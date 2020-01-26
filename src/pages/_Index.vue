@@ -1,26 +1,5 @@
 <template>
   <q-page class="flex flex-center">
-    <q-input
-      filled
-      v-model="username"
-      label="Filled"
-      hint="Username"
-    />
-    <q-input
-      v-model="password"
-      filled
-      :type="isPwd ? 'password' : 'text'"
-      hint="Password with toggle"
-    >
-      <template v-slot:append>
-        <q-icon
-          :name="isPwd ? 'visibility_off' : 'visibility'"
-          class="cursor-pointer"
-          @click="isPwd = !isPwd"
-        />
-      </template>
-    </q-input>
-
     <q-btn
       @click="storePassword"
       color="white"
@@ -53,9 +32,7 @@ export default {
   name: 'PageIndex',
   data () {
     return {
-      computerName: '',
-      password: '',
-      isPwd: true
+      computerName: ''
     }
   },
   methods: {
@@ -79,17 +56,6 @@ export default {
     lazyVersion () {
       let version = require('electron').remote.app.getVersion()
       console.log(version)
-    }
-  },
-  computed: {
-    username: {
-      get () {
-        return this.$store.state.lazystore.userName
-      },
-      set (val) {
-        this.$store.commit('lazystore/updateUserName', val)
-        console.log(`Username is ${this.$store.state.lazystore.userName}`)
-      }
     }
   }
 }
