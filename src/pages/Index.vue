@@ -1,25 +1,33 @@
 <template>
-  <q-page class="flex flex-center">
-    <q-input
-      filled
-      v-model="username"
-      label="Filled"
-      hint="Username"
-    />
-    <q-input
-      v-model="password"
-      filled
-      :type="isPwd ? 'password' : 'text'"
-      hint="Password with toggle"
-    >
-      <template v-slot:append>
-        <q-icon
-          :name="isPwd ? 'visibility_off' : 'visibility'"
-          class="cursor-pointer"
-          @click="isPwd = !isPwd"
+  <q-page class="flex justify-center items-start q-layout-padding">
+    <div class="row">
+      <div class="col">
+        <q-input
+          filled
+          v-model="username"
+          label="Filled"
+          hint="Username"
         />
-      </template>
-    </q-input>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <q-input
+          v-model="password"
+          filled
+          :type="isPwd ? 'password' : 'text'"
+          hint="Password with toggle"
+        >
+          <template v-slot:append>
+            <q-icon
+              :name="isPwd ? 'visibility_off' : 'visibility'"
+              class="cursor-pointer"
+              @click="isPwd = !isPwd"
+            />
+          </template>
+        </q-input>
+      </div>
+    </div>
 
     <q-btn
       @click="storePassword"
@@ -34,6 +42,7 @@
       label="Get Computer Name"
     />
     <q-btn
+      to="/scripts"
       @click="lazyVersion"
       color="white"
       text-color="black"

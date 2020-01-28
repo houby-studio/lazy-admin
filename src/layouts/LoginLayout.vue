@@ -30,17 +30,7 @@
           @click="closeApp"
         />
       </q-bar>
-
     </q-header>
-
-    <q-drawer
-      v-model="left"
-      side="left"
-      overlay
-      elevated
-    >
-      <!-- drawer content -->
-    </q-drawer>
 
     <q-page-container>
       <router-view />
@@ -50,27 +40,35 @@
 </template>
 
 <script>
-export default {
-  name: 'MyLayout',
+// import { colors } from 'quasar'
+// const { systemPreferences } = require('electron').remote
+// let customWindowColor = systemPreferences.getAccentColor()
 
-  data () {
-    return {
-      left: false
-    }
-  },
+// const { setBrand } = colors
+
+// const newPrimaryColor = customWindowColor
+// console.log(newPrimaryColor)
+// setBrand('windowColor', '#f00')
+// setBrand('primary-darkened', lighten(newPrimaryColor, -10))
+
+export default {
+  name: 'LoginLayout',
+
   computed: {
-    lazyVersion () {
+    windowColor () {
       let version = require('electron').remote.app.getVersion()
       return version
     }
   },
   methods: {
+    // Function for electron taskbar minimize
     minimize () {
       if (process.env.MODE === 'electron') {
         this.$q.electron.remote.BrowserWindow.getFocusedWindow().minimize()
       }
     },
 
+    // Function for electron taskbar maximize
     maximize () {
       if (process.env.MODE === 'electron') {
         const win = this.$q.electron.remote.BrowserWindow.getFocusedWindow()
@@ -83,6 +81,7 @@ export default {
       }
     },
 
+    // Function for electron taskbar close
     closeApp () {
       if (process.env.MODE === 'electron') {
         this.$q.electron.remote.BrowserWindow.getFocusedWindow().close()
@@ -91,3 +90,7 @@ export default {
   }
 }
 </script>
+
+<style lang="sass">
+  $window-color: $primary
+</style>
