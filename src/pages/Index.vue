@@ -1,54 +1,48 @@
 <template>
-  <q-page class="flex justify-center items-start q-layout-padding">
-    <div class="row">
-      <div class="col">
-        <q-input
-          filled
-          v-model="username"
-          label="Filled"
-          hint="Username"
-        />
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <q-input
-          v-model="password"
-          filled
-          :type="isPwd ? 'password' : 'text'"
-          hint="Password with toggle"
-        >
-          <template v-slot:append>
-            <q-icon
-              :name="isPwd ? 'visibility_off' : 'visibility'"
-              class="cursor-pointer"
-              @click="isPwd = !isPwd"
+  <q-page class="row justify-center items-center">
+    <div class="column">
+      <q-card
+        square
+        bordered
+        class="q-pa-lg shadow-1"
+      >
+        <q-card-section>
+          <q-form class="q-gutter-md">
+            <q-input
+              square
+              filled
+              v-model="username"
+              type="text"
+              label="username"
             />
-          </template>
-        </q-input>
-      </div>
+            <q-input
+              square
+              filled
+              v-model="password"
+              :type="isPwd ? 'password' : 'text'"
+              label="password"
+            >
+              <template v-slot:append>
+                <q-icon
+                  :name="isPwd ? 'visibility_off' : 'visibility'"
+                  class="cursor-pointer"
+                  @click="isPwd = !isPwd"
+                />
+              </template>
+            </q-input>
+          </q-form>
+        </q-card-section>
+        <q-card-actions class="q-px-md">
+          <q-btn
+            unelevated
+            color="primary"
+            size="lg"
+            class="full-width"
+            label="Login"
+          />
+        </q-card-actions>
+      </q-card>
     </div>
-
-    <q-btn
-      @click="storePassword"
-      color="white"
-      text-color="black"
-      label="Store password"
-    />
-    <q-btn
-      @click="getComputerName"
-      color="white"
-      text-color="black"
-      label="Get Computer Name"
-    />
-    <q-btn
-      to="/scripts"
-      @click="lazyVersion"
-      color="white"
-      text-color="black"
-      label="Get version"
-    />
-    q-
   </q-page>
 </template>
 

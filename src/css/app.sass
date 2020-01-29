@@ -1,1 +1,10 @@
 // app global css in Sass form
+
+// create default color which should copy system settings
+\:root
+  --q-color-window-color $window-color
+
+// class for window titlebar
+.window-color
+  background-color: $window-color
+  background-color: var(--q-color-window-color)

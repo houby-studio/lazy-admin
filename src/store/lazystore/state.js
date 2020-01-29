@@ -1,9 +1,6 @@
-const { systemPreferences } = require('electron').remote
-let customWindowColor = systemPreferences.getAccentColor()
-
 export default function () {
   return {
-    customWindowColor: customWindowColor,
+    customWindowColor: '#1d1d1d',
     userName: 'Karel'
   }
 }

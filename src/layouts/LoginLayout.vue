@@ -3,7 +3,7 @@
 
     <q-header
       elevated
-      class="bg-primary text-white"
+      class="window-color text-white"
     >
       <q-bar class="q-electron-drag">
         <q-icon name="navigate_next" />
@@ -40,26 +40,10 @@
 </template>
 
 <script>
-// import { colors } from 'quasar'
-// const { systemPreferences } = require('electron').remote
-// let customWindowColor = systemPreferences.getAccentColor()
-
-// const { setBrand } = colors
-
-// const newPrimaryColor = customWindowColor
-// console.log(newPrimaryColor)
-// setBrand('windowColor', '#f00')
-// setBrand('primary-darkened', lighten(newPrimaryColor, -10))
 
 export default {
   name: 'LoginLayout',
 
-  computed: {
-    windowColor () {
-      let version = require('electron').remote.app.getVersion()
-      return version
-    }
-  },
   methods: {
     // Function for electron taskbar minimize
     minimize () {
@@ -90,7 +74,3 @@ export default {
   }
 }
 </script>
-
-<style lang="sass">
-  $window-color: $primary
-</style>
