@@ -7,7 +7,7 @@
     >
       <q-bar class="q-electron-drag">
         <q-icon name="navigate_next" />
-        <div>Lazy Admin</div>
+        <div class="text-no-wrap hide-title">Lazy Admin</div>
 
         <q-space />
 
@@ -74,3 +74,9 @@ export default {
   }
 }
 </script>
+
+<style lang="sass">
+@media (max-width: 220px)
+  .hide-title
+    display: none !important
+</style>

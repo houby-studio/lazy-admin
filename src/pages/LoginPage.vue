@@ -13,14 +13,34 @@
               filled
               v-model="username"
               type="text"
-              label="username"
-            />
+              :disable="credentialsSaved"
+              :label="$t('username')"
+            >
+              <template v-slot:append>
+                <q-icon name="person" />
+              </template>
+            </q-input>
+            <div
+              style="q-gutter-md"
+              v-if="credentialsSaved"
+            >
+              <q-btn
+                unelevated
+                color="light"
+                size="lg"
+                class="full-width"
+                :label="$t('changeUser')"
+                @click="credentialsSaved = false"
+              />
+            </div>
+
             <q-input
               square
               filled
               v-model="password"
+              v-else
               :type="isPwd ? 'password' : 'text'"
-              label="password"
+              :label="$t('password')"
             >
               <template v-slot:append>
                 <q-icon
@@ -38,10 +58,20 @@
             color="primary"
             size="lg"
             class="full-width"
-            label="Login"
+            :label="$t('login')"
+            @click="login"
           />
         </q-card-actions>
       </q-card>
+      <q-select
+        v-model="language"
+        :options="langOptions"
+        :label="$t('language')"
+        borderless
+        emit-value
+        map-options
+        style="min-width: 150px"
+      />
     </div>
   </q-page>
 </template>
@@ -53,17 +83,21 @@ const keytar = require('keytar')
 import Shell from 'node-powershell'
 
 export default {
-  name: 'PageIndex',
+  name: 'LoginPage',
   data () {
     return {
-      computerName: '',
       password: '',
-      isPwd: true
+      credentialsSaved: false,
+      isPwd: true,
+      langOptions: [
+        { value: 'en-us', label: 'English' },
+        { value: 'cs-cz', label: 'Česky' }
+      ]
     }
   },
   methods: {
-    storePassword () {
-      keytar.setPassword('Lazy Admin', 'asindelar', 'what')
+    login () {
+      keytar.setPassword('Lazy Admin', this.username, this.password)
     },
     getComputerName () {
       keytar.getPassword('Lazy Admin', 'asindelar').then(function (res) {
@@ -91,9 +125,35 @@ export default {
       },
       set (val) {
         this.$store.commit('lazystore/updateUserName', val)
-        console.log(`Username is ${this.$store.state.lazystore.userName}`)
+      }
+    },
+    language: {
+      get () {
+        return this.$store.state.lazystore.language
+      },
+      set (val) {
+        this.$store.commit('lazystore/updateLanguage', val)
       }
     }
+  },
+  watch: {
+    language (language) {
+      // When language is changed, update locale
+      this.$i18n.locale = language
+    }
+  },
+  created: function () {
+    // When login page is created, set locale from vuex store
+    this.$i18n.locale = this.$store.state.lazystore.language
+    // Try to load saved credentials
+    keytar.getPassword('Lazy Admin', this.$store.state.lazystore.userName).then((res) => {
+      if (res) {
+        // Found saved password for last user
+        console.log(res)
+        this.credentialsSaved = true
+        console.log(this.$store.state.lazystore.userName)
+      }
+    })
   }
 }
 </script>

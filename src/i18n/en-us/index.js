@@ -1,7 +1,9 @@
-// This is just an example,
-// so you can safely delete all default props below
+// English language
 
 export default {
-  failed: 'Action failed',
-  success: 'Action was successful'
+  username: 'Username',
+  password: 'Password',
+  login: 'Login',
+  language: 'Language',
+  changeUser: 'Change User'
 }

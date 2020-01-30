@@ -14,7 +14,6 @@ function setTitleBarColor () {
   let windowColor = remote.systemPreferences.getAccentColor()
   const hex = windowColor.substr(0, 6)
   setBrand('window-color', `#${hex}`)
-  console.log(windowColor)
 }
 // set titlebar color on launch
 setTitleBarColor()

@@ -4,14 +4,14 @@ const routes = [
     path: '/',
     component: () => import('layouts/LoginLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/Index.vue') }
+      { path: '', component: () => import('pages/LoginPage.vue') }
     ]
   },
   {
     path: '/scripts',
     component: () => import('layouts/FullLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/Index.vue') }
+      { path: '', component: () => import('pages/LoginPage.vue') }
     ]
   }
 ]
