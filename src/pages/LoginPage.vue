@@ -77,9 +77,6 @@
 </template>
 
 <script>
-// Keytar requires specific settings in .npmrc as stated here https://github.com/atom/node-keytar/issues/215
-// https://github.com/atom/node-keytar
-const keytar = require('keytar')
 import Shell from 'node-powershell'
 
 export default {
@@ -97,12 +94,10 @@ export default {
   },
   methods: {
     login () {
-      keytar.setPassword('Lazy Admin', this.username, this.password)
+      /* in component - use sendSync when a response is needed */
+      // pwsh  New-StoredCredential -Persist LocalMachine -Target 'sexous la' -UserName 'peniska' -Password teniska -Comment 'Password for pros'
     },
     getComputerName () {
-      keytar.getPassword('Lazy Admin', 'asindelar').then(function (res) {
-        console.log(res)
-      })
       let ps = new Shell({
         executionPolicy: 'Bypass',
         noProfile: true
@@ -143,17 +138,31 @@ export default {
     }
   },
   created: function () {
-    // When login page is created, set locale from vuex store
-    this.$i18n.locale = this.$store.state.lazystore.language
     // Try to load saved credentials
-    keytar.getPassword('Lazy Admin', this.$store.state.lazystore.userName).then((res) => {
-      if (res) {
-        // Found saved password for last user
-        console.log(res)
-        this.credentialsSaved = true
-        console.log(this.$store.state.lazystore.userName)
-      }
+    let loginPS = new Shell({
+      executionPolicy: 'Bypass',
+      noProfile: true
     })
+
+    loginPS.addCommand('Import-Module CredentialManager')
+    // loginPS.addCommand('Get-StoredCredential -Target "Lazy Admin" | ConvertTo-Json -Compress') // Get JSON object to parse
+    loginPS.addCommand('$login = Get-StoredCredential -Target "Lazy Admin"')
+    loginPS.invoke().then(output => {
+      // let js = JSON.parse(output) // output JSON
+      // console.log(js)
+      loginPS.addCommand('Write-Output "Hello Mr $($login.UserName)"')
+      loginPS.invoke().then(output => {
+        console.log(output)
+      })
+    })
+    // console.getPassword('Lazy Admin', this.$store.state.lazystore.userName).then((res) => {
+    //   if (res) {
+    //     // Found saved password for last user
+    //     console.log(res)
+    //     this.credentialsSaved = true
+    //     console.log(this.$store.state.lazystore.userName)
+    //   }
+    // })
   }
 }
 </script>

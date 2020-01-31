@@ -10,9 +10,11 @@ const i18n = new VueI18n({
   messages
 })
 
-export default ({ app }) => {
+export default ({ app, store }) => {
   // Set i18n instance on app
   app.i18n = i18n
+  // Read saved value from vuex store and load it
+  app.i18n.locale = store.state.lazystore.language
 }
 
 export { i18n }

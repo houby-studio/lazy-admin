@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@quasar/extras": "^1.0.0",
-    "keytar": "^5.0.0",
+    "keytar": "5.1.0",
     "node-powershell": "^4.0.0",
     "quasar": "^1.0.0",
     "vue-i18n": "^8.0.0",
@@ -22,6 +22,7 @@
   "devDependencies": {
     "@quasar/app": "^1.0.0",
     "@vue/eslint-config-standard": "^4.0.0",
+    "awesome-node-loader": "^1.1.1",
     "babel-eslint": "^10.0.1",
     "devtron": "^1.4.0",
     "electron": "^7.0.0",
