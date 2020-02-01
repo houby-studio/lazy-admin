@@ -78,6 +78,7 @@
 
 <script>
 import Shell from 'node-powershell'
+import GetSavedCredentials from '../pwsh/scripts/Get-SavedCredentials'
 
 export default {
   name: 'LoginPage',
@@ -139,30 +140,22 @@ export default {
   },
   created: function () {
     // Try to load saved credentials
-    let loginPS = new Shell({
-      executionPolicy: 'Bypass',
-      noProfile: true
+    this.$pwsh.addCommand(GetSavedCredentials)
+    this.$pwsh.invoke().then(output => {
+      console.log(output)
+      let jsonOutput = JSON.parse(output)
+      // If module did not load, warn user that he might be missing module
+      if (jsonOutput.error) {
+        console.log(jsonOutput.output)
+        console.log('module missing')
+      } else {
+        if (jsonOutput.returnCode === 10011001) {
+          console.log(`Found login for user ${jsonOutput.output.UserName}`)
+        } else {
+          console.log('Did not find login for user')
+        }
+      }
     })
-
-    loginPS.addCommand('Import-Module CredentialManager')
-    // loginPS.addCommand('Get-StoredCredential -Target "Lazy Admin" | ConvertTo-Json -Compress') // Get JSON object to parse
-    loginPS.addCommand('$login = Get-StoredCredential -Target "Lazy Admin"')
-    loginPS.invoke().then(output => {
-      // let js = JSON.parse(output) // output JSON
-      // console.log(js)
-      loginPS.addCommand('Write-Output "Hello Mr $($login.UserName)"')
-      loginPS.invoke().then(output => {
-        console.log(output)
-      })
-    })
-    // console.getPassword('Lazy Admin', this.$store.state.lazystore.userName).then((res) => {
-    //   if (res) {
-    //     // Found saved password for last user
-    //     console.log(res)
-    //     this.credentialsSaved = true
-    //     console.log(this.$store.state.lazystore.userName)
-    //   }
-    // })
   }
 }
 </script>

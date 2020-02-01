@@ -1,9 +1,7 @@
-// import something here
 import { remote } from 'electron'
 import { colors } from 'quasar'
 const { setBrand } = colors
 
-// "async" is optional
 export default async () => {
   // function to read accent color from system preferences - we need to strip alpha
   function setTitleBarColor () {
