@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "@quasar/extras": "^1.0.0",
-    "keytar": "5.1.0",
     "node-powershell": "^4.0.0",
     "quasar": "^1.0.0",
     "vue-i18n": "^8.0.0",
