@@ -16,27 +16,22 @@ let scriptFile = `
  10011002: CredentialManager Module loaded but no saved credentials were found.
  10013001: CredentialManager Module couldn't be imported. It is most likely not installed.
 #>
-[CmdletBinding()]
-param ()
+function Get-SavedCredentials {
+  [CmdletBinding()]
+  param ()
 
-# Since node executes code line by line, return does not end this script
-# Workaround has to be made to ensure integrity even for repetive runs
-$ShouldContinue = $true
+  # Attempt to import CredentialManager module
+  try {
+    Import-Module -Name "CredentialManager" -ErrorAction Stop
+  }
+  catch {
+    return [PSCustomObject]@{
+      error      = $true;
+      returnCode = 10013001;
+      output     = "CredentialManager Module couldn't be imported. It is most likely not installed."
+    } | ConvertTo-Json -Compress
+  }
 
-# Attempt to import CredentialManager module
-try {
-  Import-Module -Name "CredentialManager" -ErrorAction Stop
-}
-catch {
-  $ShouldContinue = $false
-  return [PSCustomObject]@{
-    error      = $true;
-    returnCode = 10013001;
-    output     = "CredentialManager Module couldn't be imported. It is most likely not installed."
-  } | ConvertTo-Json -Compress
-}
-
-if ($ShouldContinue) {
   # Attempt to retrieve saved credentials
   $CredentialObject = Get-StoredCredential -Target 'Lazy Admin' -Type Generic -ErrorAction SilentlyContinue
 
@@ -56,6 +51,9 @@ if ($ShouldContinue) {
     } | ConvertTo-Json -Compress
   }
 }
+
+# Run function
+Get-SavedCredentials
 `
 
 export default scriptFile

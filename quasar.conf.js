@@ -44,7 +44,7 @@ module.exports = function (ctx) {
       directives: [],
 
       // Quasar plugins
-      plugins: ['Dialog', 'Notify']
+      plugins: ['Dialog', 'Notify', 'Loading']
     },
 
     // https://quasar.dev/quasar-cli/cli-documentation/supporting-ie
@@ -84,7 +84,7 @@ module.exports = function (ctx) {
 
     // animations: 'all', // --- includes all animations
     // https://quasar.dev/options/animations
-    animations: [],
+    animations: 'all',
 
     // https://quasar.dev/quasar-cli/developing-ssr/configuring-ssr
     ssr: {
@@ -166,7 +166,8 @@ module.exports = function (ctx) {
         appId: 'eu.houby-studio.lazy-admin',
         win: {
           target: 'nsis',
-          icon: 'src-electron/icons/icon.ico'
+          icon: 'src-electron/icons/icon.ico',
+          requestedExecutionLevel: 'highestAvailable'
         },
         extraFiles: [
           'Lazy Admin.VisualElementsManifest.xml',
