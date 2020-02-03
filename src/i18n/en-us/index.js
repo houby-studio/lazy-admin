@@ -11,5 +11,6 @@ export default {
   install: 'Install',
   dismiss: 'Dismiss',
   moduleCredMgrMissing: 'Couldn\'t find PowerShell module "CredentialManager", cannot load saved password.',
+  wrongUsernameOrPassword: 'Wrong username or password.',
   foundsavedCredential: 'Found stored credentials for user {usr}.'
 }

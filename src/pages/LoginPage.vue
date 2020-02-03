@@ -97,8 +97,7 @@
 <script>
 import { openURL } from 'quasar'
 import Shell from 'node-powershell'
-import GetSavedCredentials from '../pwsh/scripts/Get-SavedCredentials'
-import EnterPSSessionWithCredentials from '../pwsh/scripts/Enter-PSSessionWithCredentials'
+import GetSavedCredentials from '../statics/pwsh/scripts/Get-SavedCredentials'
 
 export default {
   name: 'LoginPage',
@@ -120,32 +119,45 @@ export default {
       this.$refs.loginform.validate().then((validate) => {
         // Validate form and continue only when form is not empty.
         if (validate) {
-          // Load function Enter-PSSessionWithCredentials
-          this.$pwsh.addCommand(EnterPSSessionWithCredentials)
+          // Invoke function with either credential object or username and password
+          if (this.credentialsSaved) {
+            console.log('using credential object')
+            this.$pwsh.addCommand(`& "${require('path').resolve(__statics, 'pwsh/scripts/Enter-PSSessionWithCredentials.ps1')}" -Credential`)
+          } else {
+            console.log('using username and password')
+            this.$pwsh.addCommand(`& "${require('path').resolve(__statics, 'pwsh/scripts/Enter-PSSessionWithCredentials.ps1')}" -Username ${this.username} -Password ${this.password}`)
+          }
           this.$pwsh.invoke().then(output => {
-            // Invoke function with either credential object or username and password
-            if (this.credentialsSaved) {
-              this.$pwsh.addCommand(`Enter-PSSessionWithCredentials -Credential`)
+            console.log(output)
+            output = JSON.parse(output)
+            if (output.error) {
+              console.log('error logging to pssession')
+              console.log(output)
+              this.credentialsSaved = false
+              this.username = ''
+              this.password = ''
+              this.$refs.loginform.resetValidation()
+              this.$q.notify({
+                timeout: 5000,
+                multiLine: false,
+                icon: 'warning',
+                message: this.$t('wrongUsernameOrPassword'),
+                actions: [
+                  { label: this.$t('dismiss'), color: 'primary' }
+                ]
+              })
             } else {
-              this.$pwsh.addCommand(`Enter-PSSessionWithCredentials -Username ${this.username} -Password ${this.password}`)
-            }
-            this.$pwsh.invoke().then(output => {
-              if (output.error) {
-                console.log('error logging to pssession')
-                console.log(output)
-              } else {
-                // Session created, add Session to variable so we can access it anytime
-                this.$pwsh.addCommand(`$LazyAdminSession = (Get-PSSession -Name 'LazyAdminSession')[0]`)
+              // Session created, add Session to variable so we can access it anytime
+              this.$pwsh.addCommand(`$LazyAdminSession = (Get-PSSession -Name 'LazyAdminSession')[0]`)
+              this.$pwsh.invoke().then(output => {
+                // Route to main screen
+                this.$pwsh.addCommand('Invoke-Command -Session $LazyAdminSession -ScriptBlock {whoami}')
                 this.$pwsh.invoke().then(output => {
-                  // Route to main screen
-                  this.$pwsh.addCommand('Invoke-Command -Session $LazyAdminSession -ScriptBlock {whoami}')
-                  this.$pwsh.invoke().then(output => {
-                    console.log(output)
-                    this.$router.push({ path: '/scripts' })
-                  })
+                  console.log(output)
+                  this.$router.push({ path: '/scripts' })
                 })
-              }
-            })
+              })
+            }
           })
         }
       })
@@ -169,7 +181,7 @@ export default {
   computed: {
     shake: {
       get () {
-        return this.shakeUsername ? 'animated heartBeat delay-fix' : ''
+        return this.shakeUsername ? 'animated pulse delay-fix' : ''
       }
     },
     // username: {

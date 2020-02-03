@@ -11,5 +11,6 @@ export default {
   install: 'Instalovat',
   dismiss: 'Skrýt',
   moduleCredMgrMissing: 'V počítači nelze nalézt PowerShell modul "CredentialManager", nelze načíst uložené heslo.',
+  wrongUsernameOrPassword: 'Špatné přihlašovací jméno nebo heslo.',
   foundsavedCredential: 'Nalezeny přihlašovací údaje pro uživatele {usr}.'
 }

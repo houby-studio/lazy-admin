@@ -9,6 +9,7 @@
       color="white"
       text-color="black"
       label="Get Computer Name"
+      to="/"
     />
     <q-btn
       @click="lazyVersion"
