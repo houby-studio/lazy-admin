@@ -6,5 +6,15 @@
 
 // class for window titlebar
 .window-color
-  background-color: $window-color
-  background-color: var(--q-color-window-color)
+  background-color: $window-color !important
+  background-color: var(--q-color-window-color) !important
+
+@media (max-width: 220px)
+  .hide-title
+    display: none !important
+
+.body--dark .q-toolbar
+  background: rgba(255, 255, 255, 0.15)
+
+.q-toolbar
+  background: rgba(0, 0, 0, 0.2)
