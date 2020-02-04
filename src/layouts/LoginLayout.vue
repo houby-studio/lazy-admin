@@ -74,9 +74,3 @@ export default {
   }
 }
 </script>
-
-<style lang="sass">
-@media (max-width: 220px)
-  .hide-title
-    display: none !important
-</style>

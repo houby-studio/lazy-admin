@@ -70,6 +70,7 @@
         </q-card-section>
         <q-card-actions class="q-px-md">
           <q-btn
+            autofocus
             unelevated
             color="primary"
             size="lg"
@@ -96,8 +97,8 @@
 
 <script>
 import { openURL } from 'quasar'
-import Shell from 'node-powershell'
 import GetSavedCredentials from '../statics/pwsh/scripts/Get-SavedCredentials'
+import EnterPSSessionWithCredentials from '../statics/pwsh/scripts/Enter-PSSessionWithCredentials'
 
 export default {
   name: 'LoginPage',
@@ -121,18 +122,18 @@ export default {
         if (validate) {
           // Invoke function with either credential object or username and password
           if (this.credentialsSaved) {
-            console.log('using credential object')
-            this.$pwsh.addCommand(`& "${require('path').resolve(__statics, 'pwsh/scripts/Enter-PSSessionWithCredentials.ps1')}" -Credential`)
+            this.$pwsh.addCommand(`Enter-PSSessionWithCredentials -Credential`)
           } else {
-            console.log('using username and password')
-            this.$pwsh.addCommand(`& "${require('path').resolve(__statics, 'pwsh/scripts/Enter-PSSessionWithCredentials.ps1')}" -Username ${this.username} -Password ${this.password}`)
+            this.$pwsh.addCommand(`Enter-PSSessionWithCredentials -Username ${this.username} -Password ${this.password}`)
           }
           this.$pwsh.invoke().then(output => {
-            console.log(output)
-            output = JSON.parse(output)
-            if (output.error) {
-              console.log('error logging to pssession')
-              console.log(output)
+            let data
+            try {
+              data = JSON.parse(output)
+            } catch (error) {
+              data = { error: true }
+            }
+            if (data.error) {
               this.credentialsSaved = false
               this.username = ''
               this.password = ''
@@ -153,7 +154,10 @@ export default {
                 // Route to main screen
                 this.$pwsh.addCommand('Invoke-Command -Session $LazyAdminSession -ScriptBlock {whoami}')
                 this.$pwsh.invoke().then(output => {
-                  console.log(output)
+                  if (!this.credentialsSaved) {
+                    this.$pwsh.addCommand(`New-StoredCredential -Target 'Lazy Admin' -UserName '${this.username}' -Password '${this.password}' -Comment 'Administrator credentials for Lazy Admin Utility.' -Type Generic -Persist LocalMachine`)
+                    this.$pwsh.invoke()
+                  }
                   this.$router.push({ path: '/scripts' })
                 })
               })
@@ -161,21 +165,6 @@ export default {
           })
         }
       })
-    },
-    getComputerName () {
-      let ps = new Shell({
-        executionPolicy: 'Bypass',
-        noProfile: true
-      })
-
-      ps.addCommand('echo $env:COMPUTERNAME')
-      ps.invoke().then(output => {
-        console.log(output)
-      })
-    },
-    lazyVersion () {
-      let version = require('electron').remote.app.getVersion()
-      console.log(version)
     }
   },
   computed: {
@@ -184,14 +173,6 @@ export default {
         return this.shakeUsername ? 'animated pulse delay-fix' : ''
       }
     },
-    // username: {
-    //   get () {
-    //     return this.$store.state.lazystore.userName
-    //   },
-    //   set (val) {
-    //     this.$store.commit('lazystore/updateUserName', val)
-    //   }
-    // },
     language: {
       get () {
         return this.$store.state.lazystore.language
@@ -212,11 +193,18 @@ export default {
     // Try to load saved credentials
     this.$pwsh.addCommand(GetSavedCredentials)
     this.$pwsh.invoke().then(output => {
+      // Load Enter-PSSessionWithCredentials function to be used when user presses login button
+      this.$pwsh.addCommand(EnterPSSessionWithCredentials)
+      this.$pwsh.invoke()
       console.log(output)
-      let jsonOutput = JSON.parse(output)
+      let jsonOutput
+      try {
+        jsonOutput = JSON.parse(output)
+      } catch (error) {
+        jsonOutput = {}
+      }
       // If module did not load, warn user that he might be missing module
       if (jsonOutput.error) {
-        console.log(jsonOutput.output)
         this.$q.notify({
           timeout: 5000,
           multiLine: false,
@@ -242,7 +230,7 @@ export default {
           })
           this.$refs.login.$el.focus()
         } else {
-          console.log('Did not find login for user')
+          // CreadentialManager module OK, did not find saved login for user.
         }
       }
       this.$q.loading.hide()
