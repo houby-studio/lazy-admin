@@ -155,7 +155,7 @@ export default {
                 this.$pwsh.addCommand('Invoke-Command -Session $LazyAdminSession -ScriptBlock {whoami}')
                 this.$pwsh.invoke().then(output => {
                   if (!this.credentialsSaved) {
-                    this.$pwsh.addCommand(`New-StoredCredential -Target 'Lazy Admin' -UserName '${this.username}' -Password '${this.password}' -Comment 'Administrator credentials for Lazy Admin Utility.' -Type Generic -Persist LocalMachine`)
+                    this.$pwsh.addCommand(`if (Get-Command New-StoredCredential -ErrorAction SilentlyContinue) {New-StoredCredential -Target 'Lazy Admin' -UserName '${this.username}' -Password '${this.password}' -Comment 'Administrator credentials for Lazy Admin Utility.' -Type Generic -Persist LocalMachine}`)
                     this.$pwsh.invoke()
                   }
                   this.$router.push({ path: '/scripts' })
