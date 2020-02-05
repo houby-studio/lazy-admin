@@ -6,11 +6,12 @@
         bordered
         class="q-pa-lg shadow-1"
       >
-        <q-card-section>
-          <q-form
-            ref="loginform"
-            class="q-gutter-md"
-          >
+        <q-form
+          ref="loginform"
+          class="q-gutter-md"
+        >
+          <q-card-section>
+
             <q-input
               square
               filled
@@ -66,21 +67,21 @@
                 </template>
               </q-input>
             </transition>
-          </q-form>
-        </q-card-section>
-        <q-card-actions class="q-px-md">
-          <q-btn
-            autofocus
-            unelevated
-            color="primary"
-            size="lg"
-            class="full-width"
-            type="submit"
-            ref="login"
-            :label="$t('login')"
-            @click="login"
-          />
-        </q-card-actions>
+          </q-card-section>
+          <q-card-actions class="q-px-md">
+            <q-btn
+              autofocus
+              unelevated
+              color="primary"
+              size="lg"
+              class="full-width"
+              type="submit"
+              ref="login"
+              :label="$t('login')"
+              @click="login"
+            />
+          </q-card-actions>
+        </q-form>
       </q-card>
       <q-select
         v-model="language"

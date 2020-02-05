@@ -8,10 +8,11 @@ const routes = [
     ]
   },
   {
-    path: '/scripts',
+    path: '/app',
     component: () => import('layouts/FullLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/Index.vue') }
+      { path: '/scripts', component: () => import('pages/Index.vue') },
+      { path: '/about', component: () => import('pages/AboutPage.vue') }
     ]
   }
 ]

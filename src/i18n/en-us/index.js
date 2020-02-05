@@ -14,5 +14,13 @@ export default {
   wrongUsernameOrPassword: 'Wrong username or password.',
   foundsavedCredential: 'Found stored credentials for user {usr}.',
   search: 'Search',
-  history: 'History'
+  history: 'History',
+  commands: 'Commands',
+  all: 'All',
+  allDesc: 'All available commands',
+  settings: 'Settings',
+  about: 'About',
+  appVersion: 'Application version:',
+  defVersion: 'Definitions version:',
+  update: 'Update'
 }

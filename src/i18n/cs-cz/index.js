@@ -14,5 +14,13 @@ export default {
   wrongUsernameOrPassword: 'Špatné přihlašovací jméno nebo heslo.',
   foundsavedCredential: 'Nalezeny přihlašovací údaje pro uživatele {usr}.',
   search: 'Vyhledat',
-  history: 'Historie'
+  history: 'Historie',
+  commands: 'Příkazy',
+  all: 'Vše',
+  allDesc: 'Všechny dostupné příkazy',
+  settings: 'Nastavení',
+  about: 'O aplikaci',
+  appVersion: 'Verze aplikace:',
+  defVersion: 'Verze definicí:',
+  update: 'Aktualizovat'
 }

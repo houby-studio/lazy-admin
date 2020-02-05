@@ -93,95 +93,57 @@
       elevated
     >
       <q-list>
-        <q-item-label header>Essential Links</q-item-label>
-        <q-item
-          clickable
-          tag="a"
-          target="_blank"
-          rel="noopener"
-          href="http://quasar.dev"
-        >
+        <q-item-label header>{{ $t('commands') }}</q-item-label>
+        <q-item clickable>
           <q-item-section avatar>
-            <q-icon name="school" />
+            <q-icon name="all_inclusive" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Docs</q-item-label>
-            <q-item-label caption>https://quasar.dev</q-item-label>
+            <q-item-label>{{ $t('all') }}</q-item-label>
+            <q-item-label caption>{{ $t('allDesc') }}</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item clickable>
+          <q-item-section avatar>
+            <q-icon name="mdi-powershell" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Mountfield Base</q-item-label>
+            <q-item-label caption>Sada obecných skriptů</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item clickable>
+          <q-item-section avatar>
+            <q-icon name="mdi-azure" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Mountfield Azure</q-item-label>
+            <q-item-label caption>Správa Azure infrastruktury</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-separator />
+        <q-item
+          clickable
+          to="/"
+          class="text-white"
+        >
+          <q-item-section avatar>
+            <q-icon name="settings" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ $t('settings') }}</q-item-label>
           </q-item-section>
         </q-item>
         <q-item
           clickable
-          tag="a"
-          target="_blank"
-          rel="noopener"
-          href="https://github.quasar.dev"
+          to="/about"
+          class="text-white"
         >
           <q-item-section avatar>
-            <q-icon name="code" />
+            <q-icon name="help" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Github</q-item-label>
-            <q-item-label caption>github.com/quasarframework</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item
-          clickable
-          tag="a"
-          target="_blank"
-          rel="noopener"
-          href="http://chat.quasar.dev"
-        >
-          <q-item-section avatar>
-            <q-icon name="chat" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Discord Chat Channel</q-item-label>
-            <q-item-label caption>https://chat.quasar.dev</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item
-          clickable
-          tag="a"
-          target="_blank"
-          rel="noopener"
-          href="https://forum.quasar.dev"
-        >
-          <q-item-section avatar>
-            <q-icon name="record_voice_over" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Forum</q-item-label>
-            <q-item-label caption>https://forum.quasar.dev</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item
-          clickable
-          tag="a"
-          target="_blank"
-          rel="noopener"
-          href="https://twitter.quasar.dev"
-        >
-          <q-item-section avatar>
-            <q-icon name="rss_feed" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Twitter</q-item-label>
-            <q-item-label caption>@quasarframework</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item
-          clickable
-          tag="a"
-          target="_blank"
-          rel="noopener"
-          href="https://facebook.quasar.dev"
-        >
-          <q-item-section avatar>
-            <q-icon name="public" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Facebook</q-item-label>
-            <q-item-label caption>@QuasarFramework</q-item-label>
+            <q-item-label>{{ $t('about') }}</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
@@ -198,7 +160,7 @@
 
 <script>
 export default {
-  name: 'MyLayout',
+  name: 'FullLayout',
 
   data () {
     return {
