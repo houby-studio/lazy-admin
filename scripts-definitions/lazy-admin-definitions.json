@@ -1,0 +1,7 @@
+{
+  "version": "0.0.1",
+  "releaseDate": "2020-02-06",
+  "definitionsUrl": [
+    "https://github.com/houby-studio/lazy-admin/tree/master/scripts-definitions/definition-lazy-admin-base.json"
+  ]
+}

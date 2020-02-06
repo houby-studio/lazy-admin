@@ -1,0 +1,86 @@
+{
+  "version": "0.0.1",
+  "name": "lazy-admin-base",
+  "icon": "mdi-powershell",
+  "displayName": {
+    "default": "Base commands",
+    "en-us": "Base commands",
+    "cs-cz": "Základní příkazy"
+  },
+  "description": {
+    "default": "General purpose commands",
+    "en-us": "General purpose commands",
+    "cs-cz": "Příkazy pro obecné použití"
+  },
+  "definition": [
+    {
+      "commandName": "Get-Disk",
+      "icon": "harddisk",
+      "returns": "object",
+      "description": {
+        "default": "Gets information about disk.",
+        "en-us": "Gets information about disk.",
+        "cs-cz": "Získá informace o disku"
+      },
+      "parameters": [
+        {
+          "parameter": "ComputerName",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "parameter": "Number",
+          "required": false,
+          "type": "int"
+        }
+      ],
+      "commandBlock": "Invoke-Command -ComputerName {ComputerName} -Credential $CredentialObject -ScriptBlock { Get-Disk | Select-Object Number, FriendlyName, OperationalStatus, @{n='Size';e={[math]: :Round($_.Size / 1GB)}} | ConvertTo-Json -Compress }"
+    },
+    {
+      "commandName": "Get-Disk",
+      "icon": "harddisk",
+      "returns": "object",
+      "description": {
+        "default": "Gets information about disk.",
+        "en-us": "Gets information about disk.",
+        "cs-cz": "Získá informace o disku"
+      },
+      "parameters": [
+        {
+          "parameter": "ComputerName",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "parameter": "Number",
+          "required": false,
+          "type": "int"
+        }
+      ],
+      "commandBlock": "Invoke-Command -ComputerName {ComputerName} -Credential $CredentialObject -ScriptBlock { Get-Disk | Select-Object Number, FriendlyName, OperationalStatus, @{n='Size';e={[math]: :Round($_.Size / 1GB)}} | ConvertTo-Json -Compress }"
+    },
+    {
+      "commandName": "Get-Disk",
+      "icon": "harddisk",
+      "returns": "object",
+      "description": {
+        "default": "Gets information about disk.",
+        "en-us": "Gets information about disk.",
+        "cs-cz": "Získá informace o disku"
+      },
+      "parameters": [
+        {
+          "parameter": "ComputerName",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "parameter": "Number",
+          "required": false,
+          "type": "int"
+        }
+      ],
+      "commandBlock": "Invoke-Command -ComputerName {ComputerName} -Credential $CredentialObject -ScriptBlock { Get-Disk | Select-Object Number, FriendlyName, OperationalStatus, @{n='Size';e={[math]: :Round($_.Size / 1GB)}} | ConvertTo-Json -Compress }"
+    }
+  ]
+}
