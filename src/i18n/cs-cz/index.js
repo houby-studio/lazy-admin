@@ -22,5 +22,6 @@ export default {
   about: 'O aplikaci',
   appVersion: 'Verze aplikace:',
   defVersion: 'Verze definicí:',
-  update: 'Aktualizovat'
+  update: 'Aktualizovat',
+  requiredField: 'Tento parametr je povinný!'
 }

@@ -22,5 +22,6 @@ export default {
   about: 'About',
   appVersion: 'Application version:',
   defVersion: 'Definitions version:',
-  update: 'Update'
+  update: 'Update',
+  requiredField: 'This parameter is required!'
 }

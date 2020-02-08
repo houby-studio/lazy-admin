@@ -7,6 +7,7 @@
         class="q-pa-lg shadow-1"
       >
         <q-form
+          @submit="login"
           ref="loginform"
           class="q-gutter-md"
         >
@@ -17,6 +18,7 @@
               filled
               v-model="username"
               type="text"
+              ref="username"
               :disable="credentialsSaved"
               :label="$t('username')"
               :class="shake"
@@ -78,7 +80,6 @@
               type="submit"
               ref="login"
               :label="$t('login')"
-              @click="login"
             />
           </q-card-actions>
         </q-form>
@@ -118,51 +119,44 @@ export default {
   },
   methods: {
     login () {
-      this.$refs.loginform.validate().then((validate) => {
-        // Validate form and continue only when form is not empty.
-        if (validate) {
-          // Invoke function with either credential object or username and password
-          if (this.credentialsSaved) {
-            this.$pwsh.addCommand(`Enter-PSSessionWithCredentials -Credential`)
-          } else {
-            this.$pwsh.addCommand(`Enter-PSSessionWithCredentials -Username ${this.username} -Password ${this.password}`)
-          }
+      // Invoke function with either credential object or username and password
+      if (this.credentialsSaved) {
+        this.$pwsh.addCommand(`Enter-PSSessionWithCredentials -Credential`)
+      } else {
+        this.$pwsh.addCommand(`Enter-PSSessionWithCredentials -Username "${this.username}" -Password "${this.password}"`)
+      }
+      this.$pwsh.invoke().then(output => {
+        let data
+        try {
+          data = JSON.parse(output)
+        } catch (error) {
+          data = { error: true }
+        }
+        if (data.error) {
+          this.credentialsSaved = false
+          this.username = ''
+          this.password = ''
+          this.$refs.loginform.resetValidation()
+          this.$refs.username.focus()
+          this.$q.notify({
+            timeout: 5000,
+            multiLine: false,
+            icon: 'warning',
+            message: this.$t('wrongUsernameOrPassword'),
+            actions: [
+              { label: this.$t('dismiss'), color: 'primary' }
+            ]
+          })
+        } else {
+          // Session created, add Session to variable so we can access it anytime
+          this.$pwsh.addCommand(`$LazyAdminSession = (Get-PSSession -Name 'LazyAdminSession')[0]`)
           this.$pwsh.invoke().then(output => {
-            let data
-            try {
-              data = JSON.parse(output)
-            } catch (error) {
-              data = { error: true }
+            // Route to main screen
+            if (!this.credentialsSaved) {
+              this.$pwsh.addCommand(`if (Get-Command New-StoredCredential -ErrorAction SilentlyContinue) {New-StoredCredential -Target 'Lazy Admin' -UserName '${this.username}' -Password '${this.password}' -Comment 'Administrator credentials for Lazy Admin Utility.' -Type Generic -Persist LocalMachine | Out-Null}`)
+              this.$pwsh.invoke()
             }
-            if (data.error) {
-              this.credentialsSaved = false
-              this.username = ''
-              this.password = ''
-              this.$refs.loginform.resetValidation()
-              this.$q.notify({
-                timeout: 5000,
-                multiLine: false,
-                icon: 'warning',
-                message: this.$t('wrongUsernameOrPassword'),
-                actions: [
-                  { label: this.$t('dismiss'), color: 'primary' }
-                ]
-              })
-            } else {
-              // Session created, add Session to variable so we can access it anytime
-              this.$pwsh.addCommand(`$LazyAdminSession = (Get-PSSession -Name 'LazyAdminSession')[0]`)
-              this.$pwsh.invoke().then(output => {
-                // Route to main screen
-                this.$pwsh.addCommand('Invoke-Command -Session $LazyAdminSession -ScriptBlock {whoami}')
-                this.$pwsh.invoke().then(output => {
-                  if (!this.credentialsSaved) {
-                    this.$pwsh.addCommand(`if (Get-Command New-StoredCredential -ErrorAction SilentlyContinue) {New-StoredCredential -Target 'Lazy Admin' -UserName '${this.username}' -Password '${this.password}' -Comment 'Administrator credentials for Lazy Admin Utility.' -Type Generic -Persist LocalMachine}`)
-                    this.$pwsh.invoke()
-                  }
-                  this.$router.push({ path: '/scripts' })
-                })
-              })
-            }
+            this.$router.push({ path: '/scripts' })
           })
         }
       })
@@ -171,38 +165,41 @@ export default {
   computed: {
     shake: {
       get () {
+        // Add classes to trigger animations on username field when username is found in credential store
         return this.shakeUsername ? 'animated pulse delay-fix' : ''
       }
     },
     language: {
       get () {
+        // retrieve language preference from store
         return this.$store.state.lazystore.language
       },
       set (val) {
+        // set selected language to store
         this.$store.commit('lazystore/updateLanguage', val)
       }
     }
   },
   watch: {
     language (language) {
-      // When language is changed, update locale
+      // When language is changed in store, update locale
       this.$i18n.locale = language
     }
   },
   created: function () {
     this.$q.loading.show()
-    // Try to load saved credentials
+    // Try to load saved credentials from Credential Manager
     this.$pwsh.addCommand(GetSavedCredentials)
     this.$pwsh.invoke().then(output => {
       // Load Enter-PSSessionWithCredentials function to be used when user presses login button
       this.$pwsh.addCommand(EnterPSSessionWithCredentials)
       this.$pwsh.invoke()
-      console.log(output)
+      // Attempt to parse output from Get-SavedCredentials as JSON
       let jsonOutput
       try {
         jsonOutput = JSON.parse(output)
       } catch (error) {
-        jsonOutput = {}
+        jsonOutput = { error: true }
       }
       // If module did not load, warn user that he might be missing module
       if (jsonOutput.error) {

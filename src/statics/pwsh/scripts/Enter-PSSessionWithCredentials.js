@@ -37,14 +37,14 @@ function Enter-PSSessionWithCredentials {
 
   # If credential object should be used, attempt to retrieve it.
   if ($Credential) {
-    $CredentialObject = Get-StoredCredential -Target 'Lazy Admin' -Type Generic -ErrorAction SilentlyContinue
+    $global:CredentialObject = Get-StoredCredential -Target 'Lazy Admin' -Type Generic -ErrorAction SilentlyContinue
   }
 
   # If CredentialObject exists, create session with it
   try {
     if (!$CredentialObject) {
       $NewPassword = ConvertTo-SecureString $Password -AsPlainText -Force
-      $CredentialObject = New-Object System.Management.Automation.PSCredential ($Username, $NewPassword)
+      $global:CredentialObject = New-Object System.Management.Automation.PSCredential ($Username, $NewPassword)
     }
     New-PSSession -Credential $CredentialObject -Name 'LazyAdminSession' -ErrorAction Stop | Out-Null
     return [PSCustomObject]@{
