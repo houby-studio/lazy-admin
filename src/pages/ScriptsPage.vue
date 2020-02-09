@@ -1,5 +1,5 @@
 <template>
-  <q-page class="flex flex-center">
+  <q-page class="flex">
     <q-dialog
       v-model="displayDialog"
       transition-show="scale"
@@ -22,7 +22,7 @@
               :label="param.parameter"
               :label-color="param.required ? 'primary' : ''"
               :key="param.parameter"
-              :rules="(param.required) ? [ val => val && val.length > 0 || $t('requiredField') ] : [] "
+              :rules="param.required ? [ val => val && val.length > 0 || $t('requiredField') ] : [] "
               :hint="param.type + ' ' + 'hint text'"
               :type="param.type"
               @keyup.enter="displayDialog = false"
@@ -48,7 +48,57 @@
         </q-form>
       </q-card>
     </q-dialog>
-    <q-list>
+    <div class="row fit">
+      <div class="col">
+        <q-table
+          :data="testJson.definition"
+          :columns="scriptsColumns"
+          :filter="searchText"
+          row-key="parameter"
+          hide-bottom
+          hide-header
+          class="fit"
+        >
+          <template v-slot:body-cell-icon="props">
+            <q-td
+              :props="props"
+              auto-width
+            >
+              <q-icon
+                :name="props.row.icon"
+                size="md"
+              ></q-icon>
+            </q-td>
+          </template>
+          <template v-slot:body-cell-commandName="props">
+            <q-td
+              :props="props"
+              auto-width
+            >
+              <div>
+                {{ props.row.friendlyName ? props.row.friendlyName[language] ? props.row.friendlyName[language] : props.row.friendlyName.default : '' }}
+              </div>
+              <div>
+                {{ props.row.commandName }}
+              </div>
+            </q-td>
+          </template>
+          <template v-slot:body-cell-execute="props">
+            <q-td
+              :props="props"
+              auto-width
+            >
+              <q-btn @click="commandDialog(props.row)">Execute</q-btn>
+              <q-icon
+                :name="props.row.icon"
+                size="md"
+              ></q-icon>
+            </q-td>
+          </template>
+        </q-table>
+      </div>
+    </div>
+    <!-- <q-list>
       <q-item
         v-for="(command, index) in testJson.definition"
         v-bind:key="index"
@@ -58,7 +108,7 @@
           <q-btn @click="commandDialog(command)">Execute</q-btn>
         </q-item>
       </q-item>
-    </q-list>
+    </q-list> -->
   </q-page>
 </template>
 
@@ -69,11 +119,40 @@ export default {
   name: 'PageIndex',
   data () {
     return {
+      search: this.$refs.search,
       currentCommand: {},
       returnParams: {},
       displayDialog: false,
       testJson: json,
-      computerName: ''
+      computerName: '',
+      scriptsColumns: [
+        { name: 'icon', align: 'center', label: 'Icon', field: row => row.icon, sortable: true },
+        {
+          name: 'commandName',
+          required: true,
+          label: 'Command Name',
+          align: 'left',
+          field: row => row.commandName,
+          format: val => `${val}`,
+          sortable: true,
+          style: 'width: 1px'
+        },
+        { name: 'description', align: 'left', label: 'Description', field: row => row.description ? row.description[(this.$i18n.locale)] ? row.description[(this.$i18n.locale)] : row.description.default : '', sortable: true },
+        { name: 'execute', label: 'Execute', field: 'Execute', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) }
+      ]
+    }
+  },
+  computed: {
+    searchText: {
+      get () {
+        return this.$store.state.lazystore.search
+      }
+    },
+    language: {
+      get () {
+        // retrieve language preference from store
+        return this.$store.state.lazystore.language
+      }
     }
   },
   methods: {
@@ -109,3 +188,8 @@ export default {
   }
 }
 </script>
+
+<style lang="sass">
+  .q-table
+    vertical-align: top !important
+</style>

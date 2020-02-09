@@ -16,7 +16,8 @@ Vue.use(Vuex)
  */
 
 const vuexLocal = new VuexPersistence({
-  storage: window.localStorage
+  storage: window.localStorage,
+  filter: (mutation) => mutation.type === 'updateSearch'
 })
 
 export default function (/* { ssrContext } */) {

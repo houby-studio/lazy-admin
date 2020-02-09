@@ -50,20 +50,20 @@
             dense
             outlined
             color="white"
-            v-model="search"
+            v-model="searchText"
             :placeholder="$t('search')"
             style="width: 90%"
           >
             <template v-slot:prepend>
               <q-icon
-                v-if="search === ''"
+                v-if="searchText === ''"
                 name="search"
               />
               <q-icon
                 v-else
                 name="clear"
                 class="cursor-pointer"
-                @click="search = ''"
+                @click="searchText = ''"
               />
             </template>
           </q-input>
@@ -177,6 +177,14 @@ export default {
     animateToolBar: {
       get () {
         return this.loadToolBar ? 'animated slideInDown' : 'hidden'
+      }
+    },
+    searchText: {
+      get () {
+        return this.$store.state.lazystore.search
+      },
+      set (val) {
+        this.$store.commit('lazystore/updateSearch', val)
       }
     }
   },
