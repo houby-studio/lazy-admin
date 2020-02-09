@@ -71,18 +71,7 @@
     },
     {
       "returns": "supersimplenearlynothing",
-      "parameters": [
-        {
-          "parameter": "ComputerName",
-          "required": true,
-          "type": "text"
-        },
-        {
-          "parameter": "Number",
-          "required": false,
-          "type": "number"
-        }
-      ],
+      "parameters": [],
       "commandBlock": "Invoke-Command {{ComputerName}} -Credential $CredentialObject -ScriptBlock { Get-Disk {{Number}} | Select-Object Number, FriendlyName, OperationalStatus, @{n='Size';e={[math]::Round($_.Size / 1GB)}} | ConvertTo-Json -Compress }"
     }
   ]

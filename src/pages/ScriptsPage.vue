@@ -1,7 +1,8 @@
 <template>
   <q-page class="flex">
+    <!-- Dialog window is shown when command is selected with 'Execute' button -->
     <q-dialog
-      v-model="displayDialog"
+      v-model="displayCommandDiag"
       transition-show="scale"
       transition-hide="scale"
     >
@@ -25,7 +26,7 @@
               :rules="param.required ? [ val => val && val.length > 0 || $t('requiredField') ] : [] "
               :hint="param.type + ' ' + 'hint text'"
               :type="param.type"
-              @keyup.enter="displayDialog = false"
+              @keyup.enter="displayCommandDiag = false"
             />
           </q-card-section>
 
@@ -48,6 +49,27 @@
         </q-form>
       </q-card>
     </q-dialog>
+    <!-- Dialog to show help window -->
+    <q-dialog
+      v-model="displayHelpDiag"
+      transition-show="scale"
+      transition-hide="scale"
+    >
+      <q-card class="full-width">
+        <q-card-section>
+          <div class="text-h6">
+            <q-icon :name="currentCommand.icon"></q-icon> {{ currentCommand.commandName }}
+          </div>
+        </q-card-section>
+        <q-card-section>
+          <div>
+            <!-- TODO: Add localized help with condition withing condition -->
+            {{ currentCommand.description ?  currentCommand.description.default : '' }}
+          </div>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+    <!-- Datatable showing all commands in main window -->
     <div class="row fit">
       <div class="col">
         <q-table
@@ -58,18 +80,21 @@
           hide-bottom
           hide-header
           class="fit"
+          virtual-scroll
         >
+          <!-- Template showing command icon. When command has no icon, defaults to mdi-powershell icon -->
           <template v-slot:body-cell-icon="props">
             <q-td
               :props="props"
               auto-width
             >
               <q-icon
-                :name="props.row.icon"
+                :name="props.row.icon ? props.row.icon : 'mdi-powershell'"
                 size="md"
               ></q-icon>
             </q-td>
           </template>
+          <!-- Template showing friendly command name and 'Cmdlet' which gets executed -->
           <template v-slot:body-cell-commandName="props">
             <q-td
               :props="props"
@@ -83,32 +108,36 @@
               </div>
             </q-td>
           </template>
+          <!-- Template showing help icon -->
+          <template v-slot:body-cell-help="props">
+            <q-td
+              :props="props"
+              auto-width
+            >
+              <q-btn
+                dense
+                round
+                flat
+                icon="help"
+                @click="showHelp(props.row)"
+              />
+            </q-td>
+          </template>
+          <!-- Template showing button which launches window prompting for-->
           <template v-slot:body-cell-execute="props">
             <q-td
               :props="props"
               auto-width
             >
-              <q-btn @click="commandDialog(props.row)">Execute</q-btn>
-              <q-icon
-                :name="props.row.icon"
-                size="md"
-              ></q-icon>
+              <q-btn
+                flat
+                @click="commandDialog(props.row)"
+              >{{ $t('execute') }}</q-btn>
             </q-td>
           </template>
         </q-table>
       </div>
     </div>
-    <!-- <q-list>
-      <q-item
-        v-for="(command, index) in testJson.definition"
-        v-bind:key="index"
-      >
-        <q-item>
-          {{ index }} {{ command.commandName }} - {{ command.icon }}
-          <q-btn @click="commandDialog(command)">Execute</q-btn>
-        </q-item>
-      </q-item>
-    </q-list> -->
   </q-page>
 </template>
 
@@ -122,7 +151,8 @@ export default {
       search: this.$refs.search,
       currentCommand: {},
       returnParams: {},
-      displayDialog: false,
+      displayCommandDiag: false,
+      displayHelpDiag: false,
       testJson: json,
       computerName: '',
       scriptsColumns: [
@@ -137,7 +167,9 @@ export default {
           sortable: true,
           style: 'width: 1px'
         },
-        { name: 'description', align: 'left', label: 'Description', field: row => row.description ? row.description[(this.$i18n.locale)] ? row.description[(this.$i18n.locale)] : row.description.default : '', sortable: true },
+        { name: 'description', align: 'left', label: 'Description', field: row => row.description ? row.description[(this.$i18n.locale)] ? row.description[(this.$i18n.locale)] : row.description.default : '', sortable: true, classes: 'gt-sm' },
+        { name: 'spacer', align: 'center', label: 'Spacer', field: '', sortable: false, classes: 'full-width' },
+        { name: 'help', align: 'center', label: 'Icon', field: 'help', sortable: true },
         { name: 'execute', label: 'Execute', field: 'Execute', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) }
       ]
     }
@@ -162,7 +194,11 @@ export default {
     },
     commandDialog (commandCtx) {
       this.currentCommand = commandCtx
-      this.displayDialog = !this.displayDialog
+      this.displayCommandDiag = !this.displayCommandDiag
+    },
+    showHelp (helpCtx) {
+      this.currentCommand = helpCtx
+      this.displayHelpDiag = !this.displayHelpDiag
     },
     executeCommand () {
       // Insert parameter variables to command template

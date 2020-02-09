@@ -23,5 +23,6 @@ export default {
   appVersion: 'Application version:',
   defVersion: 'Definitions version:',
   update: 'Update',
-  requiredField: 'This parameter is required!'
+  requiredField: 'This parameter is required!',
+  execute: 'Execute'
 }

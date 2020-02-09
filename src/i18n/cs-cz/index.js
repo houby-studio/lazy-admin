@@ -23,5 +23,6 @@ export default {
   appVersion: 'Verze aplikace:',
   defVersion: 'Verze definicí:',
   update: 'Aktualizovat',
-  requiredField: 'Tento parametr je povinný!'
+  requiredField: 'Tento parametr je povinný!',
+  execute: 'Spustit'
 }
