@@ -76,10 +76,11 @@
           :data="testJson.definition"
           :columns="scriptsColumns"
           :filter="searchText"
+          :pagination.sync="pagination"
           row-key="parameter"
           hide-bottom
           hide-header
-          class="fit"
+          table-style="height: 100vh"
           virtual-scroll
         >
           <!-- Template showing command icon. When command has no icon, defaults to mdi-powershell icon -->
@@ -171,7 +172,10 @@ export default {
         { name: 'spacer', align: 'center', label: 'Spacer', field: '', sortable: false, classes: 'full-width' },
         { name: 'help', align: 'center', label: 'Icon', field: 'help', sortable: true },
         { name: 'execute', label: 'Execute', field: 'Execute', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) }
-      ]
+      ],
+      pagination: {
+        rowsPerPage: 0
+      }
     }
   },
   computed: {

@@ -50,19 +50,23 @@
             dense
             outlined
             color="white"
+            label-color="white"
             v-model="searchText"
             :placeholder="$t('search')"
-            style="width: 90%"
+            style="width: 90%;"
+            dark
           >
             <template v-slot:prepend>
               <q-icon
                 v-if="searchText === ''"
                 name="search"
+                color="white"
               />
               <q-icon
                 v-else
                 name="clear"
                 class="cursor-pointer"
+                color="white"
                 @click="searchText = ''"
               />
             </template>
@@ -125,7 +129,7 @@
         <q-item
           clickable
           to="/"
-          class="text-white"
+          active-class="dark"
         >
           <q-item-section avatar>
             <q-icon name="settings" />
@@ -137,7 +141,7 @@
         <q-item
           clickable
           to="/about"
-          class="text-white"
+          active-class="dark"
         >
           <q-item-section avatar>
             <q-icon name="help" />
@@ -218,3 +222,8 @@ export default {
   }
 }
 </script>
+
+<style lang="sass">
+  .fkn-white
+    color: white !important
+</style>
