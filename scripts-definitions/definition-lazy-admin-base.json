@@ -16,7 +16,7 @@
     {
       "commandName": "Get-Disk",
       "icon": "mdi-harddisk",
-      "returns": "object",
+      "returns": "PSObject",
       "friendlyName": {
         "default": "Get disk information",
         "en-us": "Get disk information",

@@ -7,7 +7,7 @@
       :reveal-offset="Infinity"
       class="window-color window-color-text"
     >
-      <q-bar class="q-electron-drag">
+      <q-bar class="q-electron-drag q-pr-none">
         <q-icon name="navigate_next" />
         <div class="text-no-wrap hide-title">Lazy Admin</div>
 
@@ -18,18 +18,21 @@
           flat
           icon="minimize"
           @click="minimize"
+          style="height: 100%"
         />
         <q-btn
           dense
           flat
           icon="crop_square"
           @click="maximize"
+          style="height: 100%"
         />
         <q-btn
           dense
           flat
           icon="close"
           @click="closeApp"
+          style="height: 100%"
         />
       </q-bar>
 
@@ -171,8 +174,7 @@ export default {
   data () {
     return {
       left: false,
-      loadToolBar: false,
-      search: ''
+      loadToolBar: false
     }
   },
   computed: {
@@ -224,8 +226,3 @@ export default {
   }
 }
 </script>
-
-<style lang="sass">
-  .fkn-white
-    color: white !important
-</style>

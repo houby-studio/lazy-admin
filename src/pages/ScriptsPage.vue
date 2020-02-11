@@ -24,7 +24,7 @@
               :label-color="param.required ? 'primary' : ''"
               :key="param.parameter"
               :rules="param.required ? [ val => val && val.length > 0 || $t('requiredField') ] : [] "
-              :hint="param.type + ' ' + 'hint text'"
+              :hint="`[${param.type}] hint text`"
               :type="param.type"
               @keyup.enter="displayCommandDiag = false"
             />
@@ -63,8 +63,33 @@
         </q-card-section>
         <q-card-section>
           <div>
-            <!-- TODO: Add localized help with condition withing condition -->
-            {{ currentCommand.description ?  currentCommand.description.default : '' }}
+            {{ currentCommand.description ?  currentCommand.description[language] ? currentCommand.description[language] : currentCommand.description.default : '' }}
+          </div>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+    <!-- Dialog to show results window -->
+    <q-dialog
+      v-model="displayResultsDiag"
+      transition-show="scale"
+      transition-hide="scale"
+    >
+      <q-card class="full-width">
+        <q-card-section>
+          <div class="text-h6">
+            <q-icon :name="currentCommand.icon"></q-icon> Results
+          </div>
+        </q-card-section>
+        <q-card-section>
+          <!-- TODO: Types of returns: PSObject, LazyAdminObject, SimpleValue, Raw -->
+          <!-- Check which type of result was returned -->
+          <div v-if="results.returnType === 'object'">
+            <q-table
+              :data="results.output"
+              :columns="resultsColumns"
+              row-key="name"
+            >
+            </q-table>
           </div>
         </q-card-section>
       </q-card>
@@ -118,7 +143,7 @@
                 round
                 flat
                 icon="help"
-                @click="showHelp(props.row)"
+                @click="showHelpDiag(props.row)"
               />
             </q-td>
           </template>
@@ -130,7 +155,7 @@
             >
               <q-btn
                 flat
-                @click="commandDialog(props.row)"
+                @click="showCommandDiag(props.row)"
               >{{ $t('execute') }}</q-btn>
             </q-td>
           </template>
@@ -147,31 +172,23 @@ export default {
   name: 'PageIndex',
   data () {
     return {
-      search: this.$refs.search,
-      currentCommand: {},
-      returnParams: {},
+      currentCommand: {}, // User click "Execute" on datatable, chosen command is set to this object, which gets rendered with dialog
+      returnParams: {}, // User defined parameters from Command Dialog
+      results: {}, // Command result object displayed in Results Dialog
       displayCommandDiag: false,
       displayHelpDiag: false,
-      testJson: json,
-      computerName: '',
+      displayResultsDiag: false,
+      testJson: json, // to delete
       scriptsColumns: [
         { name: 'icon', align: 'center', label: 'Icon', field: row => row.icon, sortable: true },
-        {
-          name: 'commandName',
-          required: true,
-          label: 'Command Name',
-          align: 'left',
-          field: row => row.commandName,
-          format: val => `${val}`,
-          sortable: true,
-          style: 'width: 1px'
-        },
+        { name: 'commandName', required: true, label: 'Command Name', align: 'left', field: row => row.commandName, format: val => `${val}`, sortable: true },
         { name: 'description', align: 'left', label: 'Description', field: row => row.description ? row.description[(this.$i18n.locale)] ? row.description[(this.$i18n.locale)] : row.description.default : '', sortable: true, classes: 'gt-sm' },
         { name: 'spacer', align: 'center', label: 'Spacer', field: '', sortable: false, classes: 'full-width' },
         { name: 'help', align: 'center', label: 'Icon', field: 'help', sortable: true },
         { name: 'execute', label: 'Execute', field: 'Execute', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) }
       ],
       pagination: {
+        // all records per page
         rowsPerPage: 0
       }
     }
@@ -179,6 +196,7 @@ export default {
   computed: {
     searchText: {
       get () {
+        // retrieve search text from store
         return this.$store.state.lazystore.search
       }
     },
@@ -187,20 +205,31 @@ export default {
         // retrieve language preference from store
         return this.$store.state.lazystore.language
       }
+    },
+    resultsColumns: {
+      get () {
+        let params = Object.keys(this.results.output[0]) // Get param names
+        let columns = []
+        for (let i = 0; i < params.length; i++) {
+          let definition = { name: params[i], align: 'center', label: params[i], field: params[i], sortable: true }
+          columns.push(definition)
+        }
+        return columns
+      }
     }
   },
   methods: {
-    lazyVersion () {
-      let version = require('electron').remote.app.getVersion()
-      console.log(version)
-    },
-    commandDialog (commandCtx) {
+    showCommandDiag (commandCtx) {
       this.currentCommand = commandCtx
       this.displayCommandDiag = !this.displayCommandDiag
     },
-    showHelp (helpCtx) {
+    showHelpDiag (helpCtx) {
       this.currentCommand = helpCtx
       this.displayHelpDiag = !this.displayHelpDiag
+    },
+    showResultsDiag (resultspCtx) {
+      this.results = resultspCtx
+      this.displayResultsDiag = !this.displayResultsDiag
     },
     executeCommand () {
       // Insert parameter variables to command template
@@ -219,9 +248,28 @@ export default {
       // TODO: Save command to history
       this.$pwsh.addCommand(resultCommand)
       this.$pwsh.invoke().then(output => {
-        console.log(output)
+        //  Code block to handle PSObject returns
+        if (this.currentCommand.returns === 'PSObject') {
+          let data
+          try {
+            data = JSON.parse(output)
+            this.results = {
+              error: false,
+              returnCode: 0,
+              returnType: 'object',
+              output: data
+            }
+          } catch (error) {
+            this.results = {
+              error: true,
+              returnCode: 1,
+              returnType: 'object',
+              output: data
+            }
+          }
+          this.displayResultsDiag = true
+        }
       })
-      // console.log(resultCommand)
     }
   }
 }

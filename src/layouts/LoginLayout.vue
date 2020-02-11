@@ -5,7 +5,7 @@
       elevated
       class="window-color text-white"
     >
-      <q-bar class="q-electron-drag">
+      <q-bar class="q-electron-drag q-pr-none">
         <q-icon name="navigate_next" />
         <div class="text-no-wrap hide-title">Lazy Admin</div>
 
@@ -16,18 +16,21 @@
           flat
           icon="minimize"
           @click="minimize"
+          style="height: 100%"
         />
         <q-btn
           dense
           flat
           icon="crop_square"
           @click="maximize"
+          style="height: 100%"
         />
         <q-btn
           dense
           flat
           icon="close"
           @click="closeApp"
+          style="height: 100%"
         />
       </q-bar>
     </q-header>
