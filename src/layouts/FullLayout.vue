@@ -3,6 +3,8 @@
 
     <q-header
       elevated
+      reveal
+      :reveal-offset="Infinity"
       class="window-color window-color-text"
     >
       <q-bar class="q-electron-drag">

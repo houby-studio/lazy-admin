@@ -80,8 +80,6 @@
           row-key="parameter"
           hide-bottom
           hide-header
-          table-style="height: 100vh"
-          virtual-scroll
         >
           <!-- Template showing command icon. When command has no icon, defaults to mdi-powershell icon -->
           <template v-slot:body-cell-icon="props">
