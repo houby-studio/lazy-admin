@@ -73,6 +73,8 @@
       v-model="displayResultsDiag"
       transition-show="scale"
       transition-hide="scale"
+      full-width
+      full-height
     >
       <q-card class="full-width">
         <q-card-section>
@@ -208,10 +210,9 @@ export default {
     },
     resultsColumns: {
       get () {
-        let params = Object.keys(this.results.output[0]) // Get param names
         let columns = []
-        for (let i = 0; i < params.length; i++) {
-          let definition = { name: params[i], align: 'center', label: params[i], field: params[i], sortable: true }
+        for (let i = 0; i < this.results.params.length; i++) {
+          let definition = { name: this.results.params[i], align: 'left', label: this.results.params[i], field: this.results.params[i], sortable: true }
           columns.push(definition)
         }
         return columns
@@ -248,27 +249,43 @@ export default {
       // TODO: Save command to history
       this.$pwsh.addCommand(resultCommand)
       this.$pwsh.invoke().then(output => {
-        //  Code block to handle PSObject returns
-        if (this.currentCommand.returns === 'PSObject') {
-          let data
+        //  Code block to handle PowerShell return data
+        // if (this.currentCommand.returns === 'PSObject') { Might not need those as we determine output ourselves to avoid errors
+        let data
+        let params
+        let dataArray = []
+        try {
+          // Cast data to JSON, if this fails, display data as raw output
+          data = JSON.parse(output)
+          console.log('parsed json')
           try {
-            data = JSON.parse(output)
-            this.results = {
-              error: false,
-              returnCode: 0,
-              returnType: 'object',
-              output: data
-            }
+            params = Object.keys(data[0]) // Get param names from array
+            dataArray.push(...data)
+            console.log('got array')
           } catch (error) {
-            this.results = {
-              error: true,
-              returnCode: 1,
-              returnType: 'object',
-              output: data
-            }
+            //  If array of objects fails, assume it is single object
+            params = Object.keys(data) // Get param names from single object
+            dataArray.push(data)
+            console.log('got single object')
           }
-          this.displayResultsDiag = true
+          this.results = {
+            error: params.error,
+            returnType: 'object',
+            params: params,
+            output: dataArray
+          }
+        } catch (error) {
+          console.log('got error')
+          // Result was not an array of objects or single object. Console returned error, additional text or that's how command was written.
+          this.results = {
+            error: this.currentCommand.returns !== 'raw', // If command should return raw, it is not an error (or there is no way to tell)
+            returnType: 'raw',
+            output: data
+          }
+          console.log(this.results)
         }
+        this.displayResultsDiag = true
+        // }
       })
     }
   }

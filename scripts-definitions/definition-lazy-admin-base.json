@@ -42,7 +42,7 @@
       "commandBlock": "Invoke-Command {{ComputerName}} -Credential $CredentialObject -ScriptBlock { Get-Disk {{Number}} | Select-Object Number, FriendlyName, OperationalStatus, @{n='Size';e={[math]::Round($_.Size / 1GB)}} | ConvertTo-Json -Compress }"
     },
     {
-      "commandName": "Get-Disk",
+      "commandName": "Get-Disk Name",
       "icon": "mdi-harddisk",
       "returns": "object",
       "friendlyName": {
@@ -67,12 +67,18 @@
           "type": "number"
         }
       ],
-      "commandBlock": "Invoke-Command {{ComputerName}} -Credential $CredentialObject -ScriptBlock { Get-Disk {{Number}} | Select-Object Number, FriendlyName, OperationalStatus, @{n='Size';e={[math]::Round($_.Size / 1GB)}} | ConvertTo-Json -Compress }"
+      "commandBlock": "Invoke-Command {{ComputerName}} -Credential $CredentialObject -ScriptBlock { Get-Disk {{Number}} | Select-Object FriendlyName | ConvertTo-Json -Compress }"
     },
     {
-      "returns": "supersimplenearlynothing",
+      "commandName": "Get-Help",
+      "returns": "raw",
+      "friendlyName": {
+        "default": "Get help about command",
+        "en-us": "Get help about command",
+        "cs-cz": "Získat pomoc o příkazu"
+      },
       "parameters": [],
-      "commandBlock": "Invoke-Command {{ComputerName}} -Credential $CredentialObject -ScriptBlock { Get-Disk {{Number}} | Select-Object Number, FriendlyName, OperationalStatus, @{n='Size';e={[math]::Round($_.Size / 1GB)}} | ConvertTo-Json -Compress }"
+      "commandBlock": "Get-Help -Name Get-Content"
     },
     {
       "commandName": "Get-Diska",
