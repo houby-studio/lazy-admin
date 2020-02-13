@@ -44,7 +44,7 @@ module.exports = function (ctx) {
       directives: [],
 
       // Quasar plugins
-      plugins: ['Dialog', 'Notify', 'Loading', 'QSeparator', 'QTable']
+      plugins: ['Dialog', 'Notify', 'Loading', 'QSeparator', 'QTable', 'QPageSticky']
     },
 
     // https://quasar.dev/quasar-cli/cli-documentation/supporting-ie

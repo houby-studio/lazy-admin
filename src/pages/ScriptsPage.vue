@@ -93,7 +93,39 @@
             >
             </q-table>
           </div>
+          <div v-else>
+            <q-input
+              type="textarea"
+              autogrow
+              autofocus
+              borderless
+              :value="results.output"
+              @keyup.enter.stop
+            />
+          </div>
         </q-card-section>
+        <q-page-sticky
+          position="bottom"
+          :offset="[0, 0]"
+        >
+          <q-card-actions
+            align="right"
+            class="text-primary"
+          >
+            <q-btn
+              icon="mdi-content-copy"
+              round
+              color="primary"
+              v-close-popup
+            />
+            <q-btn
+              icon="close"
+              round
+              color="primary"
+              v-close-popup
+            />
+          </q-card-actions>
+        </q-page-sticky>
       </q-card>
     </q-dialog>
     <!-- Datatable showing all commands in main window -->
@@ -280,7 +312,7 @@ export default {
           this.results = {
             error: this.currentCommand.returns !== 'raw', // If command should return raw, it is not an error (or there is no way to tell)
             returnType: 'raw',
-            output: data
+            output: output
           }
           console.log(this.results)
         }
