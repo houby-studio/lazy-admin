@@ -10,7 +10,7 @@
         <q-form @submit="executeCommand">
           <q-card-section>
             <div class="text-h6">
-              <q-icon :name="currentCommand.icon"></q-icon> {{ currentCommand.commandName }}
+              <q-icon :name="currentCommand.icon ? currentCommand.icon : 'mdi-powershell'"></q-icon> {{ currentCommand.commandName }}
             </div>
           </q-card-section>
 
@@ -36,14 +36,14 @@
           >
             <q-btn
               flat
-              label="Cancel"
+              :label="$t('cancel')"
               v-close-popup
             />
             <q-btn
               flat
               type="submit"
               ref="execute"
-              :label="$t('login')"
+              :label="$t('launch')"
             />
           </q-card-actions>
         </q-form>
@@ -58,7 +58,7 @@
       <q-card class="full-width">
         <q-card-section>
           <div class="text-h6">
-            <q-icon :name="currentCommand.icon"></q-icon> {{ currentCommand.commandName }}
+            <q-icon :name="currentCommand.icon ? currentCommand.icon : 'mdi-powershell'"></q-icon> {{ currentCommand.commandName }}
           </div>
         </q-card-section>
         <q-card-section>
@@ -75,15 +75,15 @@
       transition-hide="scale"
       full-width
       full-height
+      persistent
     >
       <q-card class="full-width">
         <q-card-section>
           <div class="text-h6">
-            <q-icon :name="currentCommand.icon"></q-icon> Results
+            <q-icon :name="currentCommand.icon ? currentCommand.icon : 'mdi-powershell'"></q-icon> {{ $t('results', { commandName: currentCommand.commandName }) }}
           </div>
         </q-card-section>
         <q-card-section>
-          <!-- TODO: Types of returns: PSObject, LazyAdminObject, SimpleValue, Raw -->
           <!-- Check which type of result was returned -->
           <div v-if="results.returnType === 'object'">
             <q-table
@@ -93,37 +93,60 @@
             >
             </q-table>
           </div>
+          <!-- Display RAW String value returned from PowerShell - this is displayed when cast to JSON object fails -->
           <div v-else>
             <q-input
               type="textarea"
+              readonly
               autogrow
-              autofocus
               borderless
               :value="results.output"
               @keyup.enter.stop
             />
           </div>
         </q-card-section>
+        <!-- Always display buttons on the center bottom of the main window -->
         <q-page-sticky
           position="bottom"
           :offset="[0, 0]"
         >
-          <q-card-actions
-            align="right"
-            class="text-primary"
-          >
+          <q-card-actions>
+            <!-- Allow objects to be exported to CSV -->
             <q-btn
+              v-if="results.returnType === 'object'"
+              icon="mdi-file-delimited"
+              round
+              color="primary"
+              @click="exportTable"
+            >
+              <q-tooltip>
+                {{ $t('exportCsv') }}
+              </q-tooltip>
+            </q-btn>
+            <!-- Allow raw text to be copied to clipboard -->
+            <q-btn
+              v-if="results.returnType === 'raw'"
               icon="mdi-content-copy"
               round
               color="primary"
-              v-close-popup
-            />
+              @click="notifyCopied"
+              v-clipboard:copy="results.output"
+            >
+              <q-tooltip>
+                {{ $t('copyClipboard') }}
+              </q-tooltip>
+            </q-btn>
+            <!-- Button to close results -->
             <q-btn
               icon="close"
               round
               color="primary"
               v-close-popup
-            />
+            >
+              <q-tooltip>
+                {{ $t('close') }}
+              </q-tooltip>
+            </q-btn>
           </q-card-actions>
         </q-page-sticky>
       </q-card>
@@ -181,7 +204,7 @@
               />
             </q-td>
           </template>
-          <!-- Template showing button which launches window prompting for-->
+          <!-- Template showing button which launches window prompting for parameters-->
           <template v-slot:body-cell-execute="props">
             <q-td
               :props="props"
@@ -190,7 +213,7 @@
               <q-btn
                 flat
                 @click="showCommandDiag(props.row)"
-              >{{ $t('execute') }}</q-btn>
+              >{{ $t('launch') }}</q-btn>
             </q-td>
           </template>
         </q-table>
@@ -201,6 +224,28 @@
 
 <script>
 import json from '../../scripts-definitions/definition-lazy-admin-base.json'
+import { exportFile } from 'quasar'
+
+//  Helper function which wraps table values for CSV export - https://quasar.dev/vue-components/table#Exporting-data
+function wrapCsvValue (val, formatFn) {
+  let formatted = formatFn !== void 0
+    ? formatFn(val)
+    : val
+
+  formatted = formatted === void 0 || formatted === null
+    ? ''
+    : String(formatted)
+
+  formatted = formatted.split('"').join('""')
+    /**
+     * Excel accepts \n and \r in strings, but some other CSV parsers do not
+     * Uncomment the next two lines to escape new lines
+     */
+    .split('\n').join('\\n')
+    .split('\r').join('\\r')
+
+  return `"${formatted}"`
+}
 
 export default {
   name: 'PageIndex',
@@ -264,6 +309,50 @@ export default {
       this.results = resultspCtx
       this.displayResultsDiag = !this.displayResultsDiag
     },
+    notifyCopied () {
+      this.$q.notify({
+        icon: 'check',
+        color: 'positive',
+        position: 'bottom-left',
+        timeout: 1500,
+        message: this.$t('copied')
+      })
+    },
+    exportTable () {
+      // https://quasar.dev/vue-components/table#Exporting-data
+      const content = [this.resultsColumns.map(col => wrapCsvValue(col.label))].concat(
+        this.results.output.map(row => this.resultsColumns.map(col => wrapCsvValue(
+          typeof col.field === 'function'
+            ? col.field(row)
+            : row[col.field === void 0 ? col.name : col.field],
+          col.format
+        )).join(';'))
+      ).join('\r\n')
+
+      const status = exportFile(
+        `${this.currentCommand.commandName}.csv`,
+        content,
+        'text/csv'
+      )
+
+      if (status !== true) {
+        this.$q.notify({
+          icon: 'warning',
+          color: 'negative',
+          position: 'bottom-left',
+          timeout: 1500,
+          message: 'Super big error - something is very wrong'
+        })
+      } else {
+        this.$q.notify({
+          icon: 'check',
+          color: 'positive',
+          position: 'bottom-left',
+          timeout: 1500,
+          message: this.$t('exported')
+        })
+      }
+    },
     executeCommand () {
       // Insert parameter variables to command template
       let resultCommand = this.currentCommand.commandBlock
@@ -282,23 +371,19 @@ export default {
       this.$pwsh.addCommand(resultCommand)
       this.$pwsh.invoke().then(output => {
         //  Code block to handle PowerShell return data
-        // if (this.currentCommand.returns === 'PSObject') { Might not need those as we determine output ourselves to avoid errors
         let data
         let params
         let dataArray = []
         try {
           // Cast data to JSON, if this fails, display data as raw output
           data = JSON.parse(output)
-          console.log('parsed json')
           try {
             params = Object.keys(data[0]) // Get param names from array
             dataArray.push(...data)
-            console.log('got array')
           } catch (error) {
             //  If array of objects fails, assume it is single object
             params = Object.keys(data) // Get param names from single object
             dataArray.push(data)
-            console.log('got single object')
           }
           this.results = {
             error: params.error,
@@ -307,24 +392,16 @@ export default {
             output: dataArray
           }
         } catch (error) {
-          console.log('got error')
           // Result was not an array of objects or single object. Console returned error, additional text or that's how command was written.
           this.results = {
             error: this.currentCommand.returns !== 'raw', // If command should return raw, it is not an error (or there is no way to tell)
             returnType: 'raw',
             output: output
           }
-          console.log(this.results)
         }
         this.displayResultsDiag = true
-        // }
       })
     }
   }
 }
 </script>
-
-<style lang="sass">
-  .q-table
-    vertical-align: top !important
-</style>

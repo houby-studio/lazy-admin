@@ -24,5 +24,12 @@ export default {
   defVersion: 'Verze definicí:',
   update: 'Aktualizovat',
   requiredField: 'Tento parametr je povinný!',
-  execute: 'Spustit'
+  launch: 'Spustit',
+  cancel: 'Zrušit',
+  results: `{commandName}: Výsledek`,
+  exportCsv: 'Exportovat do CSV',
+  copyClipboard: 'Zkopírovat do schránky',
+  close: 'Zavřít',
+  copied: 'Zkopírováno do schránky',
+  exported: 'Exportováno'
 }

@@ -24,5 +24,12 @@ export default {
   defVersion: 'Definitions version:',
   update: 'Update',
   requiredField: 'This parameter is required!',
-  execute: 'Execute'
+  launch: 'Launch',
+  cancel: 'Cancel',
+  results: `{commandName}: Results`,
+  exportCsv: 'Export to CSV',
+  copyClipboard: 'Copy to clipboard',
+  close: 'Close',
+  copied: 'Copied to clipboard',
+  exported: 'Exported'
 }
