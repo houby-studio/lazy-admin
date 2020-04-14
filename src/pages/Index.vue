@@ -17,14 +17,10 @@
       text-color="black"
       label="Get version"
     />
-    q-
   </q-page>
 </template>
 
 <script>
-// Keytar requires specific settings in .npmrc as stated here https://github.com/atom/node-keytar/issues/215
-// https://github.com/atom/node-keytar
-// import Shell from 'node-powershell'
 
 export default {
   name: 'PageIndex',

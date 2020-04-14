@@ -367,6 +367,7 @@ export default {
           resultCommand = resultCommand.replace(`{{${param.parameter}}}`, '')
         }
       }
+      this.$q.loading.show()
       // TODO: Save command to history
       this.$pwsh.addCommand(resultCommand)
       this.$pwsh.invoke().then(output => {
@@ -399,6 +400,7 @@ export default {
             output: output
           }
         }
+        this.$q.loading.hide()
         this.displayResultsDiag = true
       })
     }

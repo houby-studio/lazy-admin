@@ -12,21 +12,21 @@
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
-    "@quasar/extras": "^1.0.0",
+    "@quasar/extras": "^1.6.4",
     "node-powershell": "^4.0.0",
-    "quasar": "^1.0.0",
+    "quasar": "^1.9.14",
     "vue-clipboard2": "^0.3.1",
     "vue-i18n": "^8.0.0",
     "vuex-persist": "^2.2.0"
   },
   "devDependencies": {
-    "@quasar/app": "^1.0.0",
+    "@quasar/app": "^1.7.0",
     "@vue/eslint-config-standard": "^4.0.0",
     "awesome-node-loader": "^1.1.1",
     "babel-eslint": "^10.0.1",
     "devtron": "^1.4.0",
     "electron": "^7.0.0",
-    "electron-builder": "^21.0.0",
+    "electron-builder": "^22.4.0",
     "electron-debug": "^3.0.0",
     "electron-devtools-installer": "^2.2.4",
     "electron-packager": "^14.1.1",

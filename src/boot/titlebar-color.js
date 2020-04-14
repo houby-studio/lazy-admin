@@ -12,7 +12,7 @@ export default async () => {
   // set titlebar color on launch
   setTitleBarColor()
 
-  // in case someone changes color theme whil app is launched
+  // register event in case user changes color theme while app is launched
   remote.systemPreferences.on('accent-color-changed', function () {
     setTitleBarColor()
   })

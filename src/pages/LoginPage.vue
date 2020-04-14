@@ -126,6 +126,7 @@ export default {
         this.$pwsh.addCommand(`Enter-PSSessionWithCredentials -Username "${this.username}" -Password "${this.password}"`)
       }
       this.$pwsh.invoke().then(output => {
+        console.log(output)
         let data
         try {
           data = JSON.parse(output)
