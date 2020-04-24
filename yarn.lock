@@ -952,10 +952,10 @@
   resolved "https://registry.yarnpkg.com/@positron/stack-trace/-/stack-trace-1.0.0.tgz#14fcc712a530038ef9be1ce6952315a839f466a8"
   integrity sha1-FPzHEqUwA475vhzmlSMVqDn0Zqg=
 
-"@quasar/app@^1.7.0":
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/@quasar/app/-/app-1.7.0.tgz#6847bd76560f0e6e050b2cfb9830d5ae8849a4ca"
-  integrity sha512-1cL6Cdyz8gsdOmbByqIutDcdN8l+3mn6sZxNfKWAYMAl0Z3ub/kWFKkvghtAQha8T5unNb7izg40ij5zKBWvzg==
+"@quasar/app@^1.7.2":
+  version "1.7.2"
+  resolved "https://registry.yarnpkg.com/@quasar/app/-/app-1.7.2.tgz#5b7af66f0fe8bec0bf182e02497fdce6be00d537"
+  integrity sha512-HLJrBKYkbAthlRurPUNK9dpM1T4ZBZ8O9mKz7O0g5vKRoHSwzrhSNsuQAWv46M+egyhcL32WgU1+/JQ5DhajJw==
   dependencies:
     "@quasar/babel-preset-app" "1.1.9"
     "@quasar/fastclick" "1.1.4"
@@ -8292,10 +8292,10 @@ qs@~6.5.2:
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.2.tgz#cb3ae806e8740444584ef154ce8ee98d403f3e36"
   integrity sha512-N5ZAX4/LxJmF+7wN74pUD6qAh9/wnvdQcjq9TZjevvXzSUo7bfmw91saqMjzGS2xq91/odN2dW/WOl7qQHNDGA==
 
-quasar@^1.9.14:
-  version "1.9.14"
-  resolved "https://registry.yarnpkg.com/quasar/-/quasar-1.9.14.tgz#c4b09e75936defebd5ab8c5b6cc95cd5c1369cb1"
-  integrity sha512-1ELBXtkoW6KALpYfel+s4ovvPwn7tILtP95NjGgD9znVbuY2gShONkku4ZGkEYKLoQY3yOgIGKd8CIjbjz2DxA==
+quasar@^1.9.16:
+  version "1.9.16"
+  resolved "https://registry.yarnpkg.com/quasar/-/quasar-1.9.16.tgz#053f2926d3df5ba26f91356f97a967d922ed2d5a"
+  integrity sha512-z67ox0tqNWtNdiXkWNnNI5PGeWvU4ZzBA6EJNZy19fin08rYubsKdZcfZY6e2oU5zNpnWBVcLios0EvQMcY6VQ==
 
 query-string@^4.1.0:
   version "4.3.4"
