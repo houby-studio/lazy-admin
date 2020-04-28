@@ -16,6 +16,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Github tagger
+      uses: mosfetlang/dev-tagger-action@v1
+      with:
+      # The tag prefix
+        tag-prefix: 'v'
+      # The remote server
+        origin: 'origin'
     - name: Use Node.js Quasar CLI
       uses: actions/setup-node@v1
       with:
