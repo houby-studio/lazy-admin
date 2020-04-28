@@ -10,7 +10,7 @@
   "scripts": {
     "lint": "eslint --ext .js,.vue src",
     "test": "echo \"No test specified\" && exit 0",
-    "release": "quasar build --mode electron"
+    "release": "quasar build --mode electron --publish onTagOrDraft"
   },
   "dependencies": {
     "@quasar/extras": "^1.6.4",

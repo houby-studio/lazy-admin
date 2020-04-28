@@ -167,7 +167,8 @@ module.exports = function (ctx) {
         win: {
           target: 'nsis',
           icon: 'src-electron/icons/icon.ico',
-          requestedExecutionLevel: 'highestAvailable'
+          requestedExecutionLevel: 'highestAvailable',
+          publish: 'github'
         },
         extraFiles: [
           'Lazy Admin.VisualElementsManifest.xml',
