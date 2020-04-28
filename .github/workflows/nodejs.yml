@@ -23,7 +23,7 @@ jobs:
     - name: Auto tag
       uses: Klemensas/action-autotag@1.2.3
       with:
-        tag_prefix: "v",
+        tag_prefix: "v"
         GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
     # Install yarn, quasar CLI, install depedencies and build (and release if tag is created)
     - name: Use Node.js Quasar CLI
