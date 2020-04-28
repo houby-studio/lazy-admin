@@ -20,13 +20,10 @@ jobs:
     # Checkout master branch
     - uses: actions/checkout@v2
     # If package.json contains higher version, create tag
-    - name: Github tagger
-      uses: mosfetlang/dev-tagger-action@v1
+    - name: Auto tag
+      uses: Klemensas/action-autotag@1.2.3
       with:
-      # The tag prefix
-        tag-prefix: 'v'
-      # The remote server
-        origin: 'origin'
+        tag_prefix: 'v'
     # Install yarn, quasar CLI, install depedencies and build (and release if tag is created)
     - name: Use Node.js Quasar CLI
       uses: actions/setup-node@v1
@@ -35,4 +32,4 @@ jobs:
     - run: npm install -g yarn
     - run: yarn global add @quasar/cli
     - run: yarn
-    - run: quasar build --mode electron --publish onTagOrDraft
+    - run: yarn release
