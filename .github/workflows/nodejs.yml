@@ -1,8 +1,10 @@
-# This workflow will do a clean install of quasar and its dependencies, build the source code and run tests
+# This workflow will do a clean install of quasar CLI and its dependencies, build the source code and drafts a release
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
+# Name of the workflow
 name: Node.js Quasar CI
 
+# Trigger workflow on push and pull request to master branch
 on:
   push:
     branches: [ master ]
@@ -12,10 +14,12 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
+    # Checkout master branch
     - uses: actions/checkout@v2
+    # If package.json contains higher version, create tag
     - name: Github tagger
       uses: mosfetlang/dev-tagger-action@v1
       with:
@@ -23,10 +27,12 @@ jobs:
         tag-prefix: 'v'
       # The remote server
         origin: 'origin'
+    # Install yarn, quasar CLI, install depedencies and build (and release if tag is created)
     - name: Use Node.js Quasar CLI
       uses: actions/setup-node@v1
       with:
         node-version: 12.x
     - run: npm install -g yarn
     - run: yarn global add @quasar/cli
+    - run: yarn
     - run: quasar build --mode electron --publish onTagOrDraft
