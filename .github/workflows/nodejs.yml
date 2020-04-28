@@ -1,0 +1,25 @@
+# This workflow will do a clean install of quasar and its dependencies, build the source code and run tests
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Node.js Quasar CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js Quasar CLI
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - run: npm install -g yarn
+    - run: yarn global add @quasar/cli
+    - run: quasar build --mode electron --publish onTagOrDraft
