@@ -2,8 +2,8 @@
 
 ## Supported Versions
 
-Supported is only the latest version for pull requests and issues.  
-This application is being developed purely for self education. Any use of this software is at your own risk.
+Supported version is only the latest one, being this agile project with each commit being new release and having application with enforced auto-update, there is no need to support older versions.
+This application is product of creative learning. Any use of this software is at your own risk.
 
 | Version | Support     |
 | ------- | ----------- |
