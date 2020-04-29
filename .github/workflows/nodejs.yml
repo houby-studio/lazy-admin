@@ -23,11 +23,9 @@ jobs:
     # Checkout master branch
     - uses: actions/checkout@v2
     # If package.json contains higher version, create tag
-    # - name: Auto tag
-    #   uses: Klemensas/action-autotag@1.2.3
-    #   with:
-    #     tag_prefix: "v"
-    #     GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+    - uses: release-drafter/release-drafter@v5.7.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     # Install yarn, quasar CLI, install depedencies and build (and release if tag is created)
     - name: Use Node.js Quasar CLI
       uses: actions/setup-node@v1
