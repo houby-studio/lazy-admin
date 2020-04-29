@@ -14,7 +14,7 @@
             {{ $t('appVersion') }} {{ lazyVersion }}
           </div>
           <div class="row col">
-            {{ $t('defVersion') }} 0.0.0
+            {{ $t('defVersion') }} TODO
           </div>
         </q-card-section>
         <q-card-section>

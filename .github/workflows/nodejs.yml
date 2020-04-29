@@ -38,14 +38,29 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ steps.autotag.outputs.tagname }}
-        release_name: Release ${{ steps.autotag.outputs.tagname }}
+        release_name: La💤y Admin 🏷${{ steps.autotag.outputs.tagname }}
         body: |
           # Changelog
-          - TODO
+          ## 🚀 New Features
+          - No new features
+
+          ## 🐛 Bug Fixes
+          - No new bug fixes
+
+          ## ⭐ Improvements
+          - No new improvements
+
+          ## 📃 Other Changes
+          - No other changes
+
+          ## 💬 Release Notes
+          This is a testing release.
+
+          > Brought to you by 🍄 Houby Studio
         draft: true
         prerelease: true
     # Install yarn, quasar CLI, install depedencies and build and publish if tag and draft was created
-    - name: Use Node.js Quasar CLI
+    - name: Setup Node.js
       uses: actions/setup-node@v1
       with:
         node-version: 12.x
