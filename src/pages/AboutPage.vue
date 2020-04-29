@@ -35,6 +35,7 @@
             type="submit"
             ref="update"
             :label="$t('update')"
+            @click="checkUpdate"
           />
         </q-card-actions>
       </q-card>
@@ -51,6 +52,25 @@ export default {
         return require('electron').remote.app.getVersion()
       }
     }
+  },
+  methods: {
+    checkUpdate () {
+      const { autoUpdater } = this.$q.electron.remote.require('electron-updater')
+      autoUpdater.checkForUpdates()
+    }
+  },
+  created () {
+    const { autoUpdater } = this.$q.electron.remote.require('electron-updater')
+    // Register event listener when update is found
+    autoUpdater.on('update-available', () => {
+      console.log('New update was found, downloading.')
+      autoUpdater.downloadUpdate()
+    })
+    // Register event listener when update is found
+    autoUpdater.on('update-downloaded', () => {
+      console.log('New update was succesfully downloaded.')
+    })
+    // TODO: Add other events to handle GUI events https://www.electronjs.org/docs/api/auto-updater#events
   }
 }
 </script>
