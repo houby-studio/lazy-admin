@@ -21,17 +21,18 @@ jobs:
 
     steps:
     - name: Checkout master branch
-      uses: actions/checkout@v2
+      uses: actions/checkout@latest
     # If package.json contains higher version, create tag
     - name: Create release tag
       id: autotag
-      uses: Klemensas/action-autotag@1.2.3
+      uses: Klemensas/action-autotag@latest
       with:
         tag_prefix: "v"
         GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
     # If previous step created tag, draft release
     - name: Draft Release
       id: draft_release
+      if: ${{ steps.autotag.outputs.tagname }} # if no tag was created, skip creating draft
       uses: actions/create-release@latest
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -45,7 +46,7 @@ jobs:
         prerelease: true
     # Install yarn, quasar CLI, install depedencies and build and publish if tag and draft was created
     - name: Use Node.js Quasar CLI
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@latest
       with:
         node-version: 12.x
     - run: npm install -g yarn
