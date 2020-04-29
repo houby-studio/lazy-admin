@@ -34,8 +34,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
+        tag_name: ${{ steps.previous_step.outputs.tagname }}
+        release_name: Release ${{ steps.previous_step.outputs.tagname }}
         body: |
           # Changelog
           - TODO
