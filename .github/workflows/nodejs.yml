@@ -21,7 +21,7 @@ jobs:
 
     steps:
     - name: Checkout master branch
-      uses: actions/checkout@latest
+      uses: actions/checkout@v2
     # If package.json contains higher version, create tag
     - name: Create release tag
       id: autotag
