@@ -31,18 +31,18 @@ jobs:
         tag_prefix: "v"
         GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
     - name: Draft Release
-        id: draft_release
-        uses: actions/create-release@latest
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          body: |
-            # Changelog
-            - TODO
-          draft: true
-          prerelease: true
+      id: draft_release
+      uses: actions/create-release@latest
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body: |
+          # Changelog
+          - TODO
+        draft: true
+        prerelease: true
     # Install yarn, quasar CLI, install depedencies and build (and release if tag is created)
     - name: Use Node.js Quasar CLI
       uses: actions/setup-node@v1
