@@ -173,8 +173,8 @@ export default {
 
   data () {
     return {
-      left: false,
-      loadToolBar: false
+      left: false, // Controls visibility of side menu
+      loadToolBar: false // Toolbar starts as hidden (false state), on 'created' animation 'animateToolBar' starts to show it
     }
   },
   computed: {
@@ -184,6 +184,7 @@ export default {
     },
     animateToolBar: {
       get () {
+        // Toolbar starts as hidden (false state), on 'created' animation 'animateToolBar' starts to show it
         return this.loadToolBar ? 'animated slideInDown' : 'hidden'
       }
     },
@@ -222,7 +223,22 @@ export default {
     }
   },
   created: function () {
+    // Toolbar starts as hidden (false state), on 'created' animation 'animateToolBar' starts to show it
     this.loadToolBar = true
+    // Check for updates
+    const { autoUpdater } = this.$q.electron.remote.require('electron-updater')
+    autoUpdater.checkForUpdatesAndNotify()
+    // Register event listener when update is found
+    autoUpdater.on('update-available', () => {
+      console.log('New update was found, downloading.')
+      this.$q.notify({
+        icon: 'check',
+        color: 'positive',
+        position: 'bottom',
+        timeout: 1500,
+        message: this.$t('updateFound')
+      })
+    })
   }
 }
 </script>

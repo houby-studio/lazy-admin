@@ -31,5 +31,6 @@ export default {
   copyClipboard: 'Zkopírovat do schránky',
   close: 'Zavřít',
   copied: 'Zkopírováno do schránky',
-  exported: 'Exportováno'
+  exported: 'Exportováno',
+  updateFound: 'Nalezena aktualizace aplikace Lazy Admin. Probíhá stahování...'
 }

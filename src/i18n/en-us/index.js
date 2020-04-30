@@ -31,5 +31,6 @@ export default {
   copyClipboard: 'Copy to clipboard',
   close: 'Close',
   copied: 'Copied to clipboard',
-  exported: 'Exported'
+  exported: 'Exported',
+  updateFound: 'Found update of Lazy Admin application. Downloading...'
 }
