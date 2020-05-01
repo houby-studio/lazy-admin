@@ -11,7 +11,7 @@
         </q-card-section>
         <q-card-section>
           <div class="row col">
-            {{ $t('appVersion') }} {{ lazyVersion }}
+            {{ $t('appVersion') }} {{ lazyVersion }} {{ appVersionProgress }}
           </div>
           <div class="row col">
             {{ $t('defVersion') }} TODO
@@ -46,6 +46,12 @@
 <script>
 export default {
   name: 'PageAbout',
+  data () {
+    return {
+      appVersionProgress: '',
+      definitionsVersionProgress: ''
+    }
+  },
   computed: {
     lazyVersion: {
       get () {
@@ -56,19 +62,18 @@ export default {
   methods: {
     checkUpdate () {
       const { autoUpdater } = this.$q.electron.remote.require('electron-updater')
-      autoUpdater.checkForUpdates()
+      autoUpdater.checkForUpdatesAndNotify()
     }
   },
   created () {
     const { autoUpdater } = this.$q.electron.remote.require('electron-updater')
-    // Register event listener when update is found
-    autoUpdater.on('update-available', () => {
-      console.log('New update was found, downloading.')
-      autoUpdater.downloadUpdate()
+    // Register event listener to display download progress
+    autoUpdater.on('download-progress', (event) => {
+      this.appVersionProgress = `${(event.transferred / 1024 / 1024).toFixed(2)}MB ${this.$t('of')} ${(event.total / 1024 / 1024).toFixed(2)}MB`
     })
-    // Register event listener when update is found
+    // Register event listener to restart required when download is complete
     autoUpdater.on('update-downloaded', () => {
-      console.log('New update was succesfully downloaded.')
+      this.appVersionProgress = `⚠ Restart required`
     })
     // TODO: Add other events to handle GUI events https://www.electronjs.org/docs/api/auto-updater#events
   }

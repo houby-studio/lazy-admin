@@ -3,6 +3,6 @@ export default function () {
     language: 'en-us',
     userName: '',
     search: '',
-    definitions: ''
+    definitions: {}
   }
 }

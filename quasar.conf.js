@@ -170,6 +170,9 @@ module.exports = function (ctx) {
           requestedExecutionLevel: 'highestAvailable',
           publish: 'github'
         },
+        nsis: {
+          perMachine: true
+        },
         extraFiles: [
           'Lazy Admin.VisualElementsManifest.xml',
           'Square150x150Logo.png',

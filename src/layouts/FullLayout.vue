@@ -232,11 +232,25 @@ export default {
     autoUpdater.on('update-available', () => {
       console.log('New update was found, downloading.')
       this.$q.notify({
-        icon: 'check',
-        color: 'positive',
-        position: 'bottom',
-        timeout: 1500,
-        message: this.$t('updateFound')
+        icon: 'system_update',
+        timeout: 2500,
+        message: this.$t('updateFound'),
+        actions: [
+          { label: this.$t('dismiss'), color: 'primary' }
+        ]
+      })
+    })
+    // Register event listener when update is downloaded
+    autoUpdater.on('update-downloaded', () => {
+      console.log('Download of the latest version just completed.')
+      this.$q.notify({
+        icon: 'system_update',
+        timeout: 2500,
+        message: this.$t('downloadCompleted'),
+        actions: [
+          { label: this.$t('install'), color: 'primary', handler: () => { autoUpdater.quitAndInstall(false, true) } },
+          { label: this.$t('dismiss'), color: 'primary' }
+        ]
       })
     })
   }

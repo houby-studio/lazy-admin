@@ -32,5 +32,8 @@ export default {
   close: 'Close',
   copied: 'Copied to clipboard',
   exported: 'Exported',
-  updateFound: 'Found update of Lazy Admin application. Downloading...'
+  updateFound: 'Downloading the latest version of Lazy Admin.',
+  updateNotFound: 'Lazy Admin is up to date.',
+  downloadCompleted: 'Download completed, close the application to start the update.',
+  of: 'of'
 }

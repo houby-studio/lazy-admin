@@ -1,0 +1,26 @@
+;Configure Lazy Admin application
+;Created by Houby-Studio
+;Last Update 2020-05-01
+;ADMX Migrator: https://www.microsoft.com/en-us/download/details.aspx?id=15058
+;After making changes, run command 
+;"%PROGRAMFILES(x86)%\FullArmor\ADMX Migrator\faAdmxConv.exe" "{pathToAdm}\LazyAdmin.adm" "{pathToAdmx}"
+CLASS MACHINE
+
+CATEGORY "Lazy Admin"
+    POLICY !!ScriptsDefinitionUrlPolicy
+        KEYNAME "Software\LazyAdmin"
+        SUPPORTED !!ScriptsDefinitionUrlSupported
+            EXPLAIN !!ScriptsDefinitionUrlExplain
+            PART !!ScriptsDefinitionUrlPathText TEXT
+            END PART
+            PART "Url:" EDITTEXT REQUIRED
+            VALUENAME "ScriptsDefinitionUrl"
+            END PART
+    END POLICY
+END CATEGORY
+ 
+[strings]
+ScriptsDefinitionUrlPolicy="Scripts Definition URL"
+ScriptsDefinitionUrlPathText="Specify full URL path to your definitions file."
+ScriptsDefinitionUrlSupported="Windows Vista and above"
+ScriptsDefinitionUrlExplain="Full URL Path to scripts definition in JSON format for Lazy Admin.\n\nExample: https://raw.githubusercontent.com/houby-studio/lazy-admin/master/scripts-definitions/definition-lazy-admin-base.json\n\nNote: You should create your own definitions file and point your administrators to it to use all your company's PowerShell Cmdlets in Lazy Admin.\n\nIf you enable this policy, the URL you specify will be used by Lazy Admin to download latest definitions.\n\nIf you disable this policy, Lazy Admin won't be able to download any definitions.\n\nIf you do not configure this policy, user has to configure definitions URL manually or use default example URL.\n\nYou can read more about Lazy Admin policies by visiting the following URL: https://github.com/houby-studio/lazy-admin/wiki"

@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<policyDefinitions revision="1.0" schemaVersion="1.0">
+  <policyNamespaces>
+    <target prefix="fullarmor" namespace="FullArmor.97b05ae5-486a-4252-90d2-76fdd32b4233" />
+    <using prefix="windows" namespace="Microsoft.Policies.Windows" />
+  </policyNamespaces>
+  <supersededAdm fileName="C:\git\lazy-admin\admx\adm\LazyAdmin.adm" />
+  <resources minRequiredRevision="1.0" />
+  <supportedOn>
+    <definitions>
+      <definition name="ScriptsDefinitionUrlSupported" displayName="$(string.ScriptsDefinitionUrlSupported)" />
+      <definition name="SUPPORTED_NotSpecified" displayName="$(string.ADMXMigrator_NoSupportedOn)" />
+    </definitions>
+  </supportedOn>
+  <categories>
+    <category name="LazyAdmin" displayName="$(string.unknown_0)" />
+  </categories>
+  <policies>
+    <policy name="ScriptsDefinitionUrlPolicy" class="Machine" displayName="$(string.ScriptsDefinitionUrlPolicy)" explainText="$(string.ScriptsDefinitionUrlExplain)" presentation="$(presentation.ScriptsDefinitionUrlPolicy)" key="Software\LazyAdmin">
+      <parentCategory ref="LazyAdmin" />
+      <supportedOn ref="ScriptsDefinitionUrlSupported" />
+      <elements>
+        <text id="Url" valueName="ScriptsDefinitionUrl" required="true" />
+      </elements>
+    </policy>
+  </policies>
+</policyDefinitions>

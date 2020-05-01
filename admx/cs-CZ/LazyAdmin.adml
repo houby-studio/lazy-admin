@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<policyDefinitionResources revision="1.0" schemaVersion="1.0">
+  <displayName></displayName>
+  <description></description>
+  <resources>
+    <stringTable>
+      <string id="unknown_0">Lazy Admin</string>
+      <string id="ScriptsDefinitionUrlPolicy">URL definice skriptů</string>
+      <string id="ScriptsDefinitionUrlPathText">Zadejte plnou URL cestu k souboru s definicemi skriptů.</string>
+      <string id="ScriptsDefinitionUrlSupported">Minimálně Windows Vista</string>
+      <string id="ScriptsDefinitionUrlExplain">Plná URL Cesta k definicím skriptů ve formátu JSON pro Lazy Admina.
+
+Příklad: https://raw.githubusercontent.com/houby-studio/lazy-admin/master/scripts-definitions/definition-lazy-admin-base.json
+
+Poznámka: Měli byste vytvořit vlastní soubor definic a odkazovat na něj vaše administrátory, abyste využili všechny vaše firemní PowerShell Cmdlety v Lazy Adminovi.
+
+Pokud nastavení této zásady povolíte, zadaná URL adresa bude použita aplikací Lazy Admin ke stažení nejnovějších definic.
+
+Pokud nastavení této zásady zakážete, Lazy Admin nebude schopen žádné definice stáhnout.
+
+Pokud nastavení této zásady nenakonfigurujete, uživatel bude muset URL vyplnit manuálně nebo se použije ukázková URL.
+
+O aplikaci Lazy Admin se můžete dočíst více na URL adrese: https://github.com/houby-studio/lazy-admin/wiki</string>
+      <string id="ADMXMigrator_UnresolvedString">ADMX Migrator encountered a string that is not present in the source ADM string table.</string>
+      <string id="ADMXMigrator_NoSupportedOn">ADMX Migrator encountered a policy that does not have a supportedOn value.</string>
+    </stringTable>
+    <presentationTable>
+      <presentation id="ScriptsDefinitionUrlPolicy">
+        <text>Zadejte plnou URL cestu k vašemu souboru definicí.</text>
+        <textBox refId="Url">
+          <label>Url:</label>
+        </textBox>
+      </presentation>
+    </presentationTable>
+  </resources>
+</policyDefinitionResources>

@@ -32,5 +32,8 @@ export default {
   close: 'Zavřít',
   copied: 'Zkopírováno do schránky',
   exported: 'Exportováno',
-  updateFound: 'Nalezena aktualizace aplikace Lazy Admin. Probíhá stahování...'
+  updateFound: 'Stahování nejnovější verze aplikace Lazy Admin.',
+  updateNotFound: 'Již máte nejnovější verzi aplikace Lazy Admin.',
+  downloadCompleted: 'Stahování dokončeno, zavřete aplikaci ke spuštění aktualizace.',
+  of: 'z'
 }

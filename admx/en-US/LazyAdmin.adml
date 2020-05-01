@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<policyDefinitionResources revision="1.0" schemaVersion="1.0">
+  <displayName></displayName>
+  <description></description>
+  <resources>
+    <stringTable>
+      <string id="unknown_0">Lazy Admin</string>
+      <string id="ScriptsDefinitionUrlPolicy">Scripts Definition URL</string>
+      <string id="ScriptsDefinitionUrlPathText">Specify full URL path to your definitions file.</string>
+      <string id="ScriptsDefinitionUrlSupported">Windows Vista and above</string>
+      <string id="ScriptsDefinitionUrlExplain">Full URL Path to scripts definition in JSON format for Lazy Admin.
+
+Example: https://raw.githubusercontent.com/houby-studio/lazy-admin/master/scripts-definitions/definition-lazy-admin-base.json
+
+Note: You should create your own definitions file and point your administrators to it to use all your company's PowerShell Cmdlets in Lazy Admin.
+
+If you enable this policy, the URL you specify will be used by Lazy Admin to download latest definitions.
+
+If you disable this policy, Lazy Admin won't be able to download any definitions.
+
+If you do not configure this policy, user has to configure definitions URL manually or use default example URL.
+
+You can read more about Lazy Admin policies by visiting the following URL: https://github.com/houby-studio/lazy-admin/wiki</string>
+      <string id="ADMXMigrator_UnresolvedString">ADMX Migrator encountered a string that is not present in the source ADM string table.</string>
+      <string id="ADMXMigrator_NoSupportedOn">ADMX Migrator encountered a policy that does not have a supportedOn value.</string>
+    </stringTable>
+    <presentationTable>
+      <presentation id="ScriptsDefinitionUrlPolicy">
+        <text>Specify full URL path to your definitions file.</text>
+        <textBox refId="Url">
+          <label>Url:</label>
+        </textBox>
+      </presentation>
+    </presentationTable>
+  </resources>
+</policyDefinitionResources>
