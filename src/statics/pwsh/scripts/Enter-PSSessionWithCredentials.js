@@ -42,7 +42,7 @@ function Enter-PSSessionWithCredentials {
 
   # If CredentialObject exists, create session with it
   try {
-    if (!$CredentialObject) {
+    if ((!$CredentialObject) -or ($Username -and $Password)) {
       $NewPassword = ConvertTo-SecureString $Password -AsPlainText -Force
       $global:CredentialObject = New-Object System.Management.Automation.PSCredential ($Username, $NewPassword)
     }

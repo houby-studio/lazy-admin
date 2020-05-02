@@ -121,12 +121,14 @@ export default {
     login () {
       // Invoke function with either credential object or username and password
       if (this.credentialsSaved) {
+        console.log(`Creating new PowerShell session with saved credentials for user "${this.username}".`)
         this.$pwsh.addCommand(`Enter-PSSessionWithCredentials -Credential`)
       } else {
+        console.log(`Creating new PowerShell session with supplied credentials for user "${this.username}".`)
         this.$pwsh.addCommand(`Enter-PSSessionWithCredentials -Username "${this.username}" -Password "${this.password}"`)
       }
       this.$pwsh.invoke().then(output => {
-        console.log(output)
+        // console.log(output)
         let data
         try {
           data = JSON.parse(output)
@@ -134,6 +136,7 @@ export default {
           data = { error: true }
         }
         if (data.error) {
+          console.error(`Failed to create new PowerShell session with supplied credentials. Error message: ${output}`)
           this.credentialsSaved = false
           this.username = ''
           this.password = ''
@@ -149,6 +152,7 @@ export default {
             ]
           })
         } else {
+          console.log(data.output)
           // Session created, add Session to variable so we can access it anytime
           this.$pwsh.addCommand(`$LazyAdminSession = (Get-PSSession -Name 'LazyAdminSession')[0]`)
           this.$pwsh.invoke().then(output => {
@@ -183,12 +187,14 @@ export default {
   },
   watch: {
     language (language) {
+      console.log(`Language changed to ${language}.`)
       // When language is changed in store, update locale
       this.$i18n.locale = language
     }
   },
   created: function () {
     this.$q.loading.show()
+    console.log(`Application started by user ${this.$q.electron.remote.process.env.USERDOMAIN}\\${this.$q.electron.remote.process.env.USERNAME} on computer ${this.$q.electron.remote.process.env.COMPUTERNAME}`)
     // Try to load saved credentials from Credential Manager
     this.$pwsh.addCommand(GetSavedCredentials)
     this.$pwsh.invoke().then(output => {
@@ -204,6 +210,7 @@ export default {
       }
       // If module did not load, warn user that he might be missing module
       if (jsonOutput.error) {
+        console.warn('Could not load "CredentialManager" module. It may be missing in the computer.')
         this.$q.notify({
           timeout: 5000,
           multiLine: false,
@@ -216,6 +223,7 @@ export default {
         })
       } else {
         if (jsonOutput.returnCode === 10011001) {
+          console.log(`Found saved credentials for user ${jsonOutput.output.UserName}.`)
           this.credentialsSaved = true
           this.shakeUsername = true
           this.username = jsonOutput.output.UserName
@@ -229,7 +237,7 @@ export default {
           })
           this.$refs.login.$el.focus()
         } else {
-          // CreadentialManager module OK, did not find saved login for user.
+          console.log(`Could not find any saved credentials.`)
         }
       }
       this.$q.loading.hide()

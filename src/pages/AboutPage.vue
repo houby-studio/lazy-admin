@@ -10,11 +10,46 @@
           <div class="h1 text-h2 text-center"> {{ $t('about') }} </div>
         </q-card-section>
         <q-card-section>
-          <div class="row col">
-            {{ $t('appVersion') }} {{ lazyVersion }} {{ appVersionProgress }}
+          <div class="row">
+            <div class="col">
+              {{ $t('appVersion') }} {{ lazyVersion }}
+              <q-icon
+                v-if="appVersionStatus === 'uptodate'"
+                name="check"
+                color="white"
+                size="1.1rem"
+              />
+              <q-spinner
+                v-else-if="appVersionStatus === 'checking'"
+                color="primary"
+                size="1.1rem"
+              />
+              <q-icon
+                v-else
+                name="warning"
+                color="yellow"
+                size="1.1rem"
+                v-show="appVersionStatus === 'restart'"
+              />
+              {{ updateProgress }}
+            </div>
           </div>
-          <div class="row col">
-            {{ $t('defVersion') }} TODO
+          <div class="row">
+            <div class="col">
+              {{ $t('defVersion') }} 1.0.0.0
+              <q-spinner
+                v-if="definitionsVersionStatus === 'checking'"
+                color="primary"
+                size="1.1rem"
+              />
+              <q-icon
+                v-else
+                name="check"
+                color="white"
+                size="1.1rem"
+                v-show="definitionsVersionStatus === 'uptodate'"
+              />
+            </div>
           </div>
         </q-card-section>
         <q-card-section>
@@ -34,8 +69,9 @@
             class="full-width"
             type="submit"
             ref="update"
-            :label="$t('update')"
-            @click="checkUpdate"
+            :disable="updateButtonDisabled"
+            :label="restartRequired ? $t('restart') : $t('update')"
+            @click="checkUpdateOrRestart"
           />
         </q-card-actions>
       </q-card>
@@ -48,8 +84,10 @@ export default {
   name: 'PageAbout',
   data () {
     return {
-      appVersionProgress: '',
-      definitionsVersionProgress: ''
+      updateButtonDisabled: false, // Handles Update/Restart button availability
+      appVersionStatus: '', // possible values: '', 'checking', 'restart', 'uptodate'
+      definitionsVersionStatus: '', // possible values: '', 'checking', 'uptodate'
+      definitionsVersionProgress: '' // TODO: Could this possibly hold any value?
     }
   },
   computed: {
@@ -57,25 +95,79 @@ export default {
       get () {
         return require('electron').remote.app.getVersion()
       }
+    },
+    updateInProgress: {
+      get () {
+        return this.$store.state.lazystore.updateInProgress
+      },
+      set () {
+        this.$store.commit('lazystore/toggleUpdateInProgress')
+      }
+    },
+    restartRequired: {
+      get () {
+        return this.$store.state.lazystore.restartRequired
+      },
+      set () {
+        this.$store.commit('lazystore/toggleRestartRequired')
+      }
+    },
+    updateProgress: {
+      get () {
+        return this.$store.state.lazystore.updateProgress
+      },
+      set (val) {
+        this.$store.commit('lazystore/updateUpdateProgress', val)
+      }
     }
   },
   methods: {
-    checkUpdate () {
-      const { autoUpdater } = this.$q.electron.remote.require('electron-updater')
-      autoUpdater.checkForUpdatesAndNotify()
+    checkUpdateOrRestart () {
+      if (!this.restartRequired) {
+        // LazyAdminApp
+        // Allow only one press of the button
+        this.updateButtonDisabled = true
+        // Checking creates spinner next to version
+        this.appVersionStatus = 'checking'
+        this.$autoUpdater.checkForUpdatesAndNotify()
+        // Definitions
+        this.definitionsVersionStatus = 'checking'
+        // Log
+        console.log('Check for updates initialized by user.')
+      } else {
+        // If application update was found, Update button changes to Restart and triggers this function
+        console.log('Restart button pressed by user, closing the application and starting update.')
+        this.$autoUpdater.quitAndInstall(false, true)
+      }
     }
   },
   created () {
-    const { autoUpdater } = this.$q.electron.remote.require('electron-updater')
-    // Register event listener to display download progress
-    autoUpdater.on('download-progress', (event) => {
-      this.appVersionProgress = `${(event.transferred / 1024 / 1024).toFixed(2)}MB ${this.$t('of')} ${(event.total / 1024 / 1024).toFixed(2)}MB`
+    // Check if update is in progress (most likely from automatic event after login) and customize variables to reflect that
+    if (this.updateInProgress) {
+      this.updateButtonDisabled = true
+      this.appVersionStatus = 'checking'
+      this.definitionsVersionStatus = 'checking'
+    } else if (this.restartRequired) {
+      this.appVersionStatus = 'restart'
+      this.updateProgress = `${this.$t('restartRequired')}`
+    }
+
+    // LazyAdminApp: Register event listener to ask for restart when update is downloaded
+    this.$autoUpdater.on('update-downloaded', () => {
+      // Change icon to warning and progress text to 'Restart required'
+      this.appVersionStatus = 'restart'
+      this.updateProgress = `${this.$t('restartRequired')}`
+      this.updateButtonDisabled = false
     })
-    // Register event listener to restart required when download is complete
-    autoUpdater.on('update-downloaded', () => {
-      this.appVersionProgress = `⚠ Restart required`
+
+    // LazyAdminApp: Register event listener to show 'check' icon when update is not found
+    this.$autoUpdater.on('update-not-available', () => {
+      // Change spinner to 'check' button
+      this.appVersionStatus = 'uptodate'
+      // Update not found, enable 'Update' button again
+      this.updateButtonDisabled = false
+      console.log('Lazy Admin application is already latest version.')
     })
-    // TODO: Add other events to handle GUI events https://www.electronjs.org/docs/api/auto-updater#events
   }
 }
 </script>

@@ -6,7 +6,7 @@ module.exports = function (ctx) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://quasar.dev/quasar-cli/cli-documentation/boot-files
-    boot: ['electron-log', 'i18n', 'powershell', 'titlebar-color', 'clipboard2'],
+    boot: ['electron-log', 'i18n', 'powershell', 'titlebar-color', 'clipboard2', 'auto-updater'],
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
     css: ['app.sass'],
@@ -44,7 +44,7 @@ module.exports = function (ctx) {
       directives: [],
 
       // Quasar plugins
-      plugins: ['Dialog', 'Notify', 'Loading', 'QSeparator', 'QTable', 'QPageSticky']
+      plugins: ['Dialog', 'Notify', 'Loading', 'QSeparator', 'QTable', 'QPageSticky', 'QSpinner']
     },
 
     // https://quasar.dev/quasar-cli/cli-documentation/supporting-ie

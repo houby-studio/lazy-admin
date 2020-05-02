@@ -35,5 +35,7 @@ export default {
   updateFound: 'Downloading the latest version of Lazy Admin.',
   updateNotFound: 'Lazy Admin is up to date.',
   downloadCompleted: 'Download completed, close the application to start the update.',
-  of: 'of'
+  of: 'of',
+  restartRequired: 'Restart required.',
+  restart: 'Restart'
 }

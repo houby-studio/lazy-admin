@@ -13,3 +13,15 @@ export const updateUserName = (state, value) => {
 export const updateSearch = (state, value) => {
   state.search = value
 }
+
+export const toggleUpdateInProgress = (state, value) => {
+  state.updateInProgress = value
+}
+
+export const toggleRestartRequired = (state, value) => {
+  state.restartRequired = value
+}
+
+export const updateUpdateProgress = (state, value) => {
+  state.updateProgress = value
+}

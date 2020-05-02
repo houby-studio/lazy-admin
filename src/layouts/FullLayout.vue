@@ -174,7 +174,7 @@ export default {
   data () {
     return {
       left: false, // Controls visibility of side menu
-      loadToolBar: false // Toolbar starts as hidden (false state), on 'created' animation 'animateToolBar' starts to show it
+      loadToolBar: false // Toolbar starts as hidden (false state), on 'created', animation 'animateToolBar' starts transform and displays toolbar
     }
   },
   computed: {
@@ -184,7 +184,7 @@ export default {
     },
     animateToolBar: {
       get () {
-        // Toolbar starts as hidden (false state), on 'created' animation 'animateToolBar' starts to show it
+        // Toolbar starts as hidden (false state), on 'created', animation 'animateToolBar' starts transform and displays toolbar
         return this.loadToolBar ? 'animated slideInDown' : 'hidden'
       }
     },
@@ -194,6 +194,30 @@ export default {
       },
       set (val) {
         this.$store.commit('lazystore/updateSearch', val)
+      }
+    },
+    updateInProgress: {
+      get () {
+        return this.$store.state.lazystore.updateInProgress
+      },
+      set (val) {
+        this.$store.commit('lazystore/toggleUpdateInProgress', val)
+      }
+    },
+    restartRequired: {
+      get () {
+        return this.$store.state.lazystore.restartRequired
+      },
+      set (val) {
+        this.$store.commit('lazystore/toggleRestartRequired', val)
+      }
+    },
+    updateProgress: {
+      get () {
+        return this.$store.state.lazystore.updateProgress
+      },
+      set (val) {
+        this.$store.commit('lazystore/updateUpdateProgress', val)
       }
     }
   },
@@ -223,14 +247,17 @@ export default {
     }
   },
   created: function () {
-    // Toolbar starts as hidden (false state), on 'created' animation 'animateToolBar' starts to show it
+    // Toolbar starts as hidden (false state), on 'created', animation 'animateToolBar' starts transform and displays toolbar
     this.loadToolBar = true
-    // Check for updates
-    const { autoUpdater } = this.$q.electron.remote.require('electron-updater')
-    autoUpdater.checkForUpdatesAndNotify()
-    // Register event listener when update is found
-    autoUpdater.on('update-available', () => {
-      console.log('New update was found, downloading.')
+    // Check for application updates and download
+    this.restartRequired = false // Remove potential leftover variable from previous update
+    this.updateProgress = '' // Remove potential leftover variable from previous update
+    this.updateInProgress = true
+    this.$autoUpdater.checkForUpdatesAndNotify() // We could prevent duplicate downloads if we put this in if-condition, but closing app unexpectedly could lead to bricking updates forever
+
+    // Register event listener, which triggers when update is found
+    this.$autoUpdater.on('update-available', (updateInfo) => {
+      console.log(`Found new application release: Version ${updateInfo.version}; Release date ${updateInfo.releaseDate}; Setup size ${(updateInfo.files[0].size / 1024 / 1024).toFixed(2)}MB. Download started.`)
       this.$q.notify({
         icon: 'system_update',
         timeout: 2500,
@@ -240,18 +267,26 @@ export default {
         ]
       })
     })
-    // Register event listener when update is downloaded
-    autoUpdater.on('update-downloaded', () => {
-      console.log('Download of the latest version just completed.')
+
+    // Register event listener, which triggers when update is downloaded
+    this.$autoUpdater.on('update-downloaded', (updateInfo) => {
+      console.log(`Lazy Admin setup downloaded to ${updateInfo.downloadedFile}`)
+      this.restartRequired = true
+      this.updateInProgress = false
       this.$q.notify({
         icon: 'system_update',
-        timeout: 2500,
+        timeout: 5000,
         message: this.$t('downloadCompleted'),
         actions: [
-          { label: this.$t('install'), color: 'primary', handler: () => { autoUpdater.quitAndInstall(false, true) } },
+          { label: this.$t('install'), color: 'primary', handler: () => { this.$autoUpdater.quitAndInstall(false, true) } }, // User can click 'Install', which closes application and starts update immediately
           { label: this.$t('dismiss'), color: 'primary' }
         ]
       })
+    })
+
+    // LazyAdminApp: Register event listener to display download progress
+    this.$autoUpdater.on('download-progress', (event) => {
+      this.updateProgress = `${(event.transferred / 1024 / 1024).toFixed(2)}MB ${this.$t('of')} ${(event.total / 1024 / 1024).toFixed(2)}MB`
     })
   }
 }

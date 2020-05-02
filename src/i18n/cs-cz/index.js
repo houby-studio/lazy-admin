@@ -35,5 +35,7 @@ export default {
   updateFound: 'Stahování nejnovější verze aplikace Lazy Admin.',
   updateNotFound: 'Již máte nejnovější verzi aplikace Lazy Admin.',
   downloadCompleted: 'Stahování dokončeno, zavřete aplikaci ke spuštění aktualizace.',
-  of: 'z'
+  of: 'z',
+  restartRequired: 'Vyžadován restart.',
+  restart: 'Restartovat'
 }
