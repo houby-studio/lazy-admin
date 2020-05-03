@@ -80,6 +80,7 @@
               type="submit"
               ref="login"
               :label="$t('login')"
+              :disable="loginButtonDisabled"
             />
           </q-card-actions>
         </q-form>
@@ -98,7 +99,7 @@
 </template>
 
 <script>
-import { openURL } from 'quasar'
+import { openURL, throttle } from 'quasar'
 import GetSavedCredentials from '../statics/pwsh/scripts/Get-SavedCredentials'
 import EnterPSSessionWithCredentials from '../statics/pwsh/scripts/Enter-PSSessionWithCredentials'
 
@@ -108,6 +109,7 @@ export default {
     return {
       username: '',
       password: '',
+      loginButtonDisabled: false,
       shakeUsername: false,
       credentialsSaved: false,
       isPwd: true,
@@ -119,6 +121,7 @@ export default {
   },
   methods: {
     login () {
+      this.loginButtonDisabled = true // Disable button during login attempt
       // Invoke function with either credential object or username and password
       if (this.credentialsSaved) {
         console.log(`Creating new PowerShell session with saved credentials for user "${this.username}".`)
@@ -137,6 +140,7 @@ export default {
         }
         if (data.error) {
           console.error(`Failed to create new PowerShell session with supplied credentials. Error message: ${output}`)
+          this.loginButtonDisabled = false
           this.credentialsSaved = false
           this.username = ''
           this.password = ''
@@ -152,7 +156,7 @@ export default {
             ]
           })
         } else {
-          console.log(data.output)
+          console.log(data.output) // Should write 'New Powershell session created succesfully.' from PS Function output
           // Session created, add Session to variable so we can access it anytime
           this.$pwsh.addCommand(`$LazyAdminSession = (Get-PSSession -Name 'LazyAdminSession')[0]`)
           this.$pwsh.invoke().then(output => {
@@ -194,6 +198,8 @@ export default {
   },
   created: function () {
     this.$q.loading.show()
+    // Insert throttle to button functions
+    this.login = throttle(this.login, 800)
     console.log(`Application started by user ${this.$q.electron.remote.process.env.USERDOMAIN}\\${this.$q.electron.remote.process.env.USERNAME} on computer ${this.$q.electron.remote.process.env.COMPUTERNAME}`)
     // Try to load saved credentials from Credential Manager
     this.$pwsh.addCommand(GetSavedCredentials)

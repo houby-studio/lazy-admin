@@ -7,6 +7,7 @@ export default function () {
     customDefinitions: {}, // Contains user defined script definitions
     favoriteDefinitions: {}, // Definitions favorited by user
     updateInProgress: false, // Is application update in progress?
+    definitionsUpdateInProgress: false, // Are definitions update in progress?
     restartRequired: false, // Is application restart required? (To install updates)
     updateProgress: '' // Update Progress message
   }

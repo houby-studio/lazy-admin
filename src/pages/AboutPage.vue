@@ -104,6 +104,14 @@ export default {
         this.$store.commit('lazystore/toggleUpdateInProgress')
       }
     },
+    definitionsUpdateInProgress: {
+      get () {
+        return this.$store.state.lazystore.definitionsUpdateInProgress
+      },
+      set (val) {
+        this.$store.commit('lazystore/toggleDefinitionsUpdateInProgress', val)
+      }
+    },
     restartRequired: {
       get () {
         return this.$store.state.lazystore.restartRequired
@@ -146,10 +154,12 @@ export default {
     if (this.updateInProgress) {
       this.updateButtonDisabled = true
       this.appVersionStatus = 'checking'
-      this.definitionsVersionStatus = 'checking'
     } else if (this.restartRequired) {
       this.appVersionStatus = 'restart'
       this.updateProgress = `${this.$t('restartRequired')}`
+    }
+    if (this.definitionsUpdateInProgress) {
+      this.definitionsVersionStatus = 'checking'
     }
 
     // LazyAdminApp: Register event listener to ask for restart when update is downloaded
@@ -166,7 +176,6 @@ export default {
       this.appVersionStatus = 'uptodate'
       // Update not found, enable 'Update' button again
       this.updateButtonDisabled = false
-      console.log('Lazy Admin application is already latest version.')
     })
   }
 }

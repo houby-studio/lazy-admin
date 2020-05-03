@@ -204,6 +204,14 @@ export default {
         this.$store.commit('lazystore/toggleUpdateInProgress', val)
       }
     },
+    definitionsUpdateInProgress: {
+      get () {
+        return this.$store.state.lazystore.definitionsUpdateInProgress
+      },
+      set (val) {
+        this.$store.commit('lazystore/toggleDefinitionsUpdateInProgress', val)
+      }
+    },
     restartRequired: {
       get () {
         return this.$store.state.lazystore.restartRequired
@@ -254,6 +262,13 @@ export default {
     this.updateProgress = '' // Remove potential leftover variable from previous update
     this.updateInProgress = true
     this.$autoUpdater.checkForUpdatesAndNotify() // We could prevent duplicate downloads if we put this in if-condition, but closing app unexpectedly could lead to bricking updates forever
+    // Check for definitions updates
+    this.definitionsUpdateInProgress = true
+    this.$defUpdater.checkForUpdates().then((event) => {
+      console.log(`Current definition version ${event.version}`)
+      this.definitionsUpdateInProgress = false
+    })
+    // TODO: Finish definitions updater function and hook some event listeners
 
     // Register event listener, which triggers when update is found
     this.$autoUpdater.on('update-available', (updateInfo) => {
@@ -266,6 +281,13 @@ export default {
           { label: this.$t('dismiss'), color: 'primary' }
         ]
       })
+    })
+
+    // LazyAdminApp: Register event listener to show 'check' icon when update is not found
+    this.$autoUpdater.on('update-not-available', () => {
+      // Change spinner to 'check' button
+      this.updateInProgress = false
+      console.log('Lazy Admin application is already latest version.')
     })
 
     // Register event listener, which triggers when update is downloaded

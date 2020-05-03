@@ -18,6 +18,10 @@ export const toggleUpdateInProgress = (state, value) => {
   state.updateInProgress = value
 }
 
+export const toggleDefinitionsUpdateInProgress = (state, value) => {
+  state.definitionsUpdateInProgress = value
+}
+
 export const toggleRestartRequired = (state, value) => {
   state.restartRequired = value
 }

@@ -33,7 +33,7 @@ function Get-SavedCredentials {
   }
 
   # Attempt to retrieve saved credentials
-  $CredentialObject = Get-StoredCredential -Target 'Lazy Admin' -Type Generic -ErrorAction SilentlyContinue
+  $CredentialObject = Get-StoredCredential -Target 'Lazy Admin' -Type Generic -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
 
   # Return either retrieved credentials or information about being unsuccessful 
   if ($CredentialObject) {
