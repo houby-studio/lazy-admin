@@ -8,6 +8,7 @@ export default function () {
     favoriteDefinitions: {}, // Definitions favorited by user
     updateInProgress: false, // Is application update in progress?
     definitionsUpdateInProgress: false, // Are definitions update in progress?
+    definitionsUrl: '', // Definitions update url - should be fetched from registry
     restartRequired: false, // Is application restart required? (To install updates)
     updateProgress: '' // Update Progress message
   }

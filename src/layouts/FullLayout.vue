@@ -212,6 +212,14 @@ export default {
         this.$store.commit('lazystore/toggleDefinitionsUpdateInProgress', val)
       }
     },
+    definitionsUrl: {
+      get () {
+        return this.$store.state.lazystore.definitionsUrl
+      },
+      set (val) {
+        this.$store.commit('lazystore/setDefinitionsUrl', val)
+      }
+    },
     restartRequired: {
       get () {
         return this.$store.state.lazystore.restartRequired
@@ -262,11 +270,14 @@ export default {
     this.updateProgress = '' // Remove potential leftover variable from previous update
     this.updateInProgress = true
     this.$autoUpdater.checkForUpdatesAndNotify() // We could prevent duplicate downloads if we put this in if-condition, but closing app unexpectedly could lead to bricking updates forever
-    // Check for definitions updates
+    // Check for definitions updates - separate from global powershell as it runs too fast after login and fails to run
     this.definitionsUpdateInProgress = true
-    this.$defUpdater.checkForUpdates().then((event) => {
-      console.log(`Current definition version ${event.version}`)
-      this.definitionsUpdateInProgress = false
+    this.$defUpdater.checkForUpdates(function (err, result) {
+      if (err) {
+        console.error('Error:', err.message)
+      } else {
+        console.log(result)
+      }
     })
     // TODO: Finish definitions updater function and hook some event listeners
 
@@ -310,6 +321,9 @@ export default {
     this.$autoUpdater.on('download-progress', (event) => {
       this.updateProgress = `${(event.transferred / 1024 / 1024).toFixed(2)}MB ${this.$t('of')} ${(event.total / 1024 / 1024).toFixed(2)}MB`
     })
+  },
+  destroyed: function () {
+    console.log('destroyed')
   }
 }
 </script>
