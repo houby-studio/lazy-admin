@@ -34,6 +34,7 @@ export default {
   exported: 'Exported',
   updateFound: 'Downloading the latest version of Lazy Admin.',
   updateNotFound: 'Lazy Admin is up to date.',
+  definitionsError: 'Could not check script definitions updates.',
   downloadCompleted: 'Download completed, close the application to start the update.',
   of: 'of',
   restartRequired: 'Restart required.',

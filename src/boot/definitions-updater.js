@@ -3,25 +3,25 @@ import axios from 'axios'
 import regedit from 'regedit'
 
 const defUpdater = {
-  checkForUpdates: function (done) {
+  checkForUpdates: function (ctx, done) {
     regedit.list('HKLM\\SOFTWARE\\LazyAdmin', function (err, result) {
       if (err) {
-        return done(Error('Scripts definition update failed. Could not locate LazyAdmin registry hive.'))
+        return done(Error('Scripts definition update failed. Could not locate LazyAdmin registry hive.'), ctx)
       }
       let defUrl
       try {
         defUrl = result['HKLM\\SOFTWARE\\LazyAdmin'].values['ScriptsDefinitionUrl'].value
       } catch {
-        return done(Error('Scripts definition update failed. Could not read ScriptsDefinitionUrl registry key value.'))
+        return done(Error('Scripts definition update failed. Could not read ScriptsDefinitionUrl registry key value.'), ctx)
       }
       if (defUrl) {
         axios.get(defUrl).then(result => {
-          return done(null, result)
+          return done(null, ctx, result)
         }).catch(e => {
-          return done(Error('Scripts definition update failed. Could not download definitions file from provided url.'))
+          return done(Error('Scripts definition update failed. Could not download definitions file from provided url.'), ctx)
         })
       } else {
-        return done(Error('Scripts definition update failed. ScriptsDefinitionUrl registry key has no value.'))
+        return done(Error('Scripts definition update failed. ScriptsDefinitionUrl registry key has no value.'), ctx)
       }
     })
   }

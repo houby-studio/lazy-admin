@@ -34,6 +34,7 @@ export default {
   exported: 'Exportováno',
   updateFound: 'Stahování nejnovější verze aplikace Lazy Admin.',
   updateNotFound: 'Již máte nejnovější verzi aplikace Lazy Admin.',
+  definitionsError: 'Nepodařilo se zkontrolovat aktualizace definice skriptů.',
   downloadCompleted: 'Stahování dokončeno, zavřete aplikaci ke spuštění aktualizace.',
   of: 'z',
   restartRequired: 'Vyžadován restart.',

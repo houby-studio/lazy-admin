@@ -149,10 +149,11 @@ export default {
           this.$q.notify({
             timeout: 5000,
             multiLine: false,
-            icon: 'warning',
+            type: 'negative',
+            icon: 'error',
             message: this.$t('wrongUsernameOrPassword'),
             actions: [
-              { label: this.$t('dismiss'), color: 'primary' }
+              { label: this.$t('dismiss'), color: 'white' }
             ]
           })
         } else {
@@ -220,11 +221,12 @@ export default {
         this.$q.notify({
           timeout: 5000,
           multiLine: false,
+          type: 'warning',
           icon: 'warning',
           message: this.$t('moduleCredMgrMissing'),
           actions: [
-            { label: this.$t('install'), color: 'primary', handler: () => { openURL('https://github.com/houby-studio/lazy-admin/wiki/How-to-install-CredentialManager-module') } },
-            { label: this.$t('dismiss'), color: 'primary' }
+            { label: this.$t('install'), color: 'black', handler: () => { openURL('https://github.com/houby-studio/lazy-admin/wiki/How-to-install-CredentialManager-module') } },
+            { label: this.$t('dismiss'), color: 'black' }
           ]
         })
       } else {
@@ -235,6 +237,7 @@ export default {
           this.username = jsonOutput.output.UserName
           this.$q.notify({
             timeout: 2000,
+            icon: 'info',
             multiLine: false,
             message: this.$t('foundsavedCredential', { usr: jsonOutput.output.UserName }),
             actions: [

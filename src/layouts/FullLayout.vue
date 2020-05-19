@@ -272,15 +272,22 @@ export default {
     this.$autoUpdater.checkForUpdatesAndNotify() // We could prevent duplicate downloads if we put this in if-condition, but closing app unexpectedly could lead to bricking updates forever
     // Check for definitions updates - separate from global powershell as it runs too fast after login and fails to run
     this.definitionsUpdateInProgress = true
-    this.$defUpdater.checkForUpdates(function (err, result) {
+    this.$defUpdater.checkForUpdates((this), function (err, context, result) {
       if (err) {
         console.error('Error:', err.message)
+        context.$q.notify({
+          type: 'negative',
+          timeout: 2500,
+          message: context.$t('definitionsError'),
+          actions: [
+            { label: context.$t('dismiss'), color: 'white' }
+          ]
+        })
       } else {
         console.log(result)
+        // Compare update definitions with current definitions
       }
     })
-    // TODO: Finish definitions updater function and hook some event listeners
-
     // Register event listener, which triggers when update is found
     this.$autoUpdater.on('update-available', (updateInfo) => {
       console.log(`Found new application release: Version ${updateInfo.version}; Release date ${updateInfo.releaseDate}; Setup size ${(updateInfo.files[0].size / 1024 / 1024).toFixed(2)}MB. Download started.`)
