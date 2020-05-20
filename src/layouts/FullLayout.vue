@@ -270,23 +270,28 @@ export default {
     this.updateProgress = '' // Remove potential leftover variable from previous update
     this.updateInProgress = true
     this.$autoUpdater.checkForUpdatesAndNotify() // We could prevent duplicate downloads if we put this in if-condition, but closing app unexpectedly could lead to bricking updates forever
-    // Check for definitions updates - separate from global powershell as it runs too fast after login and fails to run
+    // Check for definitions updates
     this.definitionsUpdateInProgress = true
-    this.$defUpdater.checkForUpdates((this), function (err, context, result) {
-      if (err) {
-        console.error('Error:', err.message)
-        context.$q.notify({
-          type: 'negative',
-          timeout: 2500,
-          message: context.$t('definitionsError'),
-          actions: [
-            { label: context.$t('dismiss'), color: 'white' }
-          ]
-        })
-      } else {
-        console.log(result)
-        // Compare update definitions with current definitions
-      }
+    // this.$defUpdater.checkForUpdates((this), function (err, context, result) {
+    //   if (err) {
+    //     console.error('Error:', err.message)
+    //     context.$q.notify({
+    //       type: 'negative',
+    //       timeout: 2500,
+    //       message: context.$t('definitionsError'),
+    //       actions: [
+    //         { label: context.$t('dismiss'), color: 'white' }
+    //       ]
+    //     })
+    //   } else {
+    //     console.log(result)
+    //     // Compare update definitions with current definitions
+    //   }
+    // })
+    this.$defUpdater.checkForUpdatesAndNotify(this)
+    this.$defUpdater.on('update-found', (updateInfo) => {
+      console.log('FIRE IN DA HOLEE')
+      console.log(updateInfo)
     })
     // Register event listener, which triggers when update is found
     this.$autoUpdater.on('update-available', (updateInfo) => {

@@ -22,10 +22,6 @@ export const toggleDefinitionsUpdateInProgress = (state, value) => {
   state.definitionsUpdateInProgress = value
 }
 
-export const setDefinitionsUrl = (state, value) => {
-  state.definitionsUrl = value
-}
-
 export const toggleRestartRequired = (state, value) => {
   state.restartRequired = value
 }
