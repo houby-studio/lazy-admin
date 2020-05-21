@@ -29,6 +29,7 @@ const defUpdater = {
     })
   },
   downloadDefinitionsFile (updateUrl, done) {
+    // Resolve URL and attempt to obtain definitions file
     axios.get(updateUrl).then(result => {
       return done(null, result)
     }).catch(e => {
@@ -36,21 +37,39 @@ const defUpdater = {
     })
   },
   checkForUpdatesAndNotify (ctx) {
-    console.log('checkForUpdatesAndNotify called')
     // Main function which gets called from Vue file
     defUpdater.getUpdateUrl(function (err, updateUrl) {
-      console.log('getUpdateUrl called')
-      console.log(err)
-      console.log(updateUrl)
       if (err) {
+        ctx.$q.notify({
+          type: 'negative',
+          icon: 'error',
+          timeout: 5000,
+          message: ctx.$t('definitionsError'),
+          actions: [
+            { label: ctx.$t('dismiss'), color: 'white' }
+          ]
+        })
+        console.error('Error: ', err)
         return err
       }
       defUpdater.downloadDefinitionsFile(updateUrl, function (err, scriptDefinitions) {
-        console.log('downloadDefinitionsFile called')
         if (err) {
+          ctx.$q.notify({
+            type: 'negative',
+            icon: 'error',
+            timeout: 5000,
+            message: ctx.$t('definitionsError'),
+            actions: [
+              { label: ctx.$t('dismiss'), color: 'white' }
+            ]
+          })
+          console.error('Error: ', err)
           return err
         }
-        definitionsEmitter.emit('update-found', scriptDefinitions)
+        if (ctx.$store.state.lazystore.definitions.version !== scriptDefinitions.data.version) {
+          ctx.$store.commit('lazystore/updateDefinitions', scriptDefinitions.data)
+          definitionsEmitter.emit('update-found', scriptDefinitions)
+        }
       })
     })
   }
