@@ -289,9 +289,10 @@ export default {
     //   }
     // })
     this.$defUpdater.checkForUpdatesAndNotify(this)
-    this.$defUpdater.on('update-found', (updateInfo) => {
+    this.$defUpdater.on('update-check-done', (updateStatus, scriptDefinitions) => {
       console.log('FIRE IN DA HOLEE')
-      console.log(updateInfo)
+      console.log(updateStatus)
+      console.log(scriptDefinitions)
     })
     // Register event listener, which triggers when update is found
     this.$autoUpdater.on('update-available', (updateInfo) => {

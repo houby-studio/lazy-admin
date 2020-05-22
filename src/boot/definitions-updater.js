@@ -10,7 +10,7 @@ const defUpdater = {
     // Allow registering of custom event listeners with custom handlers mimicking electron-updater
     definitionsEmitter.on(event, handler)
   },
-  getUpdateUrl (done) {
+  getRegUrl (done) {
     // Attempt to retrieve registry value containing script definitions url
     regedit.list('HKLM\\SOFTWARE\\LazyAdmin', function (err, result) {
       if (err) {
@@ -28,47 +28,47 @@ const defUpdater = {
       }
     })
   },
-  downloadDefinitionsFile (updateUrl, done) {
+  downloadDefinitions (updateUrl, done) {
     // Resolve URL and attempt to obtain definitions file
     axios.get(updateUrl).then(result => {
       return done(null, result)
     }).catch(e => {
-      return done(Error('Scripts definition update failed. Could not download definitions file from provided url.'))
+      e.url = updateUrl
+      return done(e)
     })
   },
   checkForUpdatesAndNotify (ctx) {
+    // Notify error when something fails during update check
+    function notifyError (context) {
+      context.$q.notify({
+        type: 'negative',
+        icon: 'error',
+        timeout: 5000,
+        message: context.$t('definitionsError'),
+        actions: [
+          { label: context.$t('dismiss'), color: 'white' }
+        ]
+      })
+    }
     // Main function which gets called from Vue file
-    defUpdater.getUpdateUrl(function (err, updateUrl) {
+    defUpdater.getRegUrl(function (err, updateUrl) {
       if (err) {
-        ctx.$q.notify({
-          type: 'negative',
-          icon: 'error',
-          timeout: 5000,
-          message: ctx.$t('definitionsError'),
-          actions: [
-            { label: ctx.$t('dismiss'), color: 'white' }
-          ]
-        })
-        console.error('Error: ', err)
+        notifyError(ctx)
+        console.error(err)
         return err
       }
-      defUpdater.downloadDefinitionsFile(updateUrl, function (err, scriptDefinitions) {
+      defUpdater.downloadDefinitions(updateUrl, function (err, scriptDefinitions) {
         if (err) {
-          ctx.$q.notify({
-            type: 'negative',
-            icon: 'error',
-            timeout: 5000,
-            message: ctx.$t('definitionsError'),
-            actions: [
-              { label: ctx.$t('dismiss'), color: 'white' }
-            ]
-          })
-          console.error('Error: ', err)
+          notifyError(ctx)
+          console.error(`${err} - ${err.url}`)
           return err
         }
-        if (ctx.$store.state.lazystore.definitions.version !== scriptDefinitions.data.version) {
-          ctx.$store.commit('lazystore/updateDefinitions', scriptDefinitions.data)
-          definitionsEmitter.emit('update-found', scriptDefinitions)
+        // If newer version is found, replace data in store and notify
+        if (ctx.$store.state.lazystore.definitionsVersionInfo.version !== scriptDefinitions.data.version) {
+          ctx.$store.commit('lazystore/updateDefinitionsVersionInfo', scriptDefinitions.data)
+          definitionsEmitter.emit('update-check-done', true, scriptDefinitions)
+        } else {
+          definitionsEmitter.emit('update-check-done', false)
         }
       })
     })
