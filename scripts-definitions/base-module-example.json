@@ -1,0 +1,85 @@
+{
+  "version": "0.0.1",
+  "name": "base-module-example",
+  "icon": "mdi-powershell",
+  "displayName": {
+    "default": "Base commands",
+    "en-us": "Base commands",
+    "cs-cz": "Základní příkazy"
+  },
+  "description": {
+    "default": "General purpose commands",
+    "en-us": "General purpose commands",
+    "cs-cz": "Příkazy pro obecné použití"
+  },
+  "definition": [
+    {
+      "commandName": "Get-Disk",
+      "type": "simpleCommand",
+      "icon": "mdi-harddisk",
+      "returns": "PSObject",
+      "friendlyName": {
+        "default": "Get disk information",
+        "en-us": "Get disk information",
+        "cs-cz": "Získat informace o disku"
+      },
+      "description": {
+        "default": "Retrievies information like model, size and operational status.",
+        "en-us": "Retrievies information like model, size and operational status.",
+        "cs-cz": "Získá informace o modelu, velikosti a o provozním stavu."
+      },
+      "parameters": [
+        {
+          "parameter": "ComputerName",
+          "required": true,
+          "type": "text"
+        },
+        {
+          "parameter": "Number",
+          "required": false,
+          "type": "number"
+        }
+      ],
+      "commandBlock": "Invoke-Command {{ComputerName}} -Credential $CredentialObject -ScriptBlock { Get-Disk {{Number}} | Select-Object Number, FriendlyName, OperationalStatus, @{n='Size';e={[math]::Round($_.Size / 1GB)}} | ConvertTo-Json -Compress }"
+    },
+    {
+      "commandName": "Get-Help",
+      "returns": "raw",
+      "friendlyName": {
+        "default": "Get help about command",
+        "en-us": "Get help about command",
+        "cs-cz": "Získat pomoc o příkazu"
+      },
+      "parameters": [],
+      "commandBlock": "Get-Help -Name Get-Content"
+    },
+    {
+      "commandName": "Get-Diska",
+      "icon": "mdi-harddisk",
+      "returns": "object",
+      "friendlyName": {
+        "default": "Get disk informations",
+        "en-us": "Get disk information",
+        "cs-cz": "Získat informace o disku"
+      },
+      "description": {
+        "default": "Retrievies information like model, size and operational status.",
+        "en-us": "Retrievies information like model, size and operational status.",
+        "cs-cz": "Získá informace o modelu, velikosti a o provozním stavu."
+      },
+      "parameters": [
+        {
+          "parameter": "ComputerName",
+          "required": true,
+          "type": "text"
+        },
+        {
+          "parameter": "Number",
+          "required": false,
+          "type": "number"
+        }
+      ],
+      "commandBlock": "Invoke-Command {{ComputerName}} -Credential $CredentialObject -ScriptBlock { Get-Disk {{Number}} | Select-Object Number, FriendlyName, OperationalStatus, @{n='Size';e={[math]::Round($_.Size / 1GB)}} | ConvertTo-Json -Compress }"
+    }
+  ]
+}

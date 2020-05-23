@@ -5,10 +5,10 @@
   <resources>
     <stringTable>
       <string id="unknown_0">Lazy Admin</string>
-      <string id="ScriptsDefinitionUrlPolicy">URL definice skriptů</string>
-      <string id="ScriptsDefinitionUrlPathText">Zadejte plnou URL cestu k souboru s definicemi skriptů.</string>
-      <string id="ScriptsDefinitionUrlSupported">Minimálně Windows Vista</string>
-      <string id="ScriptsDefinitionUrlExplain">Plná URL Cesta k definicím skriptů ve formátu JSON pro Lazy Admina.
+      <string id="MasterDefinitionUrlPolicy">URL definice skriptů</string>
+      <string id="MasterDefinitionUrlPathText">Zadejte plnou URL cestu k souboru s definicemi skriptů.</string>
+      <string id="MasterDefinitionUrlSupported">Minimálně Windows Vista</string>
+      <string id="MasterDefinitionUrlExplain">Plná URL Cesta k definicím skriptů ve formátu JSON pro Lazy Admina.
 
 Příklad: https://raw.githubusercontent.com/houby-studio/lazy-admin/master/scripts-definitions/definition-lazy-admin-base.json
 
@@ -25,7 +25,7 @@ O aplikaci Lazy Admin se můžete dočíst více na URL adrese: https://github.c
       <string id="ADMXMigrator_NoSupportedOn">ADMX Migrator encountered a policy that does not have a supportedOn value.</string>
     </stringTable>
     <presentationTable>
-      <presentation id="ScriptsDefinitionUrlPolicy">
+      <presentation id="MasterDefinitionUrlPolicy">
         <text>Zadejte plnou URL cestu k vašemu souboru definicí.</text>
         <textBox refId="Url">
           <label>Url:</label>

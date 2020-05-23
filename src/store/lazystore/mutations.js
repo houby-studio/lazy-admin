@@ -14,8 +14,8 @@ export const updateSearch = (state, value) => {
   state.search = value
 }
 
-export const updateDefinitionsVersionInfo = (state, value) => {
-  state.definitionsVersionInfo = value
+export const updateMasterDefinitions = (state, value) => {
+  state.masterDefinitions = value
 }
 
 export const toggleUpdateInProgress = (state, value) => {

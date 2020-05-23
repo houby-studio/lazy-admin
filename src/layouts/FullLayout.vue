@@ -288,7 +288,7 @@ export default {
     //     // Compare update definitions with current definitions
     //   }
     // })
-    this.$defUpdater.checkForUpdatesAndNotify(this)
+    this.$defUpdater.checkForUpdates(this)
     this.$defUpdater.on('update-check-done', (updateStatus, scriptDefinitions) => {
       console.log('FIRE IN DA HOLEE')
       console.log(updateStatus)

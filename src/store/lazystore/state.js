@@ -3,7 +3,7 @@ export default function () {
     language: 'en-us', // Handles application language - Changeable on logon screen
     userName: '', // Holds login username
     search: '', // Holds search string value
-    definitionsVersionInfo: {}, // Contains scripts definitions data, holding url to all modules
+    masterDefinitions: {}, // Contains scripts definitions data, holding url to all modules
     definitions: {}, // Key component containing script definitions
     customDefinitions: {}, // Contains user defined script definitions
     favoriteDefinitions: {}, // Definitions favorited by user

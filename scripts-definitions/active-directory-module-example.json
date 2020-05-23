@@ -1,0 +1,50 @@
+{
+  "version": "0.0.1",
+  "name": "active-directory-module-example",
+  "icon": "mdi-file-tree",
+  "displayName": {
+    "default": "Active Directory commands",
+    "en-us": "Active Directory commands",
+    "cs-cz": "Active Directory příkazy"
+  },
+  "description": {
+    "default": "Commands for administering Active Directory",
+    "en-us": "Commands for administering Active Directory",
+    "cs-cz": "Příkazy pro práci s Active Directory"
+  },
+  "requires": [
+    {
+      "name": "activedirectory",
+      "installCommand": "Add-WindowsCapability -Online -Name 'Rsat.ActiveDirectory.DS-LDS.Tools~~~~0.0.1.0' -ErrorAction SilentlyContinue; Enable-WindowsOptionalFeature -Online -FeatureName RSATClient-Roles-AD-Powershell -ErrorAction SilentlyContinue; Add-WindowsFeature -Name 'RSAT-AD-PowerShell' -IncludeAllSubFeature -ErrorAction SilentlyContinue"
+    }
+  ],
+  "definition": [
+    {
+      "commandName": "Get-ADUser",
+      "icon": "mdi-account",
+      "returns": "PSObject",
+      "friendlyName": {
+        "default": "Get disk information",
+        "en-us": "Get disk information",
+        "cs-cz": "Získat informace o disku"
+      },
+      "description": {
+        "default": "Retrievies users' basic information from Active Directory.",
+        "en-us": "Retrievies users' basic information from Active Directory.",
+        "cs-cz": "Získá základní informace o uživatelích z Active Directory."
+      },
+      "parameters": [
+        {
+          "parameter": "samAccountName",
+          "required": true,
+          "type": "text",
+          "hint": {
+            "default": "Full SamAccountName or wildcard expression.",
+            "en-us": "Full SamAccountName or wildcard expression.",
+            "cs-cz": "Celý SamAccountName nebo wildcard výraz."
+          }
+        }
+      ],
+      "commandBlock": "Get-ADUser -Filter 'SamAccountName -like {{samAccountName}}'"
+    }
+  ]

@@ -1,0 +1,8 @@
+{
+  "version": "0.0.2",
+  "releaseDate": "2020-05-23",
+  "definitionsUrl": [
+    "https://raw.githubusercontent.com/houby-studio/lazy-admin/master/scripts-definitions/base-module-example.json",
+    "https://raw.githubusercontent.com/houby-studio/lazy-admin/master/scripts-definitions/active-directory-module-example.json"
+  ]
+}

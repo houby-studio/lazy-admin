@@ -1,6 +1,6 @@
 # Policy object
 
-To simplify deployment in corporate environment, you can simply silently deploy application and take advantage of our ADM and AMDX templates to take care of settings for application.
+To simplify deployment in corporate environment, you can silently deploy application and take advantage of our ADM and AMDX templates to take care of settings for application.
 
 # How to deploy ADM template
 

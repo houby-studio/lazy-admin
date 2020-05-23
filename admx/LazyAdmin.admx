@@ -8,7 +8,7 @@
   <resources minRequiredRevision="1.0" />
   <supportedOn>
     <definitions>
-      <definition name="ScriptsDefinitionUrlSupported" displayName="$(string.ScriptsDefinitionUrlSupported)" />
+      <definition name="MasterDefinitionUrlSupported" displayName="$(string.MasterDefinitionUrlSupported)" />
       <definition name="SUPPORTED_NotSpecified" displayName="$(string.ADMXMigrator_NoSupportedOn)" />
     </definitions>
   </supportedOn>
@@ -16,11 +16,11 @@
     <category name="LazyAdmin" displayName="$(string.unknown_0)" />
   </categories>
   <policies>
-    <policy name="ScriptsDefinitionUrlPolicy" class="Machine" displayName="$(string.ScriptsDefinitionUrlPolicy)" explainText="$(string.ScriptsDefinitionUrlExplain)" presentation="$(presentation.ScriptsDefinitionUrlPolicy)" key="Software\LazyAdmin">
+    <policy name="MasterDefinitionUrlPolicy" class="Machine" displayName="$(string.MasterDefinitionUrlPolicy)" explainText="$(string.MasterDefinitionUrlExplain)" presentation="$(presentation.MasterDefinitionUrlPolicy)" key="Software\LazyAdmin">
       <parentCategory ref="LazyAdmin" />
-      <supportedOn ref="ScriptsDefinitionUrlSupported" />
+      <supportedOn ref="MasterDefinitionUrlSupported" />
       <elements>
-        <text id="Url" valueName="ScriptsDefinitionUrl" required="true" />
+        <text id="Url" valueName="MasterDefinitionUrl" required="true" />
       </elements>
     </policy>
   </policies>

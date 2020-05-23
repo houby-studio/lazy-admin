@@ -1,4 +1,5 @@
 // Definitions updater
+// Details regarding script definitions updating can be found on 
 import axios from 'axios'
 import regedit from 'regedit'
 import EventEmitter from 'events'
@@ -17,14 +18,14 @@ const defUpdater = {
         return done(Error('Scripts definition update failed. Could not locate LazyAdmin registry hive.'))
       }
       try {
-        let defUrl = result['HKLM\\SOFTWARE\\LazyAdmin'].values['ScriptsDefinitionUrl'].value
+        let defUrl = result['HKLM\\SOFTWARE\\LazyAdmin'].values['MasterDefinitionUrl'].value
         if (defUrl) {
           return done(null, defUrl)
         } else {
-          return done(Error('Scripts definition update failed. ScriptsDefinitionUrl registry key has no value.'))
+          return done(Error('Scripts definition update failed. MasterDefinitionUrl registry key has no value.'))
         }
       } catch {
-        return done(Error('Scripts definition update failed. Could not read ScriptsDefinitionUrl registry key value.'))
+        return done(Error('Scripts definition update failed. Could not read MasterDefinitionUrl registry key value.'))
       }
     })
   },
@@ -37,7 +38,7 @@ const defUpdater = {
       return done(e)
     })
   },
-  checkForUpdatesAndNotify (ctx) {
+  checkForUpdates (ctx) {
     // Notify error when something fails during update check
     function notifyError (context) {
       context.$q.notify({
@@ -72,6 +73,13 @@ const defUpdater = {
         }
       })
     })
+  },
+  updateDefinitionsAndModules (ctx) {
+    let definitionsUrl = ctx.$store.state.lazystore.definitionsVersionInfo.definitionsUrl
+    let moduleDefinition = ctx.$store.state.lazystore.definitions
+    for (let module of moduleDefinition) {
+      if (module.version !== definitionsUrl[])
+    }
   }
 }
 

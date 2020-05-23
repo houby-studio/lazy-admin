@@ -5,10 +5,10 @@
   <resources>
     <stringTable>
       <string id="unknown_0">Lazy Admin</string>
-      <string id="ScriptsDefinitionUrlPolicy">Scripts Definition URL</string>
-      <string id="ScriptsDefinitionUrlPathText">Specify full URL path to your definitions file.</string>
-      <string id="ScriptsDefinitionUrlSupported">Windows Vista and above</string>
-      <string id="ScriptsDefinitionUrlExplain">Full URL Path to scripts definition in JSON format for Lazy Admin.
+      <string id="MasterDefinitionUrlPolicy">Scripts Definition URL</string>
+      <string id="MasterDefinitionUrlPathText">Specify full URL path to your definitions file.</string>
+      <string id="MasterDefinitionUrlSupported">Windows Vista and above</string>
+      <string id="MasterDefinitionUrlExplain">Full URL Path to scripts definition in JSON format for Lazy Admin.
 
 Example: https://raw.githubusercontent.com/houby-studio/lazy-admin/master/scripts-definitions/definition-lazy-admin-base.json
 
@@ -25,7 +25,7 @@ You can read more about Lazy Admin policies by visiting the following URL: https
       <string id="ADMXMigrator_NoSupportedOn">ADMX Migrator encountered a policy that does not have a supportedOn value.</string>
     </stringTable>
     <presentationTable>
-      <presentation id="ScriptsDefinitionUrlPolicy">
+      <presentation id="MasterDefinitionUrlPolicy">
         <text>Specify full URL path to your definitions file.</text>
         <textBox refId="Url">
           <label>Url:</label>
