@@ -4,7 +4,7 @@ export default function () {
     userName: '', // Holds login username
     search: '', // Holds search string value
     masterDefinitions: {}, // Contains scripts definitions data, holding url to all modules
-    definitions: {}, // Key component containing script definitions
+    definitions: [], // Key component containing script definitions
     customDefinitions: {}, // Contains user defined script definitions
     favoriteDefinitions: {}, // Definitions favorited by user
     updateInProgress: false, // Is application update in progress?

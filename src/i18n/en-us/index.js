@@ -24,6 +24,8 @@ export default {
   defVersion: 'Definitions version:',
   update: 'Update',
   requiredField: 'This parameter is required!',
+  requiredParam: 'Required',
+  optionalParam: 'Optional',
   launch: 'Launch',
   cancel: 'Cancel',
   results: `{commandName}: Results`,

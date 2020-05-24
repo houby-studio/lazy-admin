@@ -24,6 +24,8 @@ export default {
   defVersion: 'Verze definicí:',
   update: 'Aktualizovat',
   requiredField: 'Tento parametr je povinný!',
+  requiredParam: 'Povinný',
+  optionalParam: 'Nepovinný',
   launch: 'Spustit',
   cancel: 'Zrušit',
   results: `{commandName}: Výsledek`,

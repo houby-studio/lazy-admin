@@ -18,6 +18,14 @@ export const updateMasterDefinitions = (state, value) => {
   state.masterDefinitions = value
 }
 
+export const clearDefinitions = (state) => {
+  state.definitions = []
+}
+
+export const updateDefinitions = (state, name, value) => {
+  state.definitions[name] = value
+}
+
 export const toggleUpdateInProgress = (state, value) => {
   state.updateInProgress = value
 }

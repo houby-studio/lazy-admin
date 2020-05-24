@@ -24,7 +24,7 @@
               :label-color="param.required ? 'primary' : ''"
               :key="param.parameter"
               :rules="param.required ? [ val => val && val.length > 0 || $t('requiredField') ] : [] "
-              :hint="`[${param.type}] hint text`"
+              :hint="`${param.required ? $t('requiredParam') : $t('optionalParam') } | ${param.type} | ${param.hint ? param.hint[language] || param.hint['default'] : ''}`"
               :type="param.type"
               @keyup.enter="displayCommandDiag = false"
             />
@@ -155,7 +155,7 @@
     <div class="row fit">
       <div class="col">
         <q-table
-          :data="testJson.definition"
+          :data="definitions"
           :columns="scriptsColumns"
           :filter="searchText"
           :pagination.sync="pagination"
@@ -223,7 +223,7 @@
 </template>
 
 <script>
-import json from '../../scripts-definitions/definition-lazy-admin-base.json'
+// import json from '../../scripts-definitions/base-module-example.json'
 import { exportFile } from 'quasar'
 
 //  Helper function which wraps table values for CSV export - https://quasar.dev/vue-components/table#Exporting-data
@@ -257,7 +257,6 @@ export default {
       displayCommandDiag: false,
       displayHelpDiag: false,
       displayResultsDiag: false,
-      testJson: json, // to delete
       scriptsColumns: [
         { name: 'icon', align: 'center', label: 'Icon', field: row => row.icon, sortable: true },
         { name: 'commandName', required: true, label: 'Command Name', align: 'left', field: row => row.commandName, format: val => `${val}`, sortable: true },
@@ -283,6 +282,12 @@ export default {
       get () {
         // retrieve language preference from store
         return this.$store.state.lazystore.language
+      }
+    },
+    definitions: {
+      get () {
+        // retrieve scripts definitions from stores
+        return this.$store.state.lazystore.definitions
       }
     },
     resultsColumns: {
@@ -400,8 +405,18 @@ export default {
             output: output
           }
         }
-        this.$q.loading.hide()
         this.displayResultsDiag = true
+        this.$q.loading.hide()
+      }).catch(error => {
+        // If PowerShell itself runs into problem and throws, catch and display error as raw output.
+        console.log(error)
+        this.results = {
+          error: true,
+          returnType: 'raw',
+          output: error
+        }
+        this.displayResultsDiag = true
+        this.$q.loading.hide()
       })
     }
   }

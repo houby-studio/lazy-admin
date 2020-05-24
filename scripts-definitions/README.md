@@ -13,9 +13,9 @@ Key: MasterDefinitionUrl
 Type: REG_SZ
 Value: https://raw.githubusercontent.com/houby-studio/lazy-admin/master/scripts-definitions/master-definitions-example.json
 ```
-2. Launch Lazy Admin and log in.
+2. Launch Lazy Admin and log in
 3. Lazy Admin will automatically download master definitions file, which contains multiple scripts definitions URLs
-4. Lazy Admin will download definitions from each URL and lists them on main page, allowing you to choose and run any script from Lazy Admin.
+4. Lazy Admin will download definitions from each URL and lists them on main page, allowing you to choose and run any script from Lazy Admin
 
 ## Create custom definitions
 
@@ -27,8 +27,8 @@ All you need to do is create definitions for each command and point Lazy Admin t
 
 This is simple JSON file, which contains following keys and values:
 
-* version: Very important, Lazy Admin compares this value when checking for updates. So when you release newer version of master definition file, you have to increment version to trigger update.
-* releaseDate: Informative key, may be omitted.
+* version: Very important, Lazy Admin compares this value when checking for updates. So when you release newer version of master definition file, you have to increment version to trigger update
+* releaseDate: Informative key, may be omitted
 * definitionsUrl: Array of URLs, where Lazy Admin should download scripts definitions for each set of commands or modules
 
 #### Example file 
@@ -53,8 +53,9 @@ All the magic happens here. Detailed explanation can be found on [wiki](https://
 
 Possible values for definitions file:
 
+* **unique-definitions-key**: Unique name, preferably kebab-case, but is really up to you, just don't break javascript, various functions access specific definitions module by associative array names.  
+**IMPORTANT**: All other keys are children of this one.
 * version: Very important, Lazy Admin compares this value when checking for updates. So when you release newer version of scripts definition file, you have to increment version to trigger update.
-* name: Unique name, preferably kebab-case, but is really up to you, just don't break javascript
 * icon: name of icon, if omitted, powershell icon is used
 * displayName: provided in languages you want to support, this is what user sees on side panel when filtering commands based on definitions/modules
 * description: provided in languages you want to support, this is what user sees on side panel below displayName when filtering commands based on definitions/modules
@@ -82,68 +83,73 @@ Possible values for definitions file:
 This is only example, there are many possibilities how to write definitions.
 
 ```
+
 {
-  "version": "{version}",
-  "name": "{unique-name}",
-  "icon": "{icon-name}",
-  "displayName": "{DisplayName}",
-  "description": "{Description}",
-  "definition": [
-    {
-      "commandName": "{Verb-Noun}",
-      "type": "{type}",
-      "icon": "{icon-name}",
-      "returns": "{returnType}",
-      "friendlyName": "{friendlyName}",
-      "description": "{Description}",
-      "parameters": [
-        {
-          "parameter": "{parameterName}",
-          "required": {Boolean},
-          "type": "{inputType}"
-        }
-      ],
-      "commandBlock": "{Verb-Noun {{parameterName}}}"
-    },
-    {
-      "commandName": "{Verb-Noun}",
-      "type": "workflow",
-      "icon": "{icon-name}",
-      "returns": "{returnType}",
-      "friendlyName": "{friendlyName}",
-      "description": "{Description}",
-      "parameters": [
-        {
-          "parameter": "{parameterName}",
-          "required": {Boolean},
-          "type": "{inputType}"
-        }
-      ],
-      "commandBlock": "{Verb-Noun {{parameterName}}}",
-      "workflow": [
-        {
-          "passedParameters": [
+  "{unique-definitions-key}": {
+    "version": "{version}",
+    "icon": "{icon-name}",
+    "displayName": "{DisplayName}",
+    "description": "{Description}",
+    "definition": [
+      {
+        "commandName": "{Verb-Noun}",
+        "type": "{type}",
+        "icon": "{icon-name}",
+        "returns": "{returnType}",
+        "friendlyName": "{friendlyName}",
+        "description": "{Description}",
+        "parameters": [
+          {
             "parameter": "{parameterName}",
-            "propertyName": "{propertyName}"
-          ],
-          "parameters": [
-            {
+            "required": {Boolean},
+            "type": "{inputType}",
+            "hint": "{hint}"
+          }
+        ],
+        "commandBlock": "{Verb-Noun {{parameterName}}}"
+      },
+      {
+        "commandName": "{Verb-Noun}",
+        "type": "workflow",
+        "icon": "{icon-name}",
+        "returns": "{returnType}",
+        "friendlyName": "{friendlyName}",
+        "description": "{Description}",
+        "parameters": [
+          {
+            "parameter": "{parameterName}",
+            "required": {Boolean},
+            "type": "{inputType}",
+            "hint": "{hint}"
+          }
+        ],
+        "commandBlock": "{Verb-Noun {{parameterName}}}",
+        "workflow": [
+          {
+            "passedParameters": [
               "parameter": "{parameterName}",
-              "required": {Boolean},
-              "type": "{inputType}"
-            }
-          ],
-          "commandBlock": "{Verb-Noun {{parameterName}}}",
-          "passthru": {Boolean},
-          "confirm": {Boolean}
-        },
-        {
-          "commandBlock": "{Verb-Noun {{parameterName}}}",
-          "passthru": {Boolean},
-          "confirm": {Boolean}
-        }
-      ]
-    }
-  ]
+              "propertyName": "{propertyName}"
+            ],
+            "parameters": [
+              {
+                "parameter": "{parameterName}",
+                "required": {Boolean},
+                "type": "{inputType}",
+                "hint": "{hint}"
+              }
+            ],
+            "commandBlock": "{Verb-Noun {{parameterName}}}",
+            "passthru": {Boolean},
+            "confirm": {Boolean}
+          },
+          {
+            "commandBlock": "{Verb-Noun {{parameterName}}}",
+            "passthru": {Boolean},
+            "confirm": {Boolean}
+          }
+        ]
+      }
+    ]
+  }
 }
 ```

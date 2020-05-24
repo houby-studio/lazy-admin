@@ -1,5 +1,5 @@
 // Definitions updater
-// Details regarding script definitions updating can be found on 
+// Details regarding script definitions updating can be found on
 import axios from 'axios'
 import regedit from 'regedit'
 import EventEmitter from 'events'
@@ -74,11 +74,26 @@ const defUpdater = {
       })
     })
   },
-  updateDefinitionsAndModules (ctx) {
+  updateDefinitionsAndModules (ctx, newMasterVersion) {
     let definitionsUrl = ctx.$store.state.lazystore.definitionsVersionInfo.definitionsUrl
-    let moduleDefinition = ctx.$store.state.lazystore.definitions
-    for (let module of moduleDefinition) {
-      if (module.version !== definitionsUrl[])
+    let storedDefinitions = ctx.$store.state.lazystore.definitions
+    if (newMasterVersion) {
+      // Remove all current definitions, because there is new master definition file with different URLs
+      ctx.$store.commit('lazystore/clearDefinitions')
+    }
+    // cycle thru update URLs and compare versions and eventually update
+    for (let url of definitionsUrl) {
+      defUpdater.downloadDefinitions(url, function (err, definition) {
+        if (err) {
+
+        } else {
+          let definitionName = Object.keys(definition)[0]
+          // Compare downloaded version and currently saved version
+          if (definition[definitionName].version !== storedDefinitions[definitionName].version) {
+            ctx.$store.commit('lazystore/updateDefinitions', definitionName, definition)
+          }
+        }
+      })
     }
   }
 }
