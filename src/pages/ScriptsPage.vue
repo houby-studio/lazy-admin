@@ -419,6 +419,9 @@ export default {
         this.$q.loading.hide()
       })
     }
+  },
+  created () {
+    console.log(this.definitions)
   }
 }
 </script>

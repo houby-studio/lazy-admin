@@ -11,7 +11,7 @@ You can run Lazy Admin with provided sample definitions for testing purposes, be
 Path: HKEY_LOCAL_MACHINE\SOFTWARE\LazyAdmin
 Key: MasterDefinitionUrl
 Type: REG_SZ
-Value: https://raw.githubusercontent.com/houby-studio/lazy-admin/master/scripts-definitions/master-definitions-example.json
+Value: https://raw.githubusercontent.com/houby-studio/lazy-admin/master/scripts-definitions/master-definition-example.json
 ```
 2. Launch Lazy Admin and log in
 3. Lazy Admin will automatically download master definitions file, which contains multiple scripts definitions URLs
@@ -32,7 +32,7 @@ This is simple JSON file, which contains following keys and values:
 * definitionsUrl: Array of URLs, where Lazy Admin should download scripts definitions for each set of commands or modules
 
 #### Example file 
-[master-definitions-example.json](master-definitions-example.json)
+[master-definitions-example.json](master-definition-example.json)
 
 #### Syntax
 

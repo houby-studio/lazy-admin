@@ -14,16 +14,16 @@ export const updateSearch = (state, value) => {
   state.search = value
 }
 
-export const updateMasterDefinitions = (state, value) => {
-  state.masterDefinitions = value
+export const updateMasterDefinition = (state, value) => {
+  state.masterDefinition = value
 }
 
 export const clearDefinitions = (state) => {
   state.definitions = []
 }
 
-export const updateDefinitions = (state, name, value) => {
-  state.definitions[name] = value
+export const updateDefinitions = (state, value) => {
+  state.definitions = value
 }
 
 export const toggleUpdateInProgress = (state, value) => {

@@ -47,5 +47,6 @@
         ],
         "commandBlock": "Get-ADUser -Filter 'SamAccountName -like {{samAccountName}}'"
       }
-    }
-  ]
+    ]
+  }
+}

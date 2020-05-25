@@ -290,9 +290,11 @@ export default {
     // })
     this.$defUpdater.checkForUpdates(this)
     this.$defUpdater.on('update-check-done', (updateStatus, scriptDefinitions) => {
-      console.log('FIRE IN DA HOLEE')
+      console.log('Master definition update check done, new version found:')
       console.log(updateStatus)
+      console.log('Update object:')
       console.log(scriptDefinitions)
+      this.$defUpdater.updateDefinitionsAndModules(this, true)
     })
     // Register event listener, which triggers when update is found
     this.$autoUpdater.on('update-available', (updateInfo) => {
