@@ -32,8 +32,6 @@ const defUpdater = {
   downloadDefinitions (updateUrl, done) {
     // Resolve URL and attempt to obtain definitions file
     axios.get(updateUrl).then(result => {
-      console.log('url downloaded')
-      console.log(result)
       return done(null, result)
     }).catch(e => {
       e.url = updateUrl
@@ -69,7 +67,7 @@ const defUpdater = {
         // If newer version is found, replace data in store and notify
         if (ctx.$store.state.lazystore.masterDefinition.version !== scriptDefinitions.data.version) {
           ctx.$store.commit('lazystore/updateMasterDefinition', scriptDefinitions.data)
-          definitionsEmitter.emit('update-check-done', true, scriptDefinitions)
+          definitionsEmitter.emit('update-check-done', true)
         } else {
           definitionsEmitter.emit('update-check-done', false)
         }
@@ -78,40 +76,42 @@ const defUpdater = {
   },
   updateDefinitionsAndModules (ctx, newMasterVersion) {
     let definitionsUrl = ctx.$store.state.lazystore.masterDefinition.definitionsUrl
-    console.log('Definitions urls:')
-    console.log(definitionsUrl)
     let storedDefinitions = ctx.$store.state.lazystore.definitions
-    console.log('Definitions in store:')
-    console.log(storedDefinitions)
     if (newMasterVersion) {
       // Remove all current definitions, because there is new master definition file with different URLs
-      console.log('Clearing definitions, showing array')
       ctx.$store.commit('lazystore/clearDefinitions')
-      console.log(ctx.$store.state.lazystore.definitions)
     }
     // cycle thru update URLs and compare versions and eventually update
     for (let url of definitionsUrl) {
-      console.log(`Downloading url ${url}`)
       defUpdater.downloadDefinitions(url, function (error, definition) {
         if (error) {
-          console.log('Downloading definitions error')
-          console.log(error)
+          console.error('Downloading definitions error')
+          console.error(error)
         } else {
-          let data = definition.data
+          let data
+          try {
+            // Check if downloaded file is JSON, if not, try to parse as JSON
+            if (definition.data.constructor !== ({}).constructor) {
+              data = JSON.parse(definition.data)
+            } else {
+              data = definition.data
+            }
+          } catch (error) {
+            console.error('Could not parse data as JSON')
+            console.error(error)
+            return
+          }
           let definitionName = Object.keys(data)[0]
-          console.log(`Definitions name: ${definitionName}`)
-          console.log(data)
           if (storedDefinitions[definitionName]) {
             // Compare downloaded version and currently saved version, if not matching, update
             if (data.version !== storedDefinitions[definitionName].version) {
+              console.log(`Newer version of ${definitionName} found, uploading to store.`)
               ctx.$store.commit('lazystore/updateDefinitions', data)
             }
           } else {
             // Definition does not exist in store, create it
             ctx.$store.commit('lazystore/updateDefinitions', data)
           }
-          console.log('New definitions in store:')
-          console.log(ctx.$store.state.lazystore.definitions)
         }
       })
     }

@@ -155,7 +155,7 @@
     <div class="row fit">
       <div class="col">
         <q-table
-          :data="definitions"
+          :data="scriptsArray"
           :columns="scriptsColumns"
           :filter="searchText"
           :pagination.sync="pagination"
@@ -254,6 +254,8 @@ export default {
       currentCommand: {}, // User click "Execute" on datatable, chosen command is set to this object, which gets rendered with dialog
       returnParams: {}, // User defined parameters from Command Dialog
       results: {}, // Command result object displayed in Results Dialog
+      definitionsArray: [],
+      scriptsFilter: ['base-module-example'],
       displayCommandDiag: false,
       displayHelpDiag: false,
       displayResultsDiag: false,
@@ -284,10 +286,10 @@ export default {
         return this.$store.state.lazystore.language
       }
     },
-    definitions: {
+    scriptsArray: {
       get () {
-        // retrieve scripts definitions from stores
-        return this.$store.state.lazystore.definitions
+        // Filter definitions and spread to single array to display in scripts page data table
+        return this.$store.state.lazystore.scriptsArray
       }
     },
     resultsColumns: {
@@ -419,9 +421,6 @@ export default {
         this.$q.loading.hide()
       })
     }
-  },
-  created () {
-    console.log(this.definitions)
   }
 }
 </script>

@@ -103,7 +103,10 @@
     >
       <q-list>
         <q-item-label header>{{ $t('commands') }}</q-item-label>
-        <q-item clickable>
+        <q-item
+          clickable
+          @click="showAll"
+        >
           <q-item-section avatar>
             <q-icon name="all_inclusive" />
           </q-item-section>
@@ -260,6 +263,11 @@ export default {
       if (process.env.MODE === 'electron') {
         this.$q.electron.remote.BrowserWindow.getFocusedWindow().close()
       }
+    },
+
+    showAll () {
+      this.$store.commit('lazystore/updateScriptsFilter', Object.keys(this.$store.state.lazystore.definitions))
+      this.$store.commit('lazystore/updateScriptsArray')
     }
   },
   created: function () {
@@ -294,7 +302,7 @@ export default {
       console.log(updateStatus)
       console.log('Update object:')
       console.log(scriptDefinitions)
-      this.$defUpdater.updateDefinitionsAndModules(this, true)
+      this.$defUpdater.updateDefinitionsAndModules(this, updateStatus)
     })
     // Register event listener, which triggers when update is found
     this.$autoUpdater.on('update-available', (updateInfo) => {
