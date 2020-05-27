@@ -18,6 +18,7 @@ export const updateScriptsFilter = (state, value) => {
   state.scriptsFilter = value
 }
 
+// Iterate through 'definitions' keys, add script definitions from objects included in filter. This array is displayed in data table on Scripts page.
 export const updateScriptsArray = (state, value) => {
   state.scriptsArray = []
   Object.keys(state.definitions)
@@ -27,13 +28,30 @@ export const updateScriptsArray = (state, value) => {
     })
 }
 
+// When new master definition file is found, clear array and fill with new definitions downloaded from URLs.
 export const clearDefinitions = (state) => {
   state.definitions = []
 }
 
+// When new definition file is found, update said definition key.
 export const updateDefinitions = (state, value) => {
   let keyName = Object.keys(value)[0]
   state.definitions[keyName] = value[keyName]
+}
+
+// Iterate through 'definitions' keys and create menu entries for sidebar.
+export const updateDefinitionsMenu = (state, value) => {
+  state.definitionsMenu = []
+  Object.keys(state.definitions)
+    .forEach(key => {
+      state.definitionsMenu.push({
+        name: key,
+        displayName: state.definitions[key].displayName,
+        description: state.definitions[key].description,
+        version: state.definitions[key].version,
+        icon: state.definitions[key].icon ? state.definitions[key].icon : 'mdi-powershell'
+      })
+    })
 }
 
 export const updateMasterDefinition = (state, value) => {

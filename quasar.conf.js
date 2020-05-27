@@ -77,6 +77,7 @@ module.exports = function (ctx) {
 
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-devServer
     devServer: {
+      watchOptions: { poll: true },
       https: false,
       port: 8080,
       open: true // opens browser window automatically
@@ -177,6 +178,15 @@ module.exports = function (ctx) {
           'Lazy Admin.VisualElementsManifest.xml',
           'Square150x150Logo.png',
           'Square71x71Logo.png'
+        ],
+        extraResources: [
+          {
+            'from': 'node_modules/regedit/vbs',
+            'to': 'regedit/vbs',
+            'filter': [
+              '**/*'
+            ]
+          }
         ]
       },
 

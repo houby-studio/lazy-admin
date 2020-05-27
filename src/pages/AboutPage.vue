@@ -10,55 +10,83 @@
           <div class="h1 text-h2 text-center"> {{ $t('about') }} </div>
         </q-card-section>
         <q-card-section>
-          <div class="row">
-            <div class="col">
-              {{ $t('appVersion') }} {{ lazyVersion }}
-              <q-icon
-                v-if="appVersionStatus === 'uptodate'"
-                name="check"
-                color="white"
-                size="1.1rem"
-              />
-              <q-spinner
-                v-else-if="appVersionStatus === 'checking'"
-                color="primary"
-                size="1.1rem"
-              />
-              <q-icon
-                v-else
-                name="warning"
-                color="yellow"
-                size="1.1rem"
-                v-show="appVersionStatus === 'restart'"
-              />
-              {{ updateProgress }}
-            </div>
-          </div>
-          <div class="row">
-            <div class="col">
-              {{ $t('defVersion') }} 1.0.0.0
-              <q-spinner
-                v-if="definitionsVersionStatus === 'checking'"
-                color="primary"
-                size="1.1rem"
-              />
-              <q-icon
-                v-else
-                name="check"
-                color="white"
-                size="1.1rem"
-                v-show="definitionsVersionStatus === 'uptodate'"
-              />
-            </div>
-          </div>
+          <q-list>
+            <q-item>
+              <q-item-section avatar>
+                <q-icon name="mdi-sleep" />
+              </q-item-section>
+
+              <q-item-section>
+                <q-item-label>Lazy Admin</q-item-label>
+                <q-item-label caption>{{ lazyVersion }}</q-item-label>
+                <q-item-label caption>{{ updateProgress }}</q-item-label>
+              </q-item-section>
+
+              <q-item-section avatar>
+                <q-icon
+                  v-if="appVersionStatus === 'uptodate'"
+                  name="check"
+                  color="white"
+                  size="1.1rem"
+                />
+                <q-spinner
+                  v-else-if="appVersionStatus === 'checking'"
+                  color="primary"
+                  size="1.1rem"
+                />
+                <q-icon
+                  v-else
+                  name="warning"
+                  color="yellow"
+                  size="1.1rem"
+                  v-show="appVersionStatus === 'restart'"
+                />
+              </q-item-section>
+            </q-item>
+            <q-item>
+              <q-item-section avatar>
+                <q-icon name="mdi-json" />
+              </q-item-section>
+
+              <q-item-section>
+                <q-item-label>{{ $t('masterDefinition') }}</q-item-label>
+                <q-item-label caption>{{ masterDefinitionVersion }}</q-item-label>
+              </q-item-section>
+
+              <q-item-section avatar>
+                <q-spinner
+                  v-if="definitionsVersionStatus === 'checking'"
+                  color="primary"
+                  size="1.1rem"
+                />
+                <q-icon
+                  v-else
+                  name="check"
+                  color="white"
+                  size="1.1rem"
+                  v-show="definitionsVersionStatus === 'uptodate'"
+                />
+              </q-item-section>
+            </q-item>
+          </q-list>
         </q-card-section>
+        <q-separator />
         <q-card-section>
-          <div class="row col">
-            Mountfield Base: 0.0.1
-          </div>
-          <div class="row col">
-            Mountfield Azure 0.0.0
-          </div>
+          <q-list>
+            <q-item
+              v-for="info in definitionsInfo"
+              :key="info.name"
+            >
+              <q-item-section avatar>
+                <q-icon :name="info.icon" />
+              </q-item-section>
+
+              <q-item-section>
+                <q-item-label>{{ info.displayName ? info.displayName[language] || info.displayName['default'] : '' }}</q-item-label>
+                <q-item-label caption>{{ info.version }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
         </q-card-section>
         <q-card-actions class="q-px-md">
           <q-btn
@@ -96,6 +124,17 @@ export default {
         return require('electron').remote.app.getVersion()
       }
     },
+    masterDefinitionVersion: {
+      get () {
+        return this.$store.state.lazystore.masterDefinition.version
+      }
+    },
+    language: {
+      get () {
+        // retrieve language preference from store
+        return this.$store.state.lazystore.language
+      }
+    },
     updateInProgress: {
       get () {
         return this.$store.state.lazystore.updateInProgress
@@ -126,6 +165,11 @@ export default {
       },
       set (val) {
         this.$store.commit('lazystore/updateUpdateProgress', val)
+      }
+    },
+    definitionsInfo: {
+      get () {
+        return this.$store.state.lazystore.definitionsMenu
       }
     }
   },

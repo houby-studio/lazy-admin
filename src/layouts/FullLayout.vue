@@ -102,9 +102,11 @@
       elevated
     >
       <q-list>
-        <q-item-label header>{{ $t('commands') }}</q-item-label>
+        <q-item-label header>{{ $t('visibleGroups') }}</q-item-label>
         <q-item
           clickable
+          to="/scripts"
+          active-class="text-white"
           @click="showAll"
         >
           <q-item-section avatar>
@@ -115,22 +117,20 @@
             <q-item-label caption>{{ $t('allDesc') }}</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item clickable>
+        <q-item
+          clickable
+          v-for="menuEntry in definitionsMenu"
+          :key="menuEntry.name"
+          to="/scripts"
+          active-class="text-white"
+          @click="filterMenu(menuEntry.name)"
+        >
           <q-item-section avatar>
-            <q-icon name="mdi-powershell" />
+            <q-icon :name="menuEntry.icon" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Mountfield Base</q-item-label>
-            <q-item-label caption>Sada obecných skriptů</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item clickable>
-          <q-item-section avatar>
-            <q-icon name="mdi-azure" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Mountfield Azure</q-item-label>
-            <q-item-label caption>Správa Azure infrastruktury</q-item-label>
+            <q-item-label>{{ menuEntry.displayName ? menuEntry.displayName[language] || menuEntry.displayName['default'] : '' }}</q-item-label>
+            <q-item-label caption>{{ menuEntry.description ? menuEntry.description[language] || menuEntry.description['default'] : '' }}</q-item-label>
           </q-item-section>
         </q-item>
         <q-separator />
@@ -199,6 +199,12 @@ export default {
         this.$store.commit('lazystore/updateSearch', val)
       }
     },
+    language: {
+      get () {
+        // retrieve language preference from store
+        return this.$store.state.lazystore.language
+      }
+    },
     updateInProgress: {
       get () {
         return this.$store.state.lazystore.updateInProgress
@@ -215,12 +221,14 @@ export default {
         this.$store.commit('lazystore/toggleDefinitionsUpdateInProgress', val)
       }
     },
-    definitionsUrl: {
+    definitions: {
       get () {
-        return this.$store.state.lazystore.definitionsUrl
-      },
-      set (val) {
-        this.$store.commit('lazystore/setDefinitionsUrl', val)
+        return this.$store.state.lazystore.definitions
+      }
+    },
+    definitionsMenu: {
+      get () {
+        return this.$store.state.lazystore.definitionsMenu
       }
     },
     restartRequired: {
@@ -268,6 +276,22 @@ export default {
     showAll () {
       this.$store.commit('lazystore/updateScriptsFilter', Object.keys(this.$store.state.lazystore.definitions))
       this.$store.commit('lazystore/updateScriptsArray')
+    },
+
+    filterMenu (name) {
+      this.$store.commit('lazystore/updateScriptsFilter', name)
+      this.$store.commit('lazystore/updateScriptsArray')
+    },
+
+    async displayMenu () {
+      if (Object.keys(this.$store.state.lazystore.definitions).length === 0) {
+        setTimeout(() => {
+          this.displayMenu()
+        }, 1000)
+      } else {
+        console.log('Updating definitions menu')
+        this.$store.commit('lazystore/updateDefinitionsMenu')
+      }
     }
   },
   created: function () {
@@ -298,11 +322,8 @@ export default {
     // })
     this.$defUpdater.checkForUpdates(this)
     this.$defUpdater.on('update-check-done', (updateStatus, scriptDefinitions) => {
-      console.log('Master definition update check done, new version found:')
-      console.log(updateStatus)
-      console.log('Update object:')
-      console.log(scriptDefinitions)
       this.$defUpdater.updateDefinitionsAndModules(this, updateStatus)
+      this.definitionsUpdateInProgress = false
     })
     // Register event listener, which triggers when update is found
     this.$autoUpdater.on('update-available', (updateInfo) => {
@@ -344,9 +365,17 @@ export default {
     this.$autoUpdater.on('download-progress', (event) => {
       this.updateProgress = `${(event.transferred / 1024 / 1024).toFixed(2)}MB ${this.$t('of')} ${(event.total / 1024 / 1024).toFixed(2)}MB`
     })
+
+    // Create menu entries
+    this.displayMenu()
   },
   destroyed: function () {
     console.log('destroyed')
+  },
+  watch: {
+    definitions: function () {
+      this.displayMenu()
+    }
   }
 }
 </script>

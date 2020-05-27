@@ -2,6 +2,7 @@
 // Details regarding script definitions updating can be found on
 import axios from 'axios'
 import regedit from 'regedit'
+regedit.setExternalVBSLocation('resources/regedit/vbs')
 import EventEmitter from 'events'
 
 const definitionsEmitter = new EventEmitter()
@@ -56,12 +57,14 @@ const defUpdater = {
       if (err) {
         notifyError(ctx)
         console.error(err)
+        ctx.$store.commit('lazystore/toggleDefinitionsUpdateInProgress', false)
         return err
       }
       defUpdater.downloadDefinitions(updateUrl, function (err, scriptDefinitions) {
         if (err) {
           notifyError(ctx)
           console.error(`${err} - ${err.url}`)
+          ctx.$store.commit('lazystore/toggleDefinitionsUpdateInProgress', false)
           return err
         }
         // If newer version is found, replace data in store and notify

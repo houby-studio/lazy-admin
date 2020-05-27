@@ -5,7 +5,8 @@ export default function () {
     search: '', // Holds search string value
     scriptsFilter: [], // Holds current filter for scripts table
     scriptsArray: [], // Array holding currently displayed scripts
-    definitions: [], // Key component containing script definitions in their respective module objects
+    definitions: [], // Array holding script definitions in their respective module objects
+    definitionsMenu: [], // Key component containing script definitions in their respective module objects
     masterDefinition: {}, // Contains scripts definitions data, holding url to all modules
     customDefinitions: [], // Contains user defined script definitions
     favoriteDefinitions: [], // Definitions favorited by user

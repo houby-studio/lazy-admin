@@ -189,6 +189,21 @@
               </div>
             </q-td>
           </template>
+          <!-- Template showing favorite icon -->
+          <template v-slot:body-cell-favorite="props">
+            <q-td
+              :props="props"
+              auto-width
+            >
+              <q-btn
+                dense
+                round
+                flat
+                icon="star_outline"
+                @click="showHelpDiag(props.row)"
+              />
+            </q-td>
+          </template>
           <!-- Template showing help icon -->
           <template v-slot:body-cell-help="props">
             <q-td
@@ -223,7 +238,6 @@
 </template>
 
 <script>
-// import json from '../../scripts-definitions/base-module-example.json'
 import { exportFile } from 'quasar'
 
 //  Helper function which wraps table values for CSV export - https://quasar.dev/vue-components/table#Exporting-data
@@ -254,16 +268,16 @@ export default {
       currentCommand: {}, // User click "Execute" on datatable, chosen command is set to this object, which gets rendered with dialog
       returnParams: {}, // User defined parameters from Command Dialog
       results: {}, // Command result object displayed in Results Dialog
-      definitionsArray: [],
-      scriptsFilter: ['base-module-example'],
       displayCommandDiag: false,
       displayHelpDiag: false,
       displayResultsDiag: false,
       scriptsColumns: [
         { name: 'icon', align: 'center', label: 'Icon', field: row => row.icon, sortable: true },
         { name: 'commandName', required: true, label: 'Command Name', align: 'left', field: row => row.commandName, format: val => `${val}`, sortable: true },
+        { name: 'friendlyName', label: 'Friendly Name', align: 'left', field: row => row.friendlyName ? row.friendlyName[(this.$i18n.locale)] ? row.friendlyName[(this.$i18n.locale)] : row.friendlyName['default'] : '', format: val => `${val}`, sortable: true, classes: 'hidden' },
         { name: 'description', align: 'left', label: 'Description', field: row => row.description ? row.description[(this.$i18n.locale)] ? row.description[(this.$i18n.locale)] : row.description.default : '', sortable: true, classes: 'gt-sm' },
         { name: 'spacer', align: 'center', label: 'Spacer', field: '', sortable: false, classes: 'full-width' },
+        { name: 'favorite', align: 'center', label: 'Icon', field: 'star', sortable: true },
         { name: 'help', align: 'center', label: 'Icon', field: 'help', sortable: true },
         { name: 'execute', label: 'Execute', field: 'Execute', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) }
       ],
@@ -292,6 +306,11 @@ export default {
         return this.$store.state.lazystore.scriptsArray
       }
     },
+    definitions: {
+      get () {
+        return this.$store.state.lazystore.definitions
+      }
+    },
     resultsColumns: {
       get () {
         let columns = []
@@ -315,6 +334,16 @@ export default {
     showResultsDiag (resultspCtx) {
       this.results = resultspCtx
       this.displayResultsDiag = !this.displayResultsDiag
+    },
+    async updateScriptsTable () {
+      if (Object.keys(this.$store.state.lazystore.definitions).length === 0) {
+        setTimeout(() => {
+          this.updateScriptsTable()
+        }, 1000)
+      } else {
+        console.log('Updating scripts table')
+        this.$store.commit('lazystore/updateScriptsArray')
+      }
     },
     notifyCopied () {
       this.$q.notify({
@@ -420,6 +449,14 @@ export default {
         this.displayResultsDiag = true
         this.$q.loading.hide()
       })
+    }
+  },
+  created: function () {
+    this.updateScriptsTable()
+  },
+  watch: {
+    definitions: function () {
+      this.updateScriptsTable()
     }
   }
 }
