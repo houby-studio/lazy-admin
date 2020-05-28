@@ -25,6 +25,10 @@ jobs:
     # Download VCN CLI and notarize git
     - run: Invoke-WebRequest -Uri (((Invoke-WebRequest -Uri "https://api.github.com/repos/vchain-us/vcn/releases/latest").Content | ConvertFrom-Json).Assets | Where-Object browser_download_url -like '*windows-amd64.exe').browser_download_url -OutFile "vcn.exe"
     - run: .\vcn login
+      env:
+        VCN_NOTARIZATION_PASSWORD: ${{ secrets.VCN_NOTARIZATION_PASSWORD }}
+        VCN_PASSWORD: ${{ secrets.VCN_PASSWORD }}
+        VCN_USER: ${{ secrets.VCN_USER }}
     - run: .\vcn.exe notarize git://.
     # Now Verify commit in CodeNotary
     - name: Verify
