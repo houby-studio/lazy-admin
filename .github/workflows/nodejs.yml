@@ -23,7 +23,7 @@ jobs:
     - name: Checkout master branch
       uses: actions/checkout@v2
     # Download VCN CLI and notarize git
-    - run: wget (((wget https://api.github.com/repos/vchain-us/vcn/releases/latest).Content | ConvertFrom-Json).Assets | ? browser_download_url -like '*windows-amd64.exe').browser_download_url -OutFile "vcn.exe"
+    - run: Invoke-WebRequest -Uri (((Invoke-WebRequest -Uri "https://api.github.com/repos/vchain-us/vcn/releases/latest").Content | ConvertFrom-Json).Assets | Where-Object browser_download_url -like '*windows-amd64.exe').browser_download_url -OutFile "vcn.exe"
     - run: .\vcn login
     - run: .\vcn.exe notarize git://.
     # Now Verify commit in CodeNotary
