@@ -29,14 +29,11 @@ jobs:
         VCN_NOTARIZATION_PASSWORD: ${{ secrets.VCN_NOTARIZATION_PASSWORD }}
         VCN_PASSWORD: ${{ secrets.VCN_PASSWORD }}
         VCN_USER: ${{ secrets.VCN_USER }}
-    - run: .\vcn.exe notarize git://.
+    - run: .\vcn.exe notarize --public git://.
       env:
         VCN_NOTARIZATION_PASSWORD: ${{ secrets.VCN_NOTARIZATION_PASSWORD }}
         VCN_PASSWORD: ${{ secrets.VCN_PASSWORD }}
         VCN_USER: ${{ secrets.VCN_USER }}
-    # Now Verify commit in CodeNotary
-    - name: Verify
-      uses: vchain-us/verify-action@master
     # If package.json contains higher version, create tag
     - name: Create release tag
       id: autotag
@@ -81,7 +78,7 @@ jobs:
     - run: npm install -g yarn
     - run: yarn global add @quasar/cli
     - run: yarn
-    - run: .\vcn notarize .\dist\electron\Packaged\$((Get-Item -Path ".\dist\electron\Packaged\Lazy Admin Setup *.exe").Name)
+    - run: .\vcn notarize --public .\dist\electron\Packaged\$((Get-Item -Path ".\dist\electron\Packaged\Lazy Admin Setup *.exe").Name)
       env:
         VCN_NOTARIZATION_PASSWORD: ${{ secrets.VCN_NOTARIZATION_PASSWORD }}
         VCN_PASSWORD: ${{ secrets.VCN_PASSWORD }}
