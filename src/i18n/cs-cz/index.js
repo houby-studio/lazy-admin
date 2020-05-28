@@ -40,5 +40,7 @@ export default {
   downloadCompleted: 'Stahování dokončeno, zavřete aplikaci ke spuštění aktualizace.',
   of: 'z',
   restartRequired: 'Vyžadován restart.',
-  restart: 'Restartovat'
+  restart: 'Restartovat',
+  errorPage: 'Jejda, sem jste se nikdy neměli dostat.',
+  goBack: 'Jít zpět'
 }

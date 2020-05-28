@@ -184,6 +184,7 @@ export default {
         this.$autoUpdater.checkForUpdatesAndNotify()
         // Definitions
         this.definitionsVersionStatus = 'checking'
+        this.$defUpdater.checkForUpdates(this)
         // Log
         console.log('Check for updates initialized by user.')
       } else {
@@ -220,6 +221,16 @@ export default {
       this.appVersionStatus = 'uptodate'
       // Update not found, enable 'Update' button again
       this.updateButtonDisabled = false
+    })
+
+    // Master definitions: Check when update is found
+    this.$defUpdater.on('update-check-done', () => {
+      this.definitionsVersionStatus = 'uptodate'
+    })
+
+    // Master definitions: If fail, stop checking
+    this.$defUpdater.on('update-check-error', () => {
+      this.definitionsVersionStatus = 'error'
     })
   }
 }

@@ -341,7 +341,6 @@ export default {
           this.updateScriptsTable()
         }, 1000)
       } else {
-        console.log('Updating scripts table')
         this.$store.commit('lazystore/updateScriptsArray')
       }
     },
@@ -396,8 +395,12 @@ export default {
         let param = this.currentCommand.parameters[i]
         let input = this.returnParams[param.parameter]
         if (input) {
+          // If parameter has additional text format, insert it
+          if (param.format) {
+            resultCommand = resultCommand.replace(`{{${param.parameter}}}`, `${param.format}`)
+          }
           // If parameter was supplied, insert param in place of template variable
-          resultCommand = resultCommand.replace(`{{${param.parameter}}}`, `-${param.parameter} "${input}"`)
+          resultCommand = resultCommand.replace(`{{${param.parameter}}}`, `${input}`)
         } else {
           // If paramter was not supplied, remove template variable
           resultCommand = resultCommand.replace(`{{${param.parameter}}}`, '')
@@ -456,7 +459,7 @@ export default {
   },
   watch: {
     definitions: function () {
-      this.updateScriptsTable()
+      setTimeout(() => this.updateScriptsTable(), 500)
     }
   }
 }

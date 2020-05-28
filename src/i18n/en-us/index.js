@@ -40,5 +40,7 @@ export default {
   downloadCompleted: 'Download completed, close the application to start the update.',
   of: 'of',
   restartRequired: 'Restart required.',
-  restart: 'Restart'
+  restart: 'Restart',
+  errorPage: 'Oops, never should have come here.',
+  goBack: 'Go back'
 }

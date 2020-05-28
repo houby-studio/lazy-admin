@@ -52,6 +52,7 @@ export const updateDefinitionsMenu = (state, value) => {
         icon: state.definitions[key].icon ? state.definitions[key].icon : 'mdi-powershell'
       })
     })
+  state.definitionsMenu.sort()
 }
 
 export const updateMasterDefinition = (state, value) => {

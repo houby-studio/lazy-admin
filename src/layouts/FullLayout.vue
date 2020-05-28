@@ -133,7 +133,9 @@
             <q-item-label caption>{{ menuEntry.description ? menuEntry.description[language] || menuEntry.description['default'] : '' }}</q-item-label>
           </q-item-section>
         </q-item>
+
         <q-separator />
+
         <q-item
           clickable
           to="/"
@@ -146,6 +148,7 @@
             <q-item-label>{{ $t('settings') }}</q-item-label>
           </q-item-section>
         </q-item>
+
         <q-item
           clickable
           to="/about"
@@ -158,6 +161,7 @@
             <q-item-label>{{ $t('about') }}</q-item-label>
           </q-item-section>
         </q-item>
+
       </q-list>
     </q-drawer>
 
@@ -289,7 +293,6 @@ export default {
           this.displayMenu()
         }, 1000)
       } else {
-        console.log('Updating definitions menu')
         this.$store.commit('lazystore/updateDefinitionsMenu')
       }
     }
@@ -302,27 +305,26 @@ export default {
     this.updateProgress = '' // Remove potential leftover variable from previous update
     this.updateInProgress = true
     this.$autoUpdater.checkForUpdatesAndNotify() // We could prevent duplicate downloads if we put this in if-condition, but closing app unexpectedly could lead to bricking updates forever
-    // Check for definitions updates
+    // Check for definitions updates delayed
     this.definitionsUpdateInProgress = true
-    // this.$defUpdater.checkForUpdates((this), function (err, context, result) {
-    //   if (err) {
-    //     console.error('Error:', err.message)
-    //     context.$q.notify({
-    //       type: 'negative',
-    //       timeout: 2500,
-    //       message: context.$t('definitionsError'),
-    //       actions: [
-    //         { label: context.$t('dismiss'), color: 'white' }
-    //       ]
-    //     })
-    //   } else {
-    //     console.log(result)
-    //     // Compare update definitions with current definitions
-    //   }
-    // })
-    this.$defUpdater.checkForUpdates(this)
-    this.$defUpdater.on('update-check-done', (updateStatus, scriptDefinitions) => {
-      this.$defUpdater.updateDefinitionsAndModules(this, updateStatus)
+    setTimeout(() => this.$defUpdater.checkForUpdates(this), 5000)
+    // When master definition update was successful, start updating modules
+    this.$defUpdater.on('update-check-done', (updateStatus) => {
+      console.log(this.definitions)
+      setTimeout(() => this.$defUpdater.updateDefinitionsAndModules(this, updateStatus), 5000)
+      this.definitionsUpdateInProgress = false
+    })
+    // When master definition update errored, notify error
+    this.$defUpdater.on('update-check-error', () => {
+      this.$q.notify({
+        type: 'negative',
+        icon: 'error',
+        timeout: 5000,
+        message: this.$t('definitionsError'),
+        actions: [
+          { label: this.$t('dismiss'), color: 'white' }
+        ]
+      })
       this.definitionsUpdateInProgress = false
     })
     // Register event listener, which triggers when update is found
@@ -369,12 +371,9 @@ export default {
     // Create menu entries
     this.displayMenu()
   },
-  destroyed: function () {
-    console.log('destroyed')
-  },
   watch: {
     definitions: function () {
-      this.displayMenu()
+      setTimeout(() => this.displayMenu(), 500)
     }
   }
 }

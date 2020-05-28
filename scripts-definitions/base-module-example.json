@@ -1,6 +1,6 @@
 {
   "base-module-example": {
-    "version": "0.0.1",
+    "version": "0.0.2",
     "icon": "mdi-powershell",
     "displayName": {
       "default": "Base commands",
@@ -31,6 +31,7 @@
         "parameters": [
           {
             "parameter": "ComputerName",
+            "format": "-ComputerName {{ComputerName}}",
             "required": true,
             "type": "text",
             "hint": {
@@ -41,6 +42,7 @@
           },
           {
             "parameter": "Number",
+            "format": "-Number {{Number}}",
             "required": false,
             "type": "number",
             "hint": {
@@ -63,6 +65,7 @@
         "parameters": [
           {
             "parameter": "Name",
+            "format": "-Name {{Name}}",
             "required": true,
             "type": "text"
           }

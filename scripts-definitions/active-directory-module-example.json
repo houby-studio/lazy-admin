@@ -1,6 +1,6 @@
 {
   "active-directory-module-example": {
-    "version": "0.0.1",
+    "version": "0.0.2",
     "icon": "mdi-file-tree",
     "displayName": {
       "default": "Active Directory commands",
@@ -24,9 +24,9 @@
         "icon": "mdi-account",
         "returns": "PSObject",
         "friendlyName": {
-          "default": "Get disk information",
-          "en-us": "Get disk information",
-          "cs-cz": "Získat informace o disku"
+          "default": "Get AD user's information",
+          "en-us": "Get AD user's information",
+          "cs-cz": "Získat informace o AD uživateli"
         },
         "description": {
           "default": "Retrievies users' basic information from Active Directory.",

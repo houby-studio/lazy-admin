@@ -40,31 +40,17 @@ const defUpdater = {
     })
   },
   checkForUpdates (ctx) {
-    // Notify error when something fails during update check
-    function notifyError (context) {
-      context.$q.notify({
-        type: 'negative',
-        icon: 'error',
-        timeout: 5000,
-        message: context.$t('definitionsError'),
-        actions: [
-          { label: context.$t('dismiss'), color: 'white' }
-        ]
-      })
-    }
     // Main function which gets called from Vue file
     defUpdater.getRegUrl(function (err, updateUrl) {
       if (err) {
-        notifyError(ctx)
+        definitionsEmitter.emit('update-check-error')
         console.error(err)
-        ctx.$store.commit('lazystore/toggleDefinitionsUpdateInProgress', false)
         return err
       }
       defUpdater.downloadDefinitions(updateUrl, function (err, scriptDefinitions) {
         if (err) {
-          notifyError(ctx)
+          definitionsEmitter.emit('update-check-error')
           console.error(`${err} - ${err.url}`)
-          ctx.$store.commit('lazystore/toggleDefinitionsUpdateInProgress', false)
           return err
         }
         // If newer version is found, replace data in store and notify
@@ -78,46 +64,62 @@ const defUpdater = {
     })
   },
   updateDefinitionsAndModules (ctx, newMasterVersion) {
+    // Fix this, very problematic
+    console.log('Checking for modules updates')
     let definitionsUrl = ctx.$store.state.lazystore.masterDefinition.definitionsUrl
-    let storedDefinitions = ctx.$store.state.lazystore.definitions
-    if (newMasterVersion) {
-      // Remove all current definitions, because there is new master definition file with different URLs
-      ctx.$store.commit('lazystore/clearDefinitions')
-    }
-    // cycle thru update URLs and compare versions and eventually update
-    for (let url of definitionsUrl) {
-      defUpdater.downloadDefinitions(url, function (error, definition) {
-        if (error) {
-          console.error('Downloading definitions error')
-          console.error(error)
-        } else {
-          let data
-          try {
-            // Check if downloaded file is JSON, if not, try to parse as JSON
-            if (definition.data.constructor !== ({}).constructor) {
-              data = JSON.parse(definition.data)
-            } else {
-              data = definition.data
-            }
-          } catch (error) {
-            console.error('Could not parse data as JSON')
+    function triggerUpdate () {
+      if (newMasterVersion) {
+        // Remove all current definitions, because there is new master definition file with different URLs
+        ctx.$store.commit('lazystore/clearDefinitions')
+      }
+      // cycle thru update URLs and compare versions and eventually update
+      for (let url of definitionsUrl) {
+        console.log('checking url ', url)
+        defUpdater.downloadDefinitions(url, function (error, definition) {
+          if (error) {
+            console.error('Downloading definitions error')
             console.error(error)
-            return
-          }
-          let definitionName = Object.keys(data)[0]
-          if (storedDefinitions[definitionName]) {
-            // Compare downloaded version and currently saved version, if not matching, update
-            if (data.version !== storedDefinitions[definitionName].version) {
-              console.log(`Newer version of ${definitionName} found, uploading to store.`)
+          } else {
+            let data
+            try {
+              // Check if downloaded file is JSON, if not, try to parse as JSON
+              if (definition.data.constructor !== ({}).constructor) {
+                data = JSON.parse(definition.data)
+              } else {
+                data = definition.data
+              }
+            } catch (error) {
+              console.error('Could not parse data as JSON')
+              console.error(error)
+              return
+            }
+            let definitionName = Object.keys(data)[0]
+            if (ctx.$store.state.lazystore.definitions[definitionName]) {
+              console.log('data.version then storedDefis.version')
+              console.log(data)
+              console.log(ctx.$store.state.lazystore.definitions[definitionName].version)
+              // Compare downloaded version and currently saved version, if not matching, update
+              if (data[definitionName].version !== ctx.$store.state.lazystore.definitions[definitionName].version) {
+                console.log(`Newer version of ${definitionName} found, uploading to store.`)
+                ctx.$store.commit('lazystore/updateDefinitions', data)
+              }
+            } else {
+              // Definition does not exist in store, create it
+              console.log('definition does not exist, create')
+              console.log(ctx.$store.state.lazystore.definitions)
               ctx.$store.commit('lazystore/updateDefinitions', data)
             }
-          } else {
-            // Definition does not exist in store, create it
-            ctx.$store.commit('lazystore/updateDefinitions', data)
           }
-        }
-      })
+        })
+      }
     }
+    // Wait until definitions object has not 0 keys
+    function checkObject () {
+      setTimeout(() => {
+        triggerUpdate()
+      }, 1000)
+    }
+    checkObject()
   }
 }
 
