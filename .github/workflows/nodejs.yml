@@ -40,6 +40,8 @@ jobs:
       uses: Klemensas/action-autotag@1.2.3
       with:
         tag_prefix: "v"
+      env:
+        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
     # If previous step created tag, draft release
     - name: Draft Release
       id: draft_release
