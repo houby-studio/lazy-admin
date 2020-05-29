@@ -87,11 +87,13 @@ jobs:
     - run: yarn
     - run: yarn release
     - run: .\vcn notarize --public .\dist\electron\Packaged\$((Get-Item -Path ".\dist\electron\Packaged\Lazy Admin Setup *.exe").Name)
+      if: ${{ steps.autotag.outputs.tagname }} # if no tag was created, skip notarizing build
       env:
         VCN_NOTARIZATION_PASSWORD: ${{ secrets.VCN_NOTARIZATION_PASSWORD }}
         VCN_PASSWORD: ${{ secrets.VCN_PASSWORD }}
         VCN_USER: ${{ secrets.VCN_USER }}
     - run: .\vcn authenticate .\dist\electron\Packaged\$((Get-Item -Path ".\dist\electron\Packaged\Lazy Admin Setup *.exe").Name)
+      if: ${{ steps.autotag.outputs.tagname }} # if no tag was created, skip authenticating build
       env:
         VCN_NOTARIZATION_PASSWORD: ${{ secrets.VCN_NOTARIZATION_PASSWORD }}
         VCN_PASSWORD: ${{ secrets.VCN_PASSWORD }}
