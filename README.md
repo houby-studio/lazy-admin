@@ -1,6 +1,14 @@
-# Lazy Admin (lazy-admin)
+# Lazy Admin
+
+![GitHub package.json version](https://img.shields.io/github/package-json/v/houby-studio/lazy-admin) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/houby-studio/lazy-admin/build-and-release) ![GitHub All Releases](https://img.shields.io/github/downloads/houby-studio/lazy-admin/total) ![GitHub](https://img.shields.io/github/license/houby-studio/lazy-admin)
 
 GUI for PowerShell scripts to simplify day to day IT tasks.
+
+# How to become lazy
+
+Download, install, create definitions and then become ultimate lazy admin!
+
+# Developers
 
 ## Install the dependencies
 ```bash
@@ -24,7 +32,3 @@ quasar build
 
 ### Customize the configuration
 See [Configuring quasar.conf.js](https://quasar.dev/quasar-cli/quasar-conf-js).
-
-## Changelog
-
-v0.0.1 - Test release - somehow useable, yet having no way of adding custom commands.
