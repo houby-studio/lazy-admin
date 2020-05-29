@@ -1,6 +1,6 @@
 {
   "active-directory-module-example": {
-    "version": "0.0.2",
+    "version": "0.0.3",
     "icon": "mdi-file-tree",
     "displayName": {
       "default": "Active Directory commands",
@@ -45,7 +45,7 @@
             }
           }
         ],
-        "commandBlock": "Get-ADUser -Filter 'SamAccountName -like {{samAccountName}}'"
+        "commandBlock": "Get-ADUser -Filter 'SamAccountName -like \"{{samAccountName}}\"'"
       }
     ]
   }
