@@ -2,7 +2,7 @@
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
 # Name of the workflow
-name: Node.js Quasar CI
+name: build-and-release
 
 # Trigger workflow on push and pull request to master branch
 on:
@@ -13,7 +13,8 @@ on:
 
 jobs:
   build:
-
+    name: Build, notarize and release
+    
     runs-on: windows-latest
 
     env:
