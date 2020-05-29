@@ -45,7 +45,7 @@
             }
           }
         ],
-        "commandBlock": "Get-ADUser -Filter 'SamAccountName -like \"{{samAccountName}}\"' -Properties pwdLastSet | Select-Object Name, Enabled, SamAccountName, UserPrincipalName, @{n='PasswordChange';e={[datetime]::FromFileTime($_.pwdLastSet)} | ConvertTo-Json -Compress"
+        "commandBlock": "Get-ADUser -Filter 'SamAccountName -like \"{{samAccountName}}\"' -Properties pwdLastSet | Select-Object Name, Enabled, SamAccountName, UserPrincipalName, @{n='PasswordChange';e={[datetime]::FromFileTime($_.pwdLastSet)}} | ConvertTo-Json -Compress"
       }
     ]
   }
