@@ -19,16 +19,29 @@ const vuexLocal = new VuexPersistence({
   storage: window.localStorage
 })
 
-export default function (/* { ssrContext } */) {
-  const Store = new Vuex.Store({
-    modules: {
-      lazystore
-    },
-    plugins: [vuexLocal.plugin],
-    // enable strict mode (adds overhead!)
-    // for dev mode only
-    strict: process.env.DEV
-  })
+const Store = new Vuex.Store({
+  modules: {
+    lazystore
+  },
+  plugins: [vuexLocal.plugin],
+  // enable strict mode (adds overhead!)
+  // for dev mode only
+  strict: process.env.DEV
+})
 
-  return Store
+if (module.hot) {
+  // accept actions and mutations as hot modules
+  module.hot.accept(['./lazystore'], () => {
+    // require the updated modules
+    // have to add .default here due to babel 6 module output
+    const lazystore = require('./lazystore').default
+    // swap in the new modules and mutations
+    Store.hotUpdate({
+      modules: {
+        lazystore
+      }
+    })
+  })
 }
+
+export default Store

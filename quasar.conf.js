@@ -172,7 +172,8 @@ module.exports = function (ctx) {
           publish: 'github'
         },
         nsis: {
-          perMachine: true
+          perMachine: true,
+          include: 'build/installer.nsh'
         },
         extraFiles: [
           'Lazy Admin.VisualElementsManifest.xml',

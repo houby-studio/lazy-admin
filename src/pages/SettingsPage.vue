@@ -21,7 +21,7 @@
             class="full-width"
             type="submit"
             ref="login"
-            :label="$t('login')"
+            label="TODO"
           />
         </q-card-actions>
       </q-card>

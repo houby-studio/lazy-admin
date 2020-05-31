@@ -7,7 +7,7 @@
         class="q-pa-lg shadow-1"
       >
         <q-card-section>
-          <div class="h1 text-h2 text-center"> {{ $t('about') }} </div>
+          <div class="text-h2 text-center"> {{ $t('about') }} </div>
         </q-card-section>
         <q-card-section>
           <q-list>
@@ -74,7 +74,7 @@
         <q-card-section>
           <q-list>
             <q-item
-              v-for="info in definitionsInfo"
+              v-for="info in menuEntries"
               :key="info.name"
             >
               <q-item-section avatar>
@@ -82,7 +82,7 @@
               </q-item-section>
 
               <q-item-section>
-                <q-item-label>{{ info.displayName ? info.displayName[language] || info.displayName['default'] : '' }}</q-item-label>
+                <q-item-label>{{ info.displayName }}</q-item-label>
                 <q-item-label caption>{{ info.version }}</q-item-label>
               </q-item-section>
             </q-item>
@@ -108,6 +108,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'PageAbout',
   data () {
@@ -119,6 +121,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('lazystore', ['menuEntries']),
     lazyVersion: {
       get () {
         return require('electron').remote.app.getVersion()
@@ -126,7 +129,7 @@ export default {
     },
     masterDefinitionVersion: {
       get () {
-        return this.$store.state.lazystore.masterDefinition.version
+        return this.$store.state.lazystore.master_definition.version
       }
     },
     language: {
@@ -165,11 +168,6 @@ export default {
       },
       set (val) {
         this.$store.commit('lazystore/updateUpdateProgress', val)
-      }
-    },
-    definitionsInfo: {
-      get () {
-        return this.$store.state.lazystore.definitionsMenu
       }
     }
   },

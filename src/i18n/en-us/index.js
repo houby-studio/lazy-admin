@@ -1,46 +1,46 @@
 // English language
 
 export default {
-  username: 'Username',
-  usernameRequired: 'Login username is required!',
-  password: 'Password',
-  passwordRequired: 'Login password is required!',
-  login: 'Login',
-  language: 'Language',
-  changeUser: 'Change User',
-  install: 'Install',
-  dismiss: 'Dismiss',
-  moduleCredMgrMissing: 'Couldn\'t find PowerShell module "CredentialManager", cannot load saved password.',
-  wrongUsernameOrPassword: 'Wrong username or password.',
-  foundsavedCredential: 'Found stored credentials for user {usr}.',
-  search: 'Search',
-  history: 'History',
-  commands: 'Commands',
-  visibleGroups: 'Shown commands',
-  all: 'All',
-  allDesc: 'All available commands',
-  settings: 'Settings',
-  about: 'About',
-  masterDefinition: 'Master definition',
-  update: 'Update',
-  requiredField: 'This parameter is required!',
-  requiredParam: 'Required',
-  optionalParam: 'Optional',
-  launch: 'Launch',
-  cancel: 'Cancel',
-  results: `{commandName}: Results`,
-  exportCsv: 'Export to CSV',
-  copyClipboard: 'Copy to clipboard',
-  close: 'Close',
-  copied: 'Copied to clipboard',
-  exported: 'Exported',
-  updateFound: 'Downloading the latest version of Lazy Admin.',
-  updateNotFound: 'Lazy Admin is up to date.',
-  definitionsError: 'Could not check master definitions updates.',
-  downloadCompleted: 'Download completed, close the application to start the update.',
-  of: 'of',
-  restartRequired: 'Restart required.',
-  restart: 'Restart',
-  errorPage: 'Oops, never should have come here.',
-  goBack: 'Go back'
+  username: 'Username', // Used in: LoginPage.vue
+  usernameRequired: 'Login username is required!', // Used in: LoginPage.vue
+  password: 'Password', // Used in: LoginPage.vue
+  passwordRequired: 'Login password is required!', // Used in: LoginPage.vue
+  login: 'Login', // Used in: LoginPage.vue
+  language: 'Language', // Used in: LoginPage.vue
+  changeUser: 'Change User', // Used in: LoginPage.vue
+  install: 'Install', // Used in: LoginPage.vue, FullLayout.vue
+  dismiss: 'Dismiss', // Used in: LoginPage.vue, FullLayout.vue
+  moduleCredMgrMissing: 'Couldn\'t find PowerShell module "CredentialManager", cannot load saved password.', // Used in: LoginPage.vue
+  wrongUsernameOrPassword: 'Wrong username or password.', // Used in: LoginPage.vue
+  foundsavedCredential: 'Found stored credentials for user {usr}.', // Used in: LoginPage.vue
+  search: 'Search', // Used in: FullLayout.vue
+  history: 'History', // Used in: FullLayout.vue
+  // commands: 'Commands',
+  visibleGroups: 'Shown commands', // Used in: FullLayout.vue
+  all: 'All', // Used in: FullLayout.vue
+  allDesc: 'All available commands', // Used in: FullLayout.vue
+  settings: 'Settings', // Used in: FullLayout.vue
+  about: 'About', // Used in: FullLayout.vue, AboutPage.vue
+  masterDefinition: 'Master definition', // Used in: AboutPage.vue
+  update: 'Update', // Used in: AboutPage.vue
+  requiredField: 'This parameter is required!', // Used in: ScriptsPage.vue
+  requiredParam: 'Required', // Used in: ScriptsPage.vue
+  optionalParam: 'Optional', // Used in: ScriptsPage.vue
+  launch: 'Launch', // Used in: ScriptsPage.vue
+  cancel: 'Cancel', // Used in: ScriptsPage.vue
+  results: `{commandName}: Results`, // Used in: ScriptsPage.vue
+  exportCsv: 'Export to CSV', // Used in: ScriptsPage.vue
+  copyClipboard: 'Copy to clipboard', // Used in: ScriptsPage.vue
+  close: 'Close', // Used in: ScriptsPage.vue
+  copied: 'Copied to clipboard', // Used in: ScriptsPage.vue
+  exported: 'Exported', // Used in: ScriptsPage.vue
+  updateFound: 'Downloading the latest version of Lazy Admin.', // Used in: FullLayout.vue
+  // updateNotFound: 'Lazy Admin is up to date.',
+  definitionsError: 'Could not check master definitions updates.', // Used in: FullLayout.vue
+  downloadCompleted: 'Download completed, close the application to start the update.', // Used in: FullLayout.vue
+  of: 'of', // Used in: FullLayout.vue
+  restartRequired: 'Restart required.', // Used in: AboutPage.vue
+  restart: 'Restart', // Used in: AboutPage.vue
+  errorPage: 'Oops, never should have come here.', // Used in: Error404.vue
+  goBack: 'Go back' // Used in: Error404.vue
 }

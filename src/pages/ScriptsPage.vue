@@ -239,6 +239,7 @@
 
 <script>
 import { exportFile } from 'quasar'
+import { mapGetters } from 'vuex'
 
 //  Helper function which wraps table values for CSV export - https://quasar.dev/vue-components/table#Exporting-data
 function wrapCsvValue (val, formatFn) {
@@ -288,6 +289,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('lazystore', ['getScriptsArray']),
     searchText: {
       get () {
         // retrieve search text from store
@@ -303,7 +305,7 @@ export default {
     scriptsArray: {
       get () {
         // Filter definitions and spread to single array to display in scripts page data table
-        return this.$store.state.lazystore.scriptsArray
+        return this.getScriptsArray
       }
     },
     definitions: {
@@ -334,15 +336,6 @@ export default {
     showResultsDiag (resultspCtx) {
       this.results = resultspCtx
       this.displayResultsDiag = !this.displayResultsDiag
-    },
-    async updateScriptsTable () {
-      if (Object.keys(this.$store.state.lazystore.definitions).length === 0) {
-        setTimeout(() => {
-          this.updateScriptsTable()
-        }, 1000)
-      } else {
-        this.$store.commit('lazystore/updateScriptsArray')
-      }
     },
     notifyCopied () {
       this.$q.notify({
@@ -452,14 +445,6 @@ export default {
         this.displayResultsDiag = true
         this.$q.loading.hide()
       })
-    }
-  },
-  created: function () {
-    this.updateScriptsTable()
-  },
-  watch: {
-    definitions: function () {
-      setTimeout(() => this.updateScriptsTable(), 500)
     }
   }
 }

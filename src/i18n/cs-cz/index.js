@@ -1,46 +1,46 @@
 // Czech language
 
 export default {
-  username: 'Uživatel',
-  usernameRequired: 'Zadejte přihlašovací jméno!',
-  password: 'Heslo',
-  passwordRequired: 'Zadejte přihlašovací heslo!',
-  login: 'Vstoupit',
-  language: 'Jazyk',
-  changeUser: 'Jiný uživatel',
-  install: 'Instalovat',
-  dismiss: 'Skrýt',
-  moduleCredMgrMissing: 'V počítači nelze nalézt PowerShell modul "CredentialManager", nelze načíst uložené heslo.',
-  wrongUsernameOrPassword: 'Špatné přihlašovací jméno nebo heslo.',
-  foundsavedCredential: 'Nalezeny přihlašovací údaje pro uživatele {usr}.',
-  search: 'Vyhledat',
-  history: 'Historie',
-  commands: 'Příkazy',
-  visibleGroups: 'Zobrazované příkazy',
-  all: 'Vše',
-  allDesc: 'Všechny dostupné příkazy',
-  settings: 'Nastavení',
-  about: 'O aplikaci',
-  masterDefinition: 'Hlavní definice',
-  update: 'Aktualizovat',
-  requiredField: 'Tento parametr je povinný!',
-  requiredParam: 'Povinný',
-  optionalParam: 'Nepovinný',
-  launch: 'Spustit',
-  cancel: 'Zrušit',
-  results: `{commandName}: Výsledek`,
-  exportCsv: 'Exportovat do CSV',
-  copyClipboard: 'Zkopírovat do schránky',
-  close: 'Zavřít',
-  copied: 'Zkopírováno do schránky',
-  exported: 'Exportováno',
-  updateFound: 'Stahování nejnovější verze aplikace Lazy Admin.',
-  updateNotFound: 'Již máte nejnovější verzi aplikace Lazy Admin.',
-  definitionsError: 'Nepodařilo se zkontrolovat aktualizace hlavních definic.',
-  downloadCompleted: 'Stahování dokončeno, zavřete aplikaci ke spuštění aktualizace.',
-  of: 'z',
-  restartRequired: 'Vyžadován restart.',
-  restart: 'Restartovat',
-  errorPage: 'Jejda, sem jste se nikdy neměli dostat.',
-  goBack: 'Jít zpět'
+  username: 'Uživatel', // Used in: LoginPage.vue
+  usernameRequired: 'Zadejte přihlašovací jméno!', // Used in: LoginPage.vue
+  password: 'Heslo', // Used in: LoginPage.vue
+  passwordRequired: 'Zadejte přihlašovací heslo!', // Used in: LoginPage.vue
+  login: 'Vstoupit', // Used in: LoginPage.vue
+  language: 'Jazyk', // Used in: LoginPage.vue
+  changeUser: 'Jiný uživatel', // Used in: LoginPage.vue
+  install: 'Instalovat', // Used in: LoginPage.vue, FullLayout.vue
+  dismiss: 'Skrýt', // Used in: LoginPage.vue, FullLayout.vue
+  moduleCredMgrMissing: 'V počítači nelze nalézt PowerShell modul "CredentialManager", nelze načíst uložené heslo.', // Used in: LoginPage.vue
+  wrongUsernameOrPassword: 'Špatné přihlašovací jméno nebo heslo.', // Used in: LoginPage.vue
+  foundsavedCredential: 'Nalezeny přihlašovací údaje pro uživatele {usr}.', // Used in: LoginPage.vue
+  search: 'Vyhledat', // Used in: FullLayout.vue
+  history: 'Historie', // Used in: FullLayout.vue
+  // commands: 'Příkazy',
+  visibleGroups: 'Zobrazované příkazy', // Used in: FullLayout.vue
+  all: 'Vše', // Used in: FullLayout.vue
+  allDesc: 'Všechny dostupné příkazy', // Used in: FullLayout.vue
+  settings: 'Nastavení', // Used in: FullLayout.vue
+  about: 'O aplikaci', // Used in: FullLayout.vue
+  masterDefinition: 'Hlavní definice', // Used in: AboutPage.vue
+  update: 'Aktualizovat', // Used in: AboutPage.vue
+  requiredField: 'Tento parametr je povinný!', // Used in: ScriptsPage.vue
+  requiredParam: 'Povinný', // Used in: ScriptsPage.vue
+  optionalParam: 'Nepovinný', // Used in: ScriptsPage.vue
+  launch: 'Spustit', // Used in: ScriptsPage.vue
+  cancel: 'Zrušit', // Used in: ScriptsPage.vue
+  results: `{commandName}: Výsledek`, // Used in: ScriptsPage.vue
+  exportCsv: 'Exportovat do CSV', // Used in: ScriptsPage.vue
+  copyClipboard: 'Zkopírovat do schránky', // Used in: ScriptsPage.vue
+  close: 'Zavřít', // Used in: ScriptsPage.vue
+  copied: 'Zkopírováno do schránky', // Used in: ScriptsPage.vue
+  exported: 'Exportováno', // Used in: ScriptsPage.vue
+  updateFound: 'Stahování nejnovější verze aplikace Lazy Admin.', // Used in: FullLayout.vue
+  // updateNotFound: 'Již máte nejnovější verzi aplikace Lazy Admin.',
+  definitionsError: 'Nepodařilo se zkontrolovat aktualizace hlavních definic.', // Used in: FullLayout.vue
+  downloadCompleted: 'Stahování dokončeno, zavřete aplikaci ke spuštění aktualizace.', // Used in: FullLayout.vue
+  of: 'z', // Used in: FullLayout.vue
+  restartRequired: 'Vyžadován restart.', // Used in: AboutPage.vue
+  restart: 'Restartovat', // Used in: AboutPage.vue
+  errorPage: 'Jejda, sem jste se nikdy neměli dostat.', // Used in: Error404.vue
+  goBack: 'Jít zpět' // Used in: Error404.vue
 }

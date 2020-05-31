@@ -100,6 +100,7 @@
 
 <script>
 import { openURL, throttle } from 'quasar'
+import { mapGetters } from 'vuex'
 import GetSavedCredentials from '../statics/pwsh/scripts/Get-SavedCredentials'
 import EnterPSSessionWithCredentials from '../statics/pwsh/scripts/Enter-PSSessionWithCredentials'
 
@@ -117,6 +118,25 @@ export default {
         { value: 'en-us', label: 'English' },
         { value: 'cs-cz', label: 'Česky' }
       ]
+    }
+  },
+  computed: {
+    ...mapGetters('lazystore', ['getLanguage']),
+    shake: {
+      get () {
+        // Add classes to trigger animations on username field when username is found in credential store
+        return this.shakeUsername ? 'animated pulse delay-fix' : ''
+      }
+    },
+    language: {
+      get () {
+        // retrieve language settings from mapped getter
+        return this.getLanguage
+      },
+      set (val) {
+        // set selected language to store
+        this.$store.dispatch('lazystore/setLanguage', val)
+      }
     }
   },
   methods: {
@@ -166,33 +186,16 @@ export default {
               this.$pwsh.addCommand(`if (Get-Command New-StoredCredential -ErrorAction SilentlyContinue) {New-StoredCredential -Target 'Lazy Admin' -UserName '${this.username}' -Password '${this.password}' -Comment 'Administrator credentials for Lazy Admin Utility.' -Type Generic -Persist LocalMachine | Out-Null}`)
               this.$pwsh.invoke()
             }
+            this.$pwsh.addCommand('$OutputEncoding = [System.Console]::OutputEncoding = [System.Console]::InputEncoding = [System.Text.Encoding]::UTF8; $PSDefaultParameterValues[\'*:Encoding\'] = \'utf8\'')
+            this.$pwsh.invoke()
             this.$router.push({ path: '/scripts' })
           })
         }
       })
     }
   },
-  computed: {
-    shake: {
-      get () {
-        // Add classes to trigger animations on username field when username is found in credential store
-        return this.shakeUsername ? 'animated pulse delay-fix' : ''
-      }
-    },
-    language: {
-      get () {
-        // retrieve language preference from store
-        return this.$store.state.lazystore.language
-      },
-      set (val) {
-        // set selected language to store
-        this.$store.commit('lazystore/updateLanguage', val)
-      }
-    }
-  },
   watch: {
     language (language) {
-      console.log(`Language changed to ${language}.`)
       // When language is changed in store, update locale
       this.$i18n.locale = language
     }
@@ -204,53 +207,60 @@ export default {
     console.log(`Application started by user ${this.$q.electron.remote.process.env.USERDOMAIN}\\${this.$q.electron.remote.process.env.USERNAME} on computer ${this.$q.electron.remote.process.env.COMPUTERNAME}`)
     // Try to load saved credentials from Credential Manager
     this.$pwsh.addCommand(GetSavedCredentials)
-    this.$pwsh.invoke().then(output => {
-      // Load Enter-PSSessionWithCredentials function to be used when user presses login button
-      this.$pwsh.addCommand(EnterPSSessionWithCredentials)
-      this.$pwsh.invoke()
-      // Attempt to parse output from Get-SavedCredentials as JSON
-      let jsonOutput
-      try {
-        jsonOutput = JSON.parse(output)
-      } catch (error) {
-        jsonOutput = { error: true }
-      }
-      // If module did not load, warn user that he might be missing module
-      if (jsonOutput.error) {
-        console.warn('Could not load "CredentialManager" module. It may be missing in the computer.')
-        this.$q.notify({
-          timeout: 5000,
-          multiLine: false,
-          type: 'warning',
-          icon: 'warning',
-          message: this.$t('moduleCredMgrMissing'),
-          actions: [
-            { label: this.$t('install'), color: 'black', handler: () => { openURL('https://github.com/houby-studio/lazy-admin/wiki/How-to-install-CredentialManager-module') } },
-            { label: this.$t('dismiss'), color: 'black' }
-          ]
-        })
-      } else {
-        if (jsonOutput.returnCode === 10011001) {
-          console.log(`Found saved credentials for user ${jsonOutput.output.UserName}.`)
-          this.credentialsSaved = true
-          this.shakeUsername = true
-          this.username = jsonOutput.output.UserName
+    setTimeout(() => {
+      this.$pwsh.invoke().then(output => {
+        console.log('Running GetSavedCredentials')
+        // Load Enter-PSSessionWithCredentials function to be used when user presses login button
+        this.$pwsh.addCommand(EnterPSSessionWithCredentials)
+        this.$pwsh.invoke()
+        // Attempt to parse output from Get-SavedCredentials as JSON
+        let jsonOutput
+        try {
+          jsonOutput = JSON.parse(output)
+        } catch (error) {
+          jsonOutput = { error: true }
+        }
+        // If module did not load, warn user that he might be missing module
+        if (jsonOutput.error) {
+          console.warn('Could not load "CredentialManager" module. It may be missing in the computer.')
           this.$q.notify({
-            timeout: 2000,
-            icon: 'info',
+            timeout: 5000,
             multiLine: false,
-            message: this.$t('foundsavedCredential', { usr: jsonOutput.output.UserName }),
+            type: 'warning',
+            icon: 'warning',
+            message: this.$t('moduleCredMgrMissing'),
             actions: [
-              { label: this.$t('dismiss'), color: 'primary' }
+              { label: this.$t('install'), color: 'black', handler: () => { openURL('https://github.com/houby-studio/lazy-admin/wiki/How-to-install-CredentialManager-module') } },
+              { label: this.$t('dismiss'), color: 'black' }
             ]
           })
-          this.$refs.login.$el.focus()
         } else {
-          console.log(`Could not find any saved credentials.`)
+          if (jsonOutput.returnCode === 10011001) {
+            console.log(`Found saved credentials for user ${jsonOutput.output.UserName}.`)
+            this.credentialsSaved = true
+            this.shakeUsername = true
+            this.username = jsonOutput.output.UserName
+            this.$q.notify({
+              timeout: 2000,
+              icon: 'info',
+              multiLine: false,
+              message: this.$t('foundsavedCredential', { usr: jsonOutput.output.UserName }),
+              actions: [
+                { label: this.$t('dismiss'), color: 'primary' }
+              ]
+            })
+            this.$refs.login.$el.focus()
+          } else {
+            console.log(`Could not find any saved credentials.`)
+          }
         }
-      }
-      this.$q.loading.hide()
-    })
+        this.$q.loading.hide()
+      }).catch(error => {
+        console.error('Failed to load credentials with error')
+        console.log(error)
+        this.$q.loading.hide()
+      })
+    }, 500)
   }
 }
 </script>

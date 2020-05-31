@@ -54,8 +54,8 @@ const defUpdater = {
           return err
         }
         // If newer version is found, replace data in store and notify
-        if (ctx.$store.state.lazystore.masterDefinition.version !== scriptDefinitions.data.version) {
-          ctx.$store.commit('lazystore/updateMasterDefinition', scriptDefinitions.data)
+        if (ctx.$store.state.lazystore.master_definition.version !== scriptDefinitions.data.version) {
+          ctx.$store.commit('lazystore/SET_MASTERDEFINITION', scriptDefinitions.data)
           definitionsEmitter.emit('update-check-done', true)
         } else {
           definitionsEmitter.emit('update-check-done', false)

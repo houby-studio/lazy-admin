@@ -1,28 +1,37 @@
-export const setWindowsColor = (state, value) => {
-  state.userName = value
-}
-
-export const updateLanguage = (state, value) => {
+export const SET_LANGUAGE = (state, value) => {
   state.language = value
 }
 
-export const updateUserName = (state, value) => {
-  state.userName = value
-}
-
-export const updateSearch = (state, value) => {
+export const SET_SEARCH = (state, value) => {
   state.search = value
 }
 
-export const updateScriptsFilter = (state, value) => {
-  state.scriptsFilter = value
+export const SET_SCRIPTSFILTER = (state, value) => {
+  state.scripts_filter = value
+}
+
+export const SET_MASTERDEFINITION = (state, value) => {
+  state.master_definition = value
+}
+
+export const REMOVE_MASTERDEFINITION = (state) => {
+  state.master_definition = {}
+}
+
+export const SET_DEFINITIONS = (state, value) => {
+  // https://vuejs.org/v2/guide/reactivity.html#Change-Detection-Caveats
+  state.definitions = Object.assign({}, state.definitions, value)
+}
+
+export const REMOVE_DEFINITIONS = (state) => {
+  state.definitions = {}
 }
 
 // Iterate through 'definitions' keys, add script definitions from objects included in filter. This array is displayed in data table on Scripts page.
 export const updateScriptsArray = (state, value) => {
   state.scriptsArray = []
   Object.keys(state.definitions)
-    .filter(key => state.scriptsFilter.includes(key))
+    .filter(key => state.scripts_filter.includes(key))
     .forEach(key => {
       state.scriptsArray.push(...state.definitions[key].definition)
     })
@@ -53,10 +62,6 @@ export const updateDefinitionsMenu = (state, value) => {
       })
     })
   state.definitionsMenu.sort()
-}
-
-export const updateMasterDefinition = (state, value) => {
-  state.masterDefinition = value
 }
 
 export const toggleUpdateInProgress = (state, value) => {
