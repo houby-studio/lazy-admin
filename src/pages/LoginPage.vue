@@ -102,7 +102,7 @@
 import { openURL, throttle } from 'quasar'
 import { mapGetters } from 'vuex'
 import GetSavedCredentials from '../statics/pwsh/scripts/Get-SavedCredentials'
-import EnterPSSessionWithCredentials from '../statics/pwsh/scripts/Enter-PSSessionWithCredentials'
+import EnterPSSessionWithCredentials from '../statics/pwsh/scripts/New-PSSessionWithCredentials'
 
 export default {
   name: 'LoginPage',
