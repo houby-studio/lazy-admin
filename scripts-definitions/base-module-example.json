@@ -1,6 +1,6 @@
 {
   "base-module-example": {
-    "version": "0.0.2",
+    "version": "0.0.3",
     "icon": "mdi-powershell",
     "displayName": {
       "default": "Base commands",
@@ -73,6 +73,35 @@
         "commandBlock": "Get-Help {{Name}}"
       },
       {
+        "commandName": "Invoke-Command",
+        "icon": "mdi-powershell",
+        "returns": "raw",
+        "friendlyName": {
+          "default": "Run PowerShell command",
+          "en-us": "Run PowerShell command",
+          "cs-cz": "Spustit PowerShell příkaz"
+        },
+        "description": {
+          "default": "Invokes command as you wrote it without further changes.",
+          "en-us": "Invokes command as you wrote it without further changes.",
+          "cs-cz": "Spustí příkaz přesně jak jste jej zadal, bez dalších úprav."
+        },
+        "parameters": [
+          {
+            "parameter": "ScriptBlock",
+            "format": "{{ComputerName}}",
+            "required": true,
+            "type": "autogrow",
+            "hint": {
+              "default": "Supply name of the computer",
+              "en-us": "Supply name of the computer",
+              "cs-cz": "Zadejte název počítače"
+            }
+          }
+        ],
+        "commandBlock": "{{ScriptBlock}}"
+      },
+      {
         "commandName": "Start-Process",
         "icon": "mdi-powershell",
         "returns": "raw",
@@ -87,7 +116,7 @@
           "cs-cz": "Otevře nový PowerShell terminál v administrátorském kontextu."
         },
         "parameters": [],
-        "commandBlock": "Start-Process powershell.exe -WindowStyle Hidden -Credential $CredentialObject -ArgumentList '-NoProfile -Command &{Start-Process powershell.exe -Verb runas}'"
+        "commandBlock": "Start-Process powershell.exe -WindowStyle Hidden -ArgumentList '-NoProfile -Command &{Start-Process powershell.exe -Verb runas}'"
       }
     ]
   }

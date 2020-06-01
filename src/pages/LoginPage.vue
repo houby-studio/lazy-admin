@@ -186,8 +186,8 @@ export default {
               this.$pwsh.addCommand(`if (Get-Command New-StoredCredential -ErrorAction SilentlyContinue) {New-StoredCredential -Target 'Lazy Admin' -UserName '${this.username}' -Password '${this.password}' -Comment 'Administrator credentials for Lazy Admin Utility.' -Type Generic -Persist LocalMachine | Out-Null}`)
               this.$pwsh.invoke()
             }
-            this.$pwsh.addCommand('$OutputEncoding = [System.Console]::OutputEncoding = [System.Console]::InputEncoding = [System.Text.Encoding]::UTF8; $PSDefaultParameterValues[\'*:Encoding\'] = \'utf8\'')
-            this.$pwsh.invoke()
+            // this.$pwsh.addCommand('$OutputEncoding = [System.Console]::OutputEncoding = [System.Console]::InputEncoding = [System.Text.Encoding]::UTF8; $PSDefaultParameterValues[\'*:Encoding\'] = \'utf8\'')
+            // this.$pwsh.invoke()
             this.$router.push({ path: '/scripts' })
           })
         }
