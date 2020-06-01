@@ -32,7 +32,7 @@ const defUpdater = {
   },
   downloadDefinitions (updateUrl, done) {
     // Resolve URL and attempt to obtain definitions file
-    axios.get(updateUrl).then(result => {
+    axios.get(`${updateUrl}?date=${new Date().getTime()}`).then(result => {
       return done(null, result)
     }).catch(e => {
       e.url = updateUrl

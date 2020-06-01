@@ -89,13 +89,12 @@
         "parameters": [
           {
             "parameter": "ScriptBlock",
-            "format": "{{ComputerName}}",
             "required": true,
-            "type": "autogrow",
+            "type": "textarea",
             "hint": {
-              "default": "Supply name of the computer",
-              "en-us": "Supply name of the computer",
-              "cs-cz": "Zadejte název počítače"
+              "default": "Insert full command to execute",
+              "en-us": "Insert full command to execute",
+              "cs-cz": "Zadejte celý příkaz ke spuštění"
             }
           }
         ],
