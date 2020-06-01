@@ -145,10 +145,10 @@ export default {
       // Invoke function with either credential object or username and password
       if (this.credentialsSaved) {
         console.log(`Creating new PowerShell session with saved credentials for user "${this.username}".`)
-        this.$pwsh.addCommand(`Enter-PSSessionWithCredentials -Credential`)
+        this.$pwsh.addCommand(`New-PSSessionWithCredentials -Credential`)
       } else {
         console.log(`Creating new PowerShell session with supplied credentials for user "${this.username}".`)
-        this.$pwsh.addCommand(`Enter-PSSessionWithCredentials -Username "${this.username}" -Password "${this.password}"`)
+        this.$pwsh.addCommand(`New-PSSessionWithCredentials -Username "${this.username}" -Password "${this.password}"`)
       }
       this.$pwsh.invoke().then(output => {
         // console.log(output)
@@ -178,18 +178,14 @@ export default {
           })
         } else {
           console.log(data.output) // Should write 'New Powershell session created succesfully.' from PS Function output
-          // Session created, add Session to variable so we can access it anytime
-          this.$pwsh.addCommand(`$LazyAdminSession = (Get-PSSession -Name 'LazyAdminSession')[0]`)
-          this.$pwsh.invoke().then(output => {
-            // Route to main screen
-            if (!this.credentialsSaved) {
-              this.$pwsh.addCommand(`if (Get-Command New-StoredCredential -ErrorAction SilentlyContinue) {New-StoredCredential -Target 'Lazy Admin' -UserName '${this.username}' -Password '${this.password}' -Comment 'Administrator credentials for Lazy Admin Utility.' -Type Generic -Persist LocalMachine | Out-Null}`)
-              this.$pwsh.invoke()
-            }
-            // this.$pwsh.addCommand('$OutputEncoding = [System.Console]::OutputEncoding = [System.Console]::InputEncoding = [System.Text.Encoding]::UTF8; $PSDefaultParameterValues[\'*:Encoding\'] = \'utf8\'')
-            // this.$pwsh.invoke()
-            this.$router.push({ path: '/scripts' })
-          })
+          // Route to main screen
+          if (!this.credentialsSaved) {
+            this.$pwsh.addCommand(`if (Get-Command New-StoredCredential -ErrorAction SilentlyContinue) {New-StoredCredential -Target 'Lazy Admin' -UserName '${this.username}' -Password '${this.password}' -Comment 'Administrator credentials for Lazy Admin Utility.' -Type Generic -Persist LocalMachine | Out-Null}`)
+            this.$pwsh.invoke()
+          }
+          // this.$pwsh.addCommand('$OutputEncoding = [System.Console]::OutputEncoding = [System.Console]::InputEncoding = [System.Text.Encoding]::UTF8; $PSDefaultParameterValues[\'*:Encoding\'] = \'utf8\'')
+          // this.$pwsh.invoke()
+          this.$router.push({ path: '/scripts' })
         }
       })
     }

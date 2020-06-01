@@ -401,49 +401,55 @@ export default {
       }
       this.$q.loading.show()
       // TODO: Save command to history
-      this.$pwsh.addCommand(resultCommand)
-      this.$pwsh.invoke().then(output => {
-        //  Code block to handle PowerShell return data
-        let data
-        let params
-        let dataArray = []
-        try {
-          // Cast data to JSON, if this fails, display data as raw output
-          data = JSON.parse(output)
+      this.$pwsh.clear().then(() => {
+        if (this.currentCommand.insidePsSession) {
+          this.$pwsh.addCommand(`Invoke-Command -Session $Global:LazyAdminPSSession -ScriptBlock {${resultCommand}}`)
+        } else {
+          this.$pwsh.addCommand(resultCommand)
+        }
+        this.$pwsh.invoke().then(output => {
+          //  Code block to handle PowerShell return data
+          let data
+          let params
+          let dataArray = []
           try {
-            params = Object.keys(data[0]) // Get param names from array
-            dataArray.push(...data)
+            // Cast data to JSON, if this fails, display data as raw output
+            data = JSON.parse(output)
+            try {
+              params = Object.keys(data[0]) // Get param names from array
+              dataArray.push(...data)
+            } catch (error) {
+              //  If array of objects fails, assume it is single object
+              params = Object.keys(data) // Get param names from single object
+              dataArray.push(data)
+            }
+            this.results = {
+              error: params.error,
+              returnType: 'object',
+              params: params,
+              output: dataArray
+            }
           } catch (error) {
-            //  If array of objects fails, assume it is single object
-            params = Object.keys(data) // Get param names from single object
-            dataArray.push(data)
+            // Result was not an array of objects or single object. Console returned error, additional text or that's how command was written.
+            this.results = {
+              error: this.currentCommand.returns !== 'raw', // If command should return raw, it is not an error (or there is no way to tell)
+              returnType: 'raw',
+              output: output
+            }
           }
+          this.displayResultsDiag = true
+          this.$q.loading.hide()
+        }).catch(error => {
+          // If PowerShell itself runs into problem and throws, catch and display error as raw output.
+          console.log(error)
           this.results = {
-            error: params.error,
-            returnType: 'object',
-            params: params,
-            output: dataArray
-          }
-        } catch (error) {
-          // Result was not an array of objects or single object. Console returned error, additional text or that's how command was written.
-          this.results = {
-            error: this.currentCommand.returns !== 'raw', // If command should return raw, it is not an error (or there is no way to tell)
+            error: true,
             returnType: 'raw',
-            output: output
+            output: error
           }
-        }
-        this.displayResultsDiag = true
-        this.$q.loading.hide()
-      }).catch(error => {
-        // If PowerShell itself runs into problem and throws, catch and display error as raw output.
-        console.log(error)
-        this.results = {
-          error: true,
-          returnType: 'raw',
-          output: error
-        }
-        this.displayResultsDiag = true
-        this.$q.loading.hide()
+          this.displayResultsDiag = true
+          this.$q.loading.hide()
+        })
       })
     }
   }

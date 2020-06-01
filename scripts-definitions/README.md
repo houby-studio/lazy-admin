@@ -53,9 +53,9 @@ All the magic happens here. Detailed explanation can be found on [wiki](https://
 
 Possible values for definitions file:
 
-* **unique-definitions-key**: Unique name, preferably kebab-case, but is really up to you, just don't break javascript, various functions access specific definitions module by associative array names.  
-**IMPORTANT**: All other keys are children of this one.
-* version: Very important, Lazy Admin compares this value when checking for updates. So when you release newer version of scripts definition file, you have to increment version to trigger update.
+* **unique-definitions-key**: Unique name, preferably kebab-case, but is really up to you, just don't break javascript, various functions access specific definitions module by associative array names. 
+**IMPORTANT**: All other keys are children of this one
+* version: Very important, Lazy Admin compares this value when checking for updates. So when you release newer version of scripts definition file, you have to increment version to trigger update
 * icon: name of icon, if omitted, powershell icon is used
 * displayName: provided in languages you want to support, this is what user sees on side panel when filtering commands based on definitions/modules
 * description: provided in languages you want to support, this is what user sees on side panel below displayName when filtering commands based on definitions/modules
@@ -64,13 +64,14 @@ Possible values for definitions file:
     * type: defines what type of command is it. Determines how application should treat it
     * icon: name of icon, if omitted, powershell icon is used
     * returns: type of the result, which application should expect after command is executed
+    * insidePsSession: whether command should be run in Remote PSSession or locally
     * friendlyName: provided in languages you want to support, this is displayed to user to get better idea what the command might do
     * description: provided in languages you want to support, this is displayed to user to best describe what the command might do
-    * parameters: array of parameters, which user is supposed to fill.
+    * parameters: array of parameters, which user is supposed to fill
     * commandBlock: String containing Cmdlet or function and parameters enclosed in {{ double curly braces }}
     * workflow: array of commands, when you need to run multiple commands sequentially, passing results from previous ones or asking for another user input in between
         * passedParameters: array of parameters obtained from previous command, referred by the property name
-        * parameters: array of parameters, which user is supposed to fill.
+        * parameters: array of parameters, which user is supposed to fill
         * commandBlock: String containing Cmdlet or function and parameters enclosed in {{ double curly braces }}
         * passthru: display table of results and allow user to choose single or multiple results to be passed to another command, similar to `Out-GridView -Passthru`
         * confirm: before proceeding to another command, ask user for confirmation
@@ -96,6 +97,7 @@ This is only example, there are many possibilities how to write definitions.
         "type": "{type}",
         "icon": "{icon-name}",
         "returns": "{returnType}",
+        "insidePsSession": {Boolean},
         "friendlyName": "{friendlyName}",
         "description": "{Description}",
         "parameters": [

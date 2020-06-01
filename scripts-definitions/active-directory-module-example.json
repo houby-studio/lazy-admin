@@ -1,6 +1,6 @@
 {
   "active-directory-module-example": {
-    "version": "0.0.4",
+    "version": "0.0.5",
     "icon": "mdi-file-tree",
     "displayName": {
       "default": "Active Directory commands",
@@ -23,6 +23,7 @@
         "commandName": "Get-ADUser",
         "icon": "mdi-account",
         "returns": "PSObject",
+        "insidePsSession": true,
         "friendlyName": {
           "default": "Get AD user's information",
           "en-us": "Get AD user's information",
