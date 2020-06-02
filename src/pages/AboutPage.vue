@@ -116,35 +116,24 @@ export default {
     return {
       updateButtonDisabled: false, // Handles Update/Restart button availability
       appVersionStatus: '', // possible values: '', 'checking', 'restart', 'uptodate'
-      definitionsVersionStatus: '', // possible values: '', 'checking', 'uptodate'
-      definitionsVersionProgress: '' // TODO: Could this possibly hold any value?
+      definitionsVersionStatus: '' // possible values: '', 'checking', 'uptodate'
     }
   },
   computed: {
-    ...mapGetters('lazystore', ['menuEntries']),
+    ...mapGetters('lazystore', ['getLanguage', 'menuEntries', 'getMasterDefinition', 'getUpdateInProgress', 'getUpdateProgress']),
     lazyVersion: {
       get () {
         return require('electron').remote.app.getVersion()
       }
     },
-    masterDefinitionVersion: {
-      get () {
-        return this.$store.state.lazystore.master_definition.version
-      }
+    masterDefinitionVersion: function () {
+      return this.getMasterDefinition.version
     },
-    language: {
-      get () {
-        // retrieve language preference from store
-        return this.$store.state.lazystore.language
-      }
+    language: function () {
+      return this.getLanguage
     },
-    updateInProgress: {
-      get () {
-        return this.$store.state.lazystore.updateInProgress
-      },
-      set () {
-        this.$store.commit('lazystore/toggleUpdateInProgress')
-      }
+    updateInProgress: function () {
+      return this.getUpdateInProgress
     },
     definitionsUpdateInProgress: {
       get () {
@@ -164,10 +153,10 @@ export default {
     },
     updateProgress: {
       get () {
-        return this.$store.state.lazystore.updateProgress
+        return this.getUpdateProgress
       },
       set (val) {
-        this.$store.commit('lazystore/updateUpdateProgress', val)
+        this.$store.dispatch('lazystore/setUpdateProgress', val)
       }
     }
   },
@@ -182,7 +171,13 @@ export default {
         this.$autoUpdater.checkForUpdatesAndNotify()
         // Definitions
         this.definitionsVersionStatus = 'checking'
-        this.$defUpdater.checkForUpdates(this)
+        this.$parent.updateMasterDefinition(function (err, result) {
+          if (err) {
+            // TODO: handle err
+            return err
+          }
+          this.$parent.updateDefinitions()
+        })
         // Log
         console.log('Check for updates initialized by user.')
       } else {
@@ -221,13 +216,13 @@ export default {
       this.updateButtonDisabled = false
     })
 
-    // Master definitions: Check when update is found
-    this.$defUpdater.on('update-check-done', () => {
+    // Master definitions: Check when update is found // TODO: REMOVE REPLACE
+    this.$utils.on('update-check-done', () => {
       this.definitionsVersionStatus = 'uptodate'
     })
 
-    // Master definitions: If fail, stop checking
-    this.$defUpdater.on('update-check-error', () => {
+    // Master definitions: If fail, stop checking // TODO: REMOVE REPLACE
+    this.$utils.on('update-check-error', () => {
       this.definitionsVersionStatus = 'error'
     })
   }

@@ -18,14 +18,24 @@ export function getDefinitions (state) {
   return state.definitions
 }
 
+export function getUpdateInProgress (state) {
+  return state.update_in_progress
+}
+
+export function getUpdateProgress (state) {
+  return state.update_progress
+}
+
 export function getScriptsArray (state) {
   try {
     return Object.entries(state.definitions)
       .filter(([key, value]) => state.scripts_filter.includes(key))
       .map(function ([key, value]) { return value.definition })
       .flat(1)
+      .sort()
   } catch {
     // no entries
+    console.log('Cannot build scripts entries.')
   }
 }
 

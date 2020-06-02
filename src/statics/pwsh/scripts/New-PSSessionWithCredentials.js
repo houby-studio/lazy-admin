@@ -49,7 +49,12 @@ function New-PSSessionWithCredentials {
     # Set encoding
     $OutputEncoding = [System.Console]::OutputEncoding = [System.Console]::InputEncoding = [System.Text.Encoding]::UTF8
     $PSDefaultParameterValues['*:Encoding'] = 'utf8'
-    $Global:LazyAdminPSSession = New-PSSession -Credential $Global:CredentialObject -Name 'LazyAdminSession' -ErrorAction Stop
+    # Try to create new PSSession with Credssp, which allows for credential delegation to within session, otherwise, fallback to standard authentication method
+    try {
+      $Global:LazyAdminPSSession = New-PSSession -Credential $Global:CredentialObject -Name 'LazyAdminSession' -Authentication Credssp -ErrorAction Stop
+    } catch {
+      $Global:LazyAdminPSSession = New-PSSession -Credential $Global:CredentialObject -Name 'LazyAdminSession' -ErrorAction Stop
+    }
     return [PSCustomObject]@{
       error      = $false;
       returnCode = 10021001;

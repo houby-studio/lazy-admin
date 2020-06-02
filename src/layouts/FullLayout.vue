@@ -379,7 +379,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('lazystore', ['scriptsArray', 'menuEntries', 'getSearch', 'getMasterDefinition', 'getDefinitions']),
+    ...mapGetters('lazystore', ['getLanguage', 'scriptsArray', 'menuEntries', 'getSearch', 'getMasterDefinition', 'getDefinitions']),
     animateToolBar: {
       get () {
         // Toolbar starts as hidden (false state), on 'created', animation 'animateToolBar' starts transform and displays toolbar
@@ -394,11 +394,8 @@ export default {
         this.$store.dispatch('lazystore/setSearch', val)
       }
     },
-    language: {
-      get () {
-        // retrieve language preference from store
-        return this.$store.state.lazystore.language
-      }
+    language: function () {
+      return this.getLanguage
     },
     masterDefinition: {
       get () {
@@ -421,7 +418,7 @@ export default {
         return this.$store.state.lazystore.updateInProgress
       },
       set (val) {
-        this.$store.commit('lazystore/toggleUpdateInProgress', val)
+        this.$store.dispatch('lazystore/setUpdateInProgress', val)
       }
     },
     definitionsUpdateInProgress: {
@@ -445,7 +442,7 @@ export default {
         return this.$store.state.lazystore.updateProgress
       },
       set (val) {
-        this.$store.commit('lazystore/updateUpdateProgress', val)
+        this.$store.dispatch('lazystore/setUpdateProgress', val)
       }
     }
   },
@@ -489,14 +486,14 @@ export default {
     updateMasterDefinition () {
       console.debug('Update of master definition started.')
       // Read update URL from registry
-      this.$defUpdater.getRegUrl((error, masterDefinitionUrl) => {
+      this.$utils.getRegUrl((error, masterDefinitionUrl) => {
         if (error) {
           console.error(error)
           return
         }
         console.debug('Found master definition URL: ', masterDefinitionUrl)
         // Download JSON definition from URL
-        this.$defUpdater.downloadDefinitions(masterDefinitionUrl, (error, masterDefinitionResponse) => {
+        this.$utils.downloadDefinitions(masterDefinitionUrl, (error, masterDefinitionResponse) => {
           if (error) {
             console.error(error)
             return
@@ -527,7 +524,7 @@ export default {
       console.log('Manual update of script definitions started')
       for (let updateUrl of this.masterDefinition.definitionsUrl) {
         console.debug(`Downloading definitions from URL: ${updateUrl}`)
-        this.$defUpdater.downloadDefinitions(updateUrl, (error, definitionsResponse) => {
+        this.$utils.downloadDefinitions(updateUrl, (error, definitionsResponse) => {
           if (error) {
             console.log(error)
             return
@@ -600,15 +597,15 @@ export default {
     this.$autoUpdater.checkForUpdatesAndNotify() // We could prevent duplicate downloads if we put this in if-condition, but closing app unexpectedly could lead to bricking updates forever
     // Check for definitions updates delayed
     this.definitionsUpdateInProgress = true
-    // setTimeout(() => this.$defUpdater.checkForUpdates(this), 5000) // enable wtf
+    // setTimeout(() => this.$utils.checkForUpdates(this), 5000) // enable wtf
     // When master definition update was successful, start updating modules
-    // this.$defUpdater.on('update-check-done', (updateStatus) => {
+    // this.$utils.on('update-check-done', (updateStatus) => {
     //   console.log(this.definitions)
-    //   setTimeout(() => this.$defUpdater.updateDefinitionsAndModules(this, updateStatus), 5000)
+    //   setTimeout(() => this.$utils.updateDefinitionsAndModules(this, updateStatus), 5000)
     //   this.definitionsUpdateInProgress = false
     // })
     // When master definition update errored, notify error
-    // this.$defUpdater.on('update-check-error', () => {
+    // this.$utils.on('update-check-error', () => {
     //   this.$q.notify({
     //     type: 'negative',
     //     icon: 'error',

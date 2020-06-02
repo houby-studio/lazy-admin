@@ -39,3 +39,13 @@ export async function setDefinitions ({ commit }, definitions) {
 export async function clearDefinitions ({ commit }) {
   commit('REMOVE_DEFINITIONS')
 }
+
+// Commit mutation to set update in progress state - Accessed in About.vue
+export async function setUpdateInProgress ({ commit }, updateInProgress) {
+  commit('SET_UPDATEINPROGRESS', updateInProgress)
+}
+
+// Commit mutation to set scripts definitions - Accessed in About.vue
+export async function setUpdateProgress ({ commit }, updateProgress) {
+  commit('SET_UPDATEPROGRESS', updateProgress)
+}

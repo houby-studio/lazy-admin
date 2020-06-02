@@ -27,6 +27,10 @@ export const REMOVE_DEFINITIONS = (state) => {
   state.definitions = {}
 }
 
+export const SET_UPDATEDATE = (state, value) => {
+  state.update_date = value
+}
+
 // Iterate through 'definitions' keys, add script definitions from objects included in filter. This array is displayed in data table on Scripts page.
 export const updateScriptsArray = (state, value) => {
   state.scriptsArray = []
@@ -64,8 +68,8 @@ export const updateDefinitionsMenu = (state, value) => {
   state.definitionsMenu.sort()
 }
 
-export const toggleUpdateInProgress = (state, value) => {
-  state.updateInProgress = value
+export const SET_UPDATEINPROGRESS = (state, value) => {
+  state.update_in_progress = value
 }
 
 export const toggleDefinitionsUpdateInProgress = (state, value) => {
@@ -76,6 +80,6 @@ export const toggleRestartRequired = (state, value) => {
   state.restartRequired = value
 }
 
-export const updateUpdateProgress = (state, value) => {
-  state.updateProgress = value
+export const SET_UPDATEPROGRESS = (state, value) => {
+  state.update_progress = value
 }

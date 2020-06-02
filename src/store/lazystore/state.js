@@ -9,9 +9,10 @@ export default function () {
     // definitionsMenu: [], // Key component containing script definitions in their respective module objects - MOVE TO GETTER
     custom_definitions: [], // Contains user defined script definitions
     favorite_definitions: [], // Definitions favorited by user
-    updateInProgress: false, // Is application update in progress?
+    update_date: '', // Date of last update, do not automatically update more than once a day
+    update_in_progress: false, // Is application update in progress?
     definitionsUpdateInProgress: false, // Are definitions update in progress?
     restartRequired: false, // Is application restart required? (To install updates)
-    updateProgress: '' // Update Progress message
+    update_progress: '' // Update Progress message
   }
 }
