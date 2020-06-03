@@ -87,6 +87,9 @@ jobs:
     - run: yarn global add @quasar/cli
     - run: yarn
     - run: yarn release
+      env: 
+        CSC_LINK: ${{ secrets.CSC_LINK }}
+        CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
     - run: .\vcn notarize --public .\dist\electron\Packaged\$((Get-Item -Path ".\dist\electron\Packaged\Lazy Admin Setup *.exe").Name)
       if: ${{ steps.autotag.outputs.tagname }} # if no tag was created, skip notarizing build
       env:
