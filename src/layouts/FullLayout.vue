@@ -379,7 +379,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('lazystore', ['getLanguage', 'scriptsArray', 'menuEntries', 'getSearch', 'getMasterDefinition', 'getDefinitions']),
+    ...mapGetters('lazystore', ['getLanguage', 'scriptsArray', 'menuEntries', 'getSearch', 'getMasterDefinition', 'getDefinitions', 'getDefinitionsUpdateInProgress', 'getRestartRequired', 'getUpdateInProgress', 'getUpdateProgress']),
     animateToolBar: {
       get () {
         // Toolbar starts as hidden (false state), on 'created', animation 'animateToolBar' starts transform and displays toolbar
@@ -415,7 +415,7 @@ export default {
     },
     updateInProgress: {
       get () {
-        return this.$store.state.lazystore.updateInProgress
+        return this.getUpdateInProgress
       },
       set (val) {
         this.$store.dispatch('lazystore/setUpdateInProgress', val)
@@ -423,23 +423,23 @@ export default {
     },
     definitionsUpdateInProgress: {
       get () {
-        return this.$store.state.lazystore.definitionsUpdateInProgress
+        return this.getDefinitionsUpdateInProgress
       },
       set (val) {
-        this.$store.commit('lazystore/toggleDefinitionsUpdateInProgress', val)
+        this.$store.dispatch('lazystore/setDefinitionsUpdateInProgress', val)
       }
     },
     restartRequired: {
       get () {
-        return this.$store.state.lazystore.restartRequired
+        return this.getRestartRequired
       },
       set (val) {
-        this.$store.commit('lazystore/toggleRestartRequired', val)
+        this.$store.dispatch('lazystore/setRestartRequired', val)
       }
     },
     updateProgress: {
       get () {
-        return this.$store.state.lazystore.updateProgress
+        return this.getUpdateProgress
       },
       set (val) {
         this.$store.dispatch('lazystore/setUpdateProgress', val)
@@ -472,7 +472,7 @@ export default {
     },
 
     showAll () {
-      this.$store.dispatch('lazystore/setScriptsFilter', Object.keys(this.$store.state.lazystore.definitions)) // Move keys getter to actions
+      this.$store.dispatch('lazystore/setScriptsFilter', Object.keys(this.getDefinitions)) // Move keys getter to actions
     },
 
     filterMenu (name) {
@@ -597,26 +597,6 @@ export default {
     this.$autoUpdater.checkForUpdatesAndNotify() // We could prevent duplicate downloads if we put this in if-condition, but closing app unexpectedly could lead to bricking updates forever
     // Check for definitions updates delayed
     this.definitionsUpdateInProgress = true
-    // setTimeout(() => this.$utils.checkForUpdates(this), 5000) // enable wtf
-    // When master definition update was successful, start updating modules
-    // this.$utils.on('update-check-done', (updateStatus) => {
-    //   console.log(this.definitions)
-    //   setTimeout(() => this.$utils.updateDefinitionsAndModules(this, updateStatus), 5000)
-    //   this.definitionsUpdateInProgress = false
-    // })
-    // When master definition update errored, notify error
-    // this.$utils.on('update-check-error', () => {
-    //   this.$q.notify({
-    //     type: 'negative',
-    //     icon: 'error',
-    //     timeout: 5000,
-    //     message: this.$t('definitionsError'),
-    //     actions: [
-    //       { label: this.$t('dismiss'), color: 'white' }
-    //     ]
-    //   })
-    //   this.definitionsUpdateInProgress = false
-    // })
     // Register event listener, which triggers when update is found
     this.$autoUpdater.on('update-available', (updateInfo) => {
       console.log(`Found new application release: Version ${updateInfo.version}; Release date ${updateInfo.releaseDate}; Setup size ${(updateInfo.files[0].size / 1024 / 1024).toFixed(2)}MB. Download started.`)
@@ -635,6 +615,24 @@ export default {
       // Change spinner to 'check' button
       this.updateInProgress = false
       console.log('Lazy Admin application is already latest version.')
+    })
+
+    // LazyAdminApp: Register event listener to show error message when error occcurs during update
+    this.$autoUpdater.on('error', (error) => {
+      // Change spinner to 'check' button
+      this.updateInProgress = false
+      console.log('Could not download Lazy Admin update, error message:')
+      console.error(error)
+      this.$q.notify({
+        timeout: 2500,
+        multiLine: false,
+        type: 'negative',
+        icon: 'error',
+        message: this.$t('updateError'),
+        actions: [
+          { label: this.$t('dismiss'), color: 'white' }
+        ]
+      })
     })
 
     // Register event listener, which triggers when update is downloaded

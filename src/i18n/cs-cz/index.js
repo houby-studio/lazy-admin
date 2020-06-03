@@ -35,7 +35,7 @@ export default {
   copied: 'Zkopírováno do schránky', // Used in: ScriptsPage.vue
   exported: 'Exportováno', // Used in: ScriptsPage.vue
   updateFound: 'Stahování nejnovější verze aplikace Lazy Admin.', // Used in: FullLayout.vue
-  // updateNotFound: 'Již máte nejnovější verzi aplikace Lazy Admin.',
+  updateError: 'Nepodařilo se stáhnout aktualizaci aplikace Lazy Admin.', // Used in: FullLayout.vue
   definitionsError: 'Nepodařilo se zkontrolovat aktualizace hlavních definic.', // Used in: FullLayout.vue
   downloadCompleted: 'Stahování dokončeno, zavřete aplikaci ke spuštění aktualizace.', // Used in: FullLayout.vue
   of: 'z', // Used in: FullLayout.vue

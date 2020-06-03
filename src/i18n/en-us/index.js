@@ -35,7 +35,7 @@ export default {
   copied: 'Copied to clipboard', // Used in: ScriptsPage.vue
   exported: 'Exported', // Used in: ScriptsPage.vue
   updateFound: 'Downloading the latest version of Lazy Admin.', // Used in: FullLayout.vue
-  // updateNotFound: 'Lazy Admin is up to date.',
+  updateError: 'Could not download update for Lazy Admin application.', // Used in: FullLayout.vue
   definitionsError: 'Could not check master definitions updates.', // Used in: FullLayout.vue
   downloadCompleted: 'Download completed, close the application to start the update.', // Used in: FullLayout.vue
   of: 'of', // Used in: FullLayout.vue

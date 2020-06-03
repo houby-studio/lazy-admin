@@ -22,10 +22,19 @@ export function getUpdateInProgress (state) {
   return state.update_in_progress
 }
 
+export function getDefinitionsUpdateInProgress (state) {
+  return state.definitions_update_in_progress
+}
+
+export function getRestartRequired (state) {
+  return state.restart_required
+}
+
 export function getUpdateProgress (state) {
   return state.update_progress
 }
 
+// Dynamically build array of scripts to display in ScriptsPage.vue page
 export function getScriptsArray (state) {
   try {
     return Object.entries(state.definitions)
@@ -34,11 +43,11 @@ export function getScriptsArray (state) {
       .flat(1)
       .sort()
   } catch {
-    // no entries
-    console.log('Cannot build scripts entries.')
+    console.error('Cannot build scripts entries.')
   }
 }
 
+// Dynamically menu entries array of modules to display in FullLayout.vue and AboutPage.vue
 export function menuEntries (state) {
   try {
     return Object.entries(state.definitions)
@@ -52,7 +61,6 @@ export function menuEntries (state) {
         }
       })
   } catch {
-    // no entries
-    console.log('Cannot build menu entries.')
+    console.error('Cannot build menu entries.')
   }
 }

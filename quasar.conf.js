@@ -170,6 +170,7 @@ module.exports = function (ctx) {
           icon: 'src-electron/icons/icon.ico',
           requestedExecutionLevel: 'highestAvailable',
           publish: 'github'
+          // verifyUpdateCodeSignature: false
         },
         nsis: {
           perMachine: true,

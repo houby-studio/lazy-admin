@@ -289,29 +289,19 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('lazystore', ['getScriptsArray']),
-    searchText: {
-      get () {
-        // retrieve search text from store
-        return this.$store.state.lazystore.search
-      }
+    ...mapGetters('lazystore', ['getLanguage', 'getSearch', 'getScriptsArray', 'getDefinitions']),
+    searchText: function () {
+      return this.getSearch
     },
-    language: {
-      get () {
-        // retrieve language preference from store
-        return this.$store.state.lazystore.language
-      }
+    language: function () {
+      return this.getLanguage
     },
-    scriptsArray: {
-      get () {
-        // Filter definitions and spread to single array to display in scripts page data table
-        return this.getScriptsArray
-      }
+    scriptsArray: function () {
+      // Filter definitions and spread to single array to display in scripts page data table
+      return this.getScriptsArray
     },
-    definitions: {
-      get () {
-        return this.$store.state.lazystore.definitions
-      }
+    definitions: function () {
+      return this.getDefinitions
     },
     resultsColumns: {
       get () {

@@ -31,53 +31,16 @@ export const SET_UPDATEDATE = (state, value) => {
   state.update_date = value
 }
 
-// Iterate through 'definitions' keys, add script definitions from objects included in filter. This array is displayed in data table on Scripts page.
-export const updateScriptsArray = (state, value) => {
-  state.scriptsArray = []
-  Object.keys(state.definitions)
-    .filter(key => state.scripts_filter.includes(key))
-    .forEach(key => {
-      state.scriptsArray.push(...state.definitions[key].definition)
-    })
-}
-
-// When new master definition file is found, clear array and fill with new definitions downloaded from URLs.
-export const clearDefinitions = (state) => {
-  state.definitions = []
-}
-
-// When new definition file is found, update said definition key.
-export const updateDefinitions = (state, value) => {
-  let keyName = Object.keys(value)[0]
-  state.definitions[keyName] = value[keyName]
-}
-
-// Iterate through 'definitions' keys and create menu entries for sidebar.
-export const updateDefinitionsMenu = (state, value) => {
-  state.definitionsMenu = []
-  Object.keys(state.definitions)
-    .forEach(key => {
-      state.definitionsMenu.push({
-        name: key,
-        displayName: state.definitions[key].displayName,
-        description: state.definitions[key].description,
-        version: state.definitions[key].version,
-        icon: state.definitions[key].icon ? state.definitions[key].icon : 'mdi-powershell'
-      })
-    })
-  state.definitionsMenu.sort()
-}
-
 export const SET_UPDATEINPROGRESS = (state, value) => {
   state.update_in_progress = value
 }
 
-export const toggleDefinitionsUpdateInProgress = (state, value) => {
-  state.definitionsUpdateInProgress = value
+export const SET_DEFINITIONSUPDATEINPROGRESS = (state, value) => {
+  state.definitions_update_in_progress = value
 }
 
-export const toggleRestartRequired = (state, value) => {
-  state.restartRequired = value
+export const SET_RESTARTREQUIRED = (state, value) => {
+  state.restart_required = value
 }
 
 export const SET_UPDATEPROGRESS = (state, value) => {

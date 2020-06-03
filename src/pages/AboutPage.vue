@@ -29,6 +29,12 @@
                   color="white"
                   size="1.1rem"
                 />
+                <q-icon
+                  v-if="appVersionStatus === 'error'"
+                  name="error"
+                  color="white"
+                  size="1.1rem"
+                />
                 <q-spinner
                   v-else-if="appVersionStatus === 'checking'"
                   color="primary"
@@ -115,12 +121,12 @@ export default {
   data () {
     return {
       updateButtonDisabled: false, // Handles Update/Restart button availability
-      appVersionStatus: '', // possible values: '', 'checking', 'restart', 'uptodate'
+      appVersionStatus: '', // possible values: '', 'checking', 'restart', 'uptodate', 'error'
       definitionsVersionStatus: '' // possible values: '', 'checking', 'uptodate'
     }
   },
   computed: {
-    ...mapGetters('lazystore', ['getLanguage', 'menuEntries', 'getMasterDefinition', 'getUpdateInProgress', 'getUpdateProgress']),
+    ...mapGetters('lazystore', ['getLanguage', 'menuEntries', 'getMasterDefinition', 'getUpdateInProgress', 'getUpdateProgress', 'getDefinitionsUpdateInProgress', 'getRestartRequired']),
     lazyVersion: {
       get () {
         return require('electron').remote.app.getVersion()
@@ -137,18 +143,18 @@ export default {
     },
     definitionsUpdateInProgress: {
       get () {
-        return this.$store.state.lazystore.definitionsUpdateInProgress
+        return this.getDefinitionsUpdateInProgress
       },
       set (val) {
-        this.$store.commit('lazystore/toggleDefinitionsUpdateInProgress', val)
+        this.$store.dispatch('lazystore/setDefinitionsUpdateInProgress', val)
       }
     },
     restartRequired: {
       get () {
-        return this.$store.state.lazystore.restartRequired
+        return this.getRestartRequired
       },
-      set () {
-        this.$store.commit('lazystore/toggleRestartRequired')
+      set (val) {
+        this.$store.dispatch('lazystore/setRestartRequired', val)
       }
     },
     updateProgress: {
@@ -213,6 +219,13 @@ export default {
       // Change spinner to 'check' button
       this.appVersionStatus = 'uptodate'
       // Update not found, enable 'Update' button again
+      this.updateButtonDisabled = false
+    })
+
+    // LazyAdminApp: Register event listener to show error when error occurs
+    this.$autoUpdater.on('error', () => {
+      // Change spinner to 'check' button
+      this.appVersionStatus = 'error'
       this.updateButtonDisabled = false
     })
 

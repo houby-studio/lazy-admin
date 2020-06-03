@@ -14,7 +14,7 @@ export default ({ app, store }) => {
   // Set i18n instance on app
   app.i18n = i18n
   // Read saved value from vuex store and load it
-  app.i18n.locale = store.state.lazystore.language
+  app.i18n.locale = store.getters['lazystore/getLanguage']
 }
 
 export { i18n }
