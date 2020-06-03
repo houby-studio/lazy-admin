@@ -169,8 +169,8 @@ module.exports = function (ctx) {
           target: 'nsis',
           icon: 'src-electron/icons/icon.ico',
           requestedExecutionLevel: 'highestAvailable',
-          publish: 'github'
-          // verifyUpdateCodeSignature: false
+          publish: 'github',
+          verifyUpdateCodeSignature: false
         },
         nsis: {
           perMachine: true,
