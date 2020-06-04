@@ -1,6 +1,6 @@
 {
   "base-module-example": {
-    "version": "0.0.4",
+    "version": "0.0.5",
     "icon": "mdi-powershell",
     "displayName": {
       "default": "Base commands",
@@ -53,7 +53,7 @@
             }
           }
         ],
-        "commandBlock": "Invoke-Command {{ComputerName}} -Credential $CredentialObject -ScriptBlock { Get-Disk {{Number}} | Select-Object Number, FriendlyName, OperationalStatus, @{n='Size';e={[math]::Round($_.Size / 1GB)}} | ConvertTo-Json -Compress }"
+        "commandBlock": "Invoke-Command {{ComputerName}} -Credential $Global:CredentialObject -ScriptBlock { Get-Disk {{Number}} | Select-Object Number, FriendlyName, OperationalStatus, @{n='Size';e={[math]::Round($_.Size / 1GB)}} | ConvertTo-Json -Compress }"
       },
       {
         "commandName": "Get-Help",
