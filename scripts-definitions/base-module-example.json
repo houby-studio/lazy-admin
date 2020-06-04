@@ -1,6 +1,6 @@
 {
   "base-module-example": {
-    "version": "0.0.5",
+    "version": "0.0.6",
     "icon": "mdi-powershell",
     "displayName": {
       "default": "Base commands",
@@ -18,7 +18,7 @@
         "type": "simpleCommand",
         "icon": "mdi-harddisk",
         "returns": "PSObject",
-        "insidePsSession": true,
+        "insidePsSession": false,
         "friendlyName": {
           "default": "Get disk information",
           "en-us": "Get disk information",
