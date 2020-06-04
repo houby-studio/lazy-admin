@@ -13,6 +13,21 @@ const utils = {
     // Allow registering of custom event listeners with custom handlers mimicking electron-updater
     definitionsEmitter.on(event, handler)
   },
+  emit: function (event, args) {
+    // Allow registering of custom event listeners with custom handlers mimicking electron-updater
+    definitionsEmitter.emit(event, args)
+  },
+  getDate: function () {
+    let d = new Date(),
+      month = '' + (d.getMonth() + 1),
+      day = '' + d.getDate(),
+      year = d.getFullYear()
+
+    if (month.length < 2) { month = '0' + month }
+    if (day.length < 2) { day = '0' + day }
+
+    return [year, month, day].join('-')
+  },
   getRegUrl (done) {
     // Attempt to retrieve registry value containing script definitions url
     regedit.list('HKLM\\SOFTWARE\\LazyAdmin', function (err, result) {

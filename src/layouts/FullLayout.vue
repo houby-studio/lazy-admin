@@ -324,15 +324,17 @@
                   style="width: 90%"
                   class="q-mb-sm"
                   no-wrap
+                  @click="debugUpdateApplication"
                 />
               </div>
               <div class="col-xs-12 col-sm-6 col-md-3">
                 <q-btn
                   color="primary"
-                  label="-"
+                  label="Clear Update Date"
                   style="width: 90%"
                   class="q-mb-sm"
                   no-wrap
+                  @click="debugClearUpdateDate"
                 />
               </div>
             </div>
@@ -379,7 +381,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('lazystore', ['getLanguage', 'scriptsArray', 'menuEntries', 'getSearch', 'getMasterDefinition', 'getDefinitions', 'getDefinitionsUpdateInProgress', 'getRestartRequired', 'getUpdateInProgress', 'getUpdateProgress']),
+    ...mapGetters('lazystore', ['getLanguage', 'getMenuEntries', 'getSearch', 'getMasterDefinition', 'getDefinitions', 'getDefinitionsUpdateInProgress', 'getRestartRequired', 'getUpdateDate', 'getUpdateInProgress', 'getUpdateProgress']),
     animateToolBar: {
       get () {
         // Toolbar starts as hidden (false state), on 'created', animation 'animateToolBar' starts transform and displays toolbar
@@ -397,6 +399,9 @@ export default {
     language: function () {
       return this.getLanguage
     },
+    menuEntries: function () {
+      return this.getMenuEntries
+    },
     masterDefinition: {
       get () {
         return this.getMasterDefinition
@@ -411,6 +416,14 @@ export default {
       },
       set (val) {
         this.$store.dispatch('lazystore/setMasterDefinition', val)
+      }
+    },
+    updateDate: {
+      get () {
+        return this.getUpdateDate
+      },
+      set (val) {
+        this.$store.dispatch('lazystore/setUpdateDate', val)
       }
     },
     updateInProgress: {
@@ -506,12 +519,15 @@ export default {
                 console.debug(`Current stored version: ${this.masterDefinition.version}, New version: ${masterDefinitionResponse.data.version}`)
                 this.masterDefinition = masterDefinitionResponse.data
                 this.$store.dispatch('lazystore/clearDefinitions')
+                this.$utils.emit('master-check-done', true)
               } else {
                 console.debug('Master definition file is up to date.')
+                this.$utils.emit('master-check-done', false)
               }
             } else {
               console.debug('Master definition does not yet exist, creating.')
               this.masterDefinition = masterDefinitionResponse.data
+              this.$utils.emit('master-check-done', true)
             }
           } else {
             console.error('Did not receive data from Master definition URL response.')
@@ -520,7 +536,7 @@ export default {
       })
     },
 
-    updateDefinitions () {
+    updateDefinitions (newMasterDefinition) {
       console.log('Manual update of script definitions started')
       for (let updateUrl of this.masterDefinition.definitionsUrl) {
         console.debug(`Downloading definitions from URL: ${updateUrl}`)
@@ -533,6 +549,7 @@ export default {
             let definitionsName = Object.keys(definitionsResponse.data)[0]
             console.debug(`Updating script definitions ${definitionsName}`)
             this.$store.dispatch('lazystore/setDefinitions', definitionsResponse.data)
+            if (newMasterDefinition) { this.showAll() }
           } else {
             console.error(`Did not receive data from definition URL ${updateUrl} response.`)
           }
@@ -585,19 +602,27 @@ export default {
     debugUpdateDefinitions () {
       console.log('DEBUG function: Updating scripts definitions.')
       this.updateDefinitions()
+    },
+
+    debugUpdateApplication () {
+      console.log('DEBUG function: Updating Lazy Admin application.')
+      this.$autoUpdater.checkForUpdatesAndNotify()
+    },
+
+    debugClearUpdateDate () {
+      console.log('DEBUG function: Clearing last update date.')
+      this.updateDate = ''
     }
   },
   created: function () {
     // Toolbar starts as hidden (false state), on 'created', animation 'animateToolBar' starts transform and displays toolbar
     this.loadToolBar = true
-    // Check for application updates and download
+    // Set variables for updates
     this.restartRequired = false // Remove potential leftover variable from previous update
     this.updateProgress = '' // Remove potential leftover variable from previous update
     this.updateInProgress = true
-    this.$autoUpdater.checkForUpdatesAndNotify() // We could prevent duplicate downloads if we put this in if-condition, but closing app unexpectedly could lead to bricking updates forever
-    // Check for definitions updates delayed
     this.definitionsUpdateInProgress = true
-    // Register event listener, which triggers when update is found
+    // LazyAdminApp: Register event listener, which triggers when update is found
     this.$autoUpdater.on('update-available', (updateInfo) => {
       console.log(`Found new application release: Version ${updateInfo.version}; Release date ${updateInfo.releaseDate}; Setup size ${(updateInfo.files[0].size / 1024 / 1024).toFixed(2)}MB. Download started.`)
       this.$q.notify({
@@ -656,10 +681,26 @@ export default {
       this.updateProgress = `${(event.transferred / 1024 / 1024).toFixed(2)}MB ${this.$t('of')} ${(event.total / 1024 / 1024).toFixed(2)}MB`
     })
 
-    // Register always listening function for Shift+F12 shortcut to display debug window
+    // Definitions: Register event listener when master definition check is done
+    this.$utils.on('master-check-done', (newMasterDefinition) => {
+      // Master definition check finished, fire definitions update
+      this.updateDefinitions(newMasterDefinition)
+    })
+
+    // Register always listening function for Shift+F11 shortcut to display debug window
     globalShortcut.register('Shift+F11', () => {
       this.showDebugWindow()
     })
+
+    // Start update checks
+    this.$autoUpdater.checkForUpdatesAndNotify() // We could prevent duplicate downloads if we put this in if-condition, but closing app unexpectedly could lead to bricking updates forever
+    if (this.$utils.getDate() === this.updateDate) {
+      console.log('Definitions update already done today, automatic update skipped')
+    } else {
+      this.updateMasterDefinition()
+      console.log('Setting date')
+      this.updateDate = this.$utils.getDate()
+    }
   },
   destroyed: function () {
     // Unregister listening function

@@ -39,6 +39,11 @@ export async function clearDefinitions ({ commit }) {
 }
 
 // Commit mutation to set update in progress state - Accessed in FullLayout.vue
+export async function setUpdateDate ({ commit }, date) {
+  commit('SET_UPDATEDATE', date)
+}
+
+// Commit mutation to set update in progress state - Accessed in FullLayout.vue
 export async function setUpdateInProgress ({ commit }, updateInProgress) {
   commit('SET_UPDATEINPROGRESS', updateInProgress)
 }

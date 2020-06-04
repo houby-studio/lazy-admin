@@ -18,6 +18,10 @@ export function getDefinitions (state) {
   return state.definitions
 }
 
+export function getUpdateDate (state) {
+  return state.update_date
+}
+
 export function getUpdateInProgress (state) {
   return state.update_in_progress
 }
@@ -48,7 +52,7 @@ export function getScriptsArray (state) {
 }
 
 // Dynamically menu entries array of modules to display in FullLayout.vue and AboutPage.vue
-export function menuEntries (state) {
+export function getMenuEntries (state) {
   try {
     return Object.entries(state.definitions)
       .map(function ([key, value]) {

@@ -126,7 +126,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('lazystore', ['getLanguage', 'menuEntries', 'getMasterDefinition', 'getUpdateInProgress', 'getUpdateProgress', 'getDefinitionsUpdateInProgress', 'getRestartRequired']),
+    ...mapGetters('lazystore', ['getLanguage', 'getMenuEntries', 'getMasterDefinition', 'getUpdateInProgress', 'getUpdateProgress', 'getDefinitionsUpdateInProgress', 'getRestartRequired']),
     lazyVersion: {
       get () {
         return require('electron').remote.app.getVersion()
@@ -137,6 +137,9 @@ export default {
     },
     language: function () {
       return this.getLanguage
+    },
+    menuEntries: function () {
+      return this.getMenuEntries
     },
     updateInProgress: function () {
       return this.getUpdateInProgress
@@ -177,13 +180,7 @@ export default {
         this.$autoUpdater.checkForUpdatesAndNotify()
         // Definitions
         this.definitionsVersionStatus = 'checking'
-        this.$parent.updateMasterDefinition(function (err, result) {
-          if (err) {
-            // TODO: handle err
-            return err
-          }
-          this.$parent.updateDefinitions()
-        })
+        this.$parent.$parent.$parent.updateMasterDefinition()
         // Log
         console.log('Check for updates initialized by user.')
       } else {
