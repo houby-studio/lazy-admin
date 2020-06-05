@@ -685,6 +685,7 @@ export default {
     this.$utils.on('master-check-done', (newMasterDefinition) => {
       // Master definition check finished, fire definitions update
       this.updateDefinitions(newMasterDefinition)
+      this.definitionsUpdateInProgress = false
     })
 
     // Register always listening function for Shift+F11 shortcut to display debug window

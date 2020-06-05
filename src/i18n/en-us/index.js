@@ -11,6 +11,7 @@ export default {
   install: 'Install', // Used in: LoginPage.vue, FullLayout.vue
   dismiss: 'Dismiss', // Used in: LoginPage.vue, FullLayout.vue
   moduleCredMgrMissing: 'Couldn\'t find PowerShell module "CredentialManager", cannot load saved password.', // Used in: LoginPage.vue
+  pwshMissing: 'Couldn\'t find PowerShell Core, default. Using fallback Windows PowerShell.', // Used in: LoginPage.vue
   wrongUsernameOrPassword: 'Wrong username or password.', // Used in: LoginPage.vue
   foundsavedCredential: 'Found stored credentials for user {usr}.', // Used in: LoginPage.vue
   search: 'Search', // Used in: FullLayout.vue

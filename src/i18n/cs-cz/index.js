@@ -10,7 +10,8 @@ export default {
   changeUser: 'Jiný uživatel', // Used in: LoginPage.vue
   install: 'Instalovat', // Used in: LoginPage.vue, FullLayout.vue
   dismiss: 'Skrýt', // Used in: LoginPage.vue, FullLayout.vue
-  moduleCredMgrMissing: 'V počítači nelze nalézt PowerShell modul "CredentialManager", nelze načíst uložené heslo.', // Used in: LoginPage.vue
+  moduleCredMgrMissing: 'Nelze nalézt PowerShell modul "CredentialManager", nelze načíst uložené heslo.', // Used in: LoginPage.vue
+  pwshMissing: 'Nelze nalézt PowerShell Core. Používá se záložní Windows PowerShell.', // Used in: LoginPage.vue
   wrongUsernameOrPassword: 'Špatné přihlašovací jméno nebo heslo.', // Used in: LoginPage.vue
   foundsavedCredential: 'Nalezeny přihlašovací údaje pro uživatele {usr}.', // Used in: LoginPage.vue
   search: 'Vyhledat', // Used in: FullLayout.vue

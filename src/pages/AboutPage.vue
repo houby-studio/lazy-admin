@@ -227,13 +227,8 @@ export default {
     })
 
     // Master definitions: Check when update is found // TODO: REMOVE REPLACE
-    this.$utils.on('update-check-done', () => {
+    this.$utils.on('master-check-done', () => {
       this.definitionsVersionStatus = 'uptodate'
-    })
-
-    // Master definitions: If fail, stop checking // TODO: REMOVE REPLACE
-    this.$utils.on('update-check-error', () => {
-      this.definitionsVersionStatus = 'error'
     })
   }
 }

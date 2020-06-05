@@ -188,6 +188,21 @@ export default {
           this.$router.push({ path: '/scripts' })
         }
       })
+    },
+    pwshFallbackNotify () {
+      if (this.$pwsh.fallback) {
+        this.$q.notify({
+          timeout: 8000,
+          multiLine: false,
+          type: 'warning',
+          icon: 'warning',
+          message: this.$t('pwshMissing'),
+          actions: [
+            { label: this.$t('install'), color: 'black', handler: () => { openURL('https://github.com/PowerShell/powershell/releases/latest') } },
+            { label: this.$t('dismiss'), color: 'black' }
+          ]
+        })
+      }
     }
   },
   watch: {
@@ -250,10 +265,12 @@ export default {
             console.log(`Could not find any saved credentials.`)
           }
         }
+        this.pwshFallbackNotify()
         this.$q.loading.hide()
       }).catch(error => {
         console.error('Failed to load credentials with error')
         console.log(error)
+        this.pwshFallbackNotify()
         this.$q.loading.hide()
       })
     }, 500)
