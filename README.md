@@ -3,8 +3,8 @@
 GUI for PowerShell scripts to simplify day to day IT tasks.
 
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/houby-studio/lazy-admin)
-![build](https://github.com/houby-studio/lazy-admin/workflows/build-and-release/badge.svg)
-![codeql](https://github.com/houby-studio/lazy-admin/workflows/codeql-analyze/badge.svg)
+![build](https://github.com/houby-studio/lazy-admin/workflows/build/badge.svg)
+![codeql](https://github.com/houby-studio/lazy-admin/workflows/codeql/badge.svg)
 ![GitHub All Releases](https://img.shields.io/github/downloads/houby-studio/lazy-admin/total)
 ![GitHub](https://img.shields.io/github/license/houby-studio/lazy-admin)
 

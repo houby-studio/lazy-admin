@@ -1,6 +1,6 @@
 {
   "base-module-example": {
-    "version": "0.0.6",
+    "version": "0.0.7",
     "icon": "mdi-powershell",
     "displayName": {
       "default": "Base commands",
@@ -83,6 +83,35 @@
           "default": "Run PowerShell command",
           "en-us": "Run PowerShell command",
           "cs-cz": "Spustit PowerShell příkaz"
+        },
+        "description": {
+          "default": "Invokes command as you wrote it without further changes.",
+          "en-us": "Invokes command as you wrote it without further changes.",
+          "cs-cz": "Spustí příkaz přesně jak jste jej zadal, bez dalších úprav."
+        },
+        "parameters": [
+          {
+            "parameter": "ScriptBlock",
+            "required": true,
+            "type": "textarea",
+            "hint": {
+              "default": "Insert full command to execute",
+              "en-us": "Insert full command to execute",
+              "cs-cz": "Zadejte celý příkaz ke spuštění"
+            }
+          }
+        ],
+        "commandBlock": "{{ScriptBlock}}"
+      },
+      {
+        "commandName": "Invoke-Command",
+        "icon": "mdi-powershell",
+        "returns": "raw",
+        "insidePsSession": false,
+        "friendlyName": {
+          "default": "Run PowerShell command as logged on user",
+          "en-us": "Run PowerShell command as logged on user",
+          "cs-cz": "Spustit PowerShell příkaz jako přihlášený uživatel"
         },
         "description": {
           "default": "Invokes command as you wrote it without further changes.",

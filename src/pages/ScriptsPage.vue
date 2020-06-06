@@ -389,9 +389,12 @@ export default {
           resultCommand = resultCommand.replace(`{{${param.parameter}}}`, '')
         }
       }
-      this.$q.loading.show()
+      this.$q.loading.show({
+        message: 'Script running'
+      })
       // TODO: Save command to history
       this.$pwsh.clear().then(() => {
+        // this.$pwsh.on('output', (output) => { console.log(output) })
         if (this.currentCommand.insidePsSession) {
           this.$pwsh.addCommand(`Invoke-Command -Session $Global:LazyAdminPSSession -ScriptBlock {${resultCommand}}`)
         } else {

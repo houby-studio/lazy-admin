@@ -10,12 +10,14 @@ export default async ({ Vue }) => {
     pwsh = new Shell({
       executionPolicy: 'Bypass',
       noProfile: true,
+      nonInteractive: true,
       pwsh: true
     })
   } catch {
     pwsh = new Shell({
       executionPolicy: 'Bypass',
-      noProfile: true
+      noProfile: true,
+      nonInteractive: true
     })
     pwsh.fallback = true
   }

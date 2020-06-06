@@ -382,11 +382,9 @@ export default {
   },
   computed: {
     ...mapGetters('lazystore', ['getLanguage', 'getMenuEntries', 'getSearch', 'getMasterDefinition', 'getDefinitions', 'getDefinitionsUpdateInProgress', 'getRestartRequired', 'getUpdateDate', 'getUpdateInProgress', 'getUpdateProgress']),
-    animateToolBar: {
-      get () {
-        // Toolbar starts as hidden (false state), on 'created', animation 'animateToolBar' starts transform and displays toolbar
-        return this.loadToolBar ? 'animated slideInDown' : 'hidden'
-      }
+    animateToolBar: function () {
+      // Toolbar starts as hidden (false state), on 'created', animation 'animateToolBar' starts transform and displays toolbar
+      return this.loadToolBar ? 'animated slideInDown' : 'hidden'
     },
     searchText: {
       get () {
@@ -485,10 +483,12 @@ export default {
     },
 
     showAll () {
-      this.$store.dispatch('lazystore/setScriptsFilter', Object.keys(this.getDefinitions)) // Move keys getter to actions
+      // Gets all keys from definitions object and sets it as filter, displaying scripts from all modules
+      this.$store.dispatch('lazystore/setScriptsFilter', Object.keys(this.definitions))
     },
 
     filterMenu (name) {
+      // Sets selected module key as filter, displaying scripts from said module
       this.$store.dispatch('lazystore/setScriptsFilter', name)
     },
 
@@ -502,6 +502,7 @@ export default {
       this.$utils.getRegUrl((error, masterDefinitionUrl) => {
         if (error) {
           console.error(error)
+          this.$utils.emit('master-check-error')
           return
         }
         console.debug('Found master definition URL: ', masterDefinitionUrl)
@@ -509,6 +510,7 @@ export default {
         this.$utils.downloadDefinitions(masterDefinitionUrl, (error, masterDefinitionResponse) => {
           if (error) {
             console.error(error)
+            this.$utils.emit('master-check-error')
             return
           }
           if (masterDefinitionResponse.data) {
@@ -531,18 +533,20 @@ export default {
             }
           } else {
             console.error('Did not receive data from Master definition URL response.')
+            this.$utils.emit('master-check-error')
           }
         })
       })
     },
 
     updateDefinitions (newMasterDefinition) {
-      console.log('Manual update of script definitions started')
+      console.debug('Update of scripts definitions started.')
       for (let updateUrl of this.masterDefinition.definitionsUrl) {
         console.debug(`Downloading definitions from URL: ${updateUrl}`)
         this.$utils.downloadDefinitions(updateUrl, (error, definitionsResponse) => {
           if (error) {
-            console.log(error)
+            console.error(error)
+            this.$utils.emit('definitions-check-error')
             return
           }
           if (definitionsResponse.data) {
@@ -552,6 +556,7 @@ export default {
             if (newMasterDefinition) { this.showAll() }
           } else {
             console.error(`Did not receive data from definition URL ${updateUrl} response.`)
+            this.$utils.emit('definitions-check-error')
           }
         })
       }
@@ -562,7 +567,7 @@ export default {
 
     // Functions accessed in debug window
     debugGetDefinitions () {
-      console.log('DEBUG function: Showing definitions in console!', this.definitions)
+      console.log('DEBUG function: Outputting definitions to console!', this.definitions)
     },
 
     debugClearDefinitions () {
@@ -571,7 +576,7 @@ export default {
     },
 
     debugGetMasterDefinitions () {
-      console.log('DEBUG function: Showing master definition in console.', this.masterDefinition)
+      console.log('DEBUG function: Outputting master definition to console.', this.masterDefinition)
     },
 
     debugClearMasterDefinition () {
@@ -617,11 +622,9 @@ export default {
   created: function () {
     // Toolbar starts as hidden (false state), on 'created', animation 'animateToolBar' starts transform and displays toolbar
     this.loadToolBar = true
-    // Set variables for updates
+    // Clear potential leftover variables from previous run
     this.restartRequired = false // Remove potential leftover variable from previous update
     this.updateProgress = '' // Remove potential leftover variable from previous update
-    this.updateInProgress = true
-    this.definitionsUpdateInProgress = true
     // LazyAdminApp: Register event listener, which triggers when update is found
     this.$autoUpdater.on('update-available', (updateInfo) => {
       console.log(`Found new application release: Version ${updateInfo.version}; Release date ${updateInfo.releaseDate}; Setup size ${(updateInfo.files[0].size / 1024 / 1024).toFixed(2)}MB. Download started.`)
@@ -693,13 +696,15 @@ export default {
       this.showDebugWindow()
     })
 
-    // Start update checks
-    this.$autoUpdater.checkForUpdatesAndNotify() // We could prevent duplicate downloads if we put this in if-condition, but closing app unexpectedly could lead to bricking updates forever
+    // Start application update check
+    this.updateInProgress = true
+    this.$autoUpdater.checkForUpdatesAndNotify()
+    // Check if update was done today and if not, start definitions update check
     if (this.$utils.getDate() === this.updateDate) {
-      console.log('Definitions update already done today, automatic update skipped')
+      console.log('Definitions were already updated today, automatic update skipped.')
     } else {
+      this.definitionsUpdateInProgress = true
       this.updateMasterDefinition()
-      console.log('Setting date')
       this.updateDate = this.$utils.getDate()
     }
   },

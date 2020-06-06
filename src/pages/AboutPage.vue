@@ -32,7 +32,7 @@
                 <q-icon
                   v-if="appVersionStatus === 'error'"
                   name="error"
-                  color="white"
+                  color="primary"
                   size="1.1rem"
                 />
                 <q-spinner
@@ -61,7 +61,13 @@
 
               <q-item-section avatar>
                 <q-spinner
-                  v-if="definitionsVersionStatus === 'checking'"
+                  v-if="masterDefinitionUpdateStatus === 'checking'"
+                  color="primary"
+                  size="1.1rem"
+                />
+                <q-icon
+                  v-else-if="masterDefinitionUpdateStatus === 'error'"
+                  name="error"
                   color="primary"
                   size="1.1rem"
                 />
@@ -70,7 +76,7 @@
                   name="check"
                   color="white"
                   size="1.1rem"
-                  v-show="definitionsVersionStatus === 'uptodate'"
+                  v-show="masterDefinitionUpdateStatus === 'uptodate'"
                 />
               </q-item-section>
             </q-item>
@@ -79,6 +85,20 @@
         <q-separator />
         <q-card-section>
           <q-list>
+            <q-item
+              dense
+              v-if="definitionsUpdateStatus === 'error'"
+            >
+              <q-item-section avatar>
+                <q-icon
+                  name="error"
+                  color="primary"
+                />
+              </q-item-section>
+              <q-item-label caption>{{ $t('definitionsError') }}</q-item-label>
+              <q-item-section>
+              </q-item-section>
+            </q-item>
             <q-item
               v-for="info in menuEntries"
               :key="info.name"
@@ -122,7 +142,8 @@ export default {
     return {
       updateButtonDisabled: false, // Handles Update/Restart button availability
       appVersionStatus: '', // possible values: '', 'checking', 'restart', 'uptodate', 'error'
-      definitionsVersionStatus: '' // possible values: '', 'checking', 'uptodate'
+      masterDefinitionUpdateStatus: '', // possible values: '', 'checking', 'uptodate'
+      definitionsUpdateStatus: '' // possible values: '', 'error'
     }
   },
   computed: {
@@ -179,7 +200,7 @@ export default {
         this.appVersionStatus = 'checking'
         this.$autoUpdater.checkForUpdatesAndNotify()
         // Definitions
-        this.definitionsVersionStatus = 'checking'
+        this.masterDefinitionUpdateStatus = 'checking'
         this.$parent.$parent.$parent.updateMasterDefinition()
         // Log
         console.log('Check for updates initialized by user.')
@@ -200,7 +221,7 @@ export default {
       this.updateProgress = `${this.$t('restartRequired')}`
     }
     if (this.definitionsUpdateInProgress) {
-      this.definitionsVersionStatus = 'checking'
+      this.masterDefinitionUpdateStatus = 'checking'
     }
 
     // LazyAdminApp: Register event listener to ask for restart when update is downloaded
@@ -226,9 +247,20 @@ export default {
       this.updateButtonDisabled = false
     })
 
-    // Master definitions: Check when update is found // TODO: REMOVE REPLACE
+    // Master definition: Change status to check when update finished
     this.$utils.on('master-check-done', () => {
-      this.definitionsVersionStatus = 'uptodate'
+      this.masterDefinitionUpdateStatus = 'uptodate'
+      this.definitionsUpdateStatus = '' // Clear possible previous error for scripts definitions
+    })
+
+    // Master definition: Change status to error when update errored
+    this.$utils.on('master-check-error', () => {
+      this.masterDefinitionUpdateStatus = 'error'
+    })
+
+    // Scripts definitions: When one definition failed, display warning above definitions
+    this.$utils.on('definitions-check-error', () => {
+      this.definitionsUpdateStatus = 'error'
     })
   }
 }

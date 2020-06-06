@@ -37,7 +37,7 @@ export default {
   exported: 'Exportováno', // Used in: ScriptsPage.vue
   updateFound: 'Stahování nejnovější verze aplikace Lazy Admin.', // Used in: FullLayout.vue
   updateError: 'Nepodařilo se stáhnout aktualizaci aplikace Lazy Admin.', // Used in: FullLayout.vue
-  definitionsError: 'Nepodařilo se zkontrolovat aktualizace hlavních definic.', // Used in: FullLayout.vue
+  definitionsError: 'Chyba aktualizace definic.', // Used in: AboutPage.vue
   downloadCompleted: 'Stahování dokončeno, zavřete aplikaci ke spuštění aktualizace.', // Used in: FullLayout.vue
   of: 'z', // Used in: FullLayout.vue
   restartRequired: 'Vyžadován restart.', // Used in: AboutPage.vue

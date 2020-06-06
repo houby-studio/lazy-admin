@@ -47,7 +47,7 @@ function New-PSSessionWithCredentials {
       $Global:CredentialObject = New-Object System.Management.Automation.PSCredential ($Username, $NewPassword)
     }
     # Set encoding
-    $OutputEncoding = [System.Console]::OutputEncoding = [System.Console]::InputEncoding = [System.Text.Encoding]::UTF8
+    $OutputEncoding = [console]::InputEncoding = [console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
     $PSDefaultParameterValues['*:Encoding'] = 'utf8'
     # Try to create new PSSession with Credssp, which allows for credential delegation to within session, otherwise, fallback to standard authentication method
     try {
