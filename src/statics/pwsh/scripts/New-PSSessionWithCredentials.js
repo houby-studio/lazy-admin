@@ -46,10 +46,11 @@ function New-PSSessionWithCredentials {
       $NewPassword = ConvertTo-SecureString $Password -AsPlainText -Force
       $Global:CredentialObject = New-Object System.Management.Automation.PSCredential ($Username, $NewPassword)
     }
-    # Set encoding
+    # Set encoding https://github.com/PowerShell/PowerShell/issues/4681
     $OutputEncoding = [console]::InputEncoding = [console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
     $PSDefaultParameterValues['*:Encoding'] = 'utf8'
     # Try to create new PSSession with Credssp, which allows for credential delegation to within session, otherwise, fallback to standard authentication method
+    # This session is created with login credentials and runs Windows PowerShell, even when main shell is pwsh, which allows users to easily run commands in both shell types.
     try {
       $Global:LazyAdminPSSession = New-PSSession -Credential $Global:CredentialObject -Name 'LazyAdminSession' -Authentication Credssp -ErrorAction Stop
     } catch {

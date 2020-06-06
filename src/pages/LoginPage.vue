@@ -151,7 +151,6 @@ export default {
         this.$pwsh.addCommand(`New-PSSessionWithCredentials -Username "${this.username}" -Password "${this.password}"`)
       }
       this.$pwsh.invoke().then(output => {
-        // console.log(output)
         let data
         try {
           data = JSON.parse(output)
@@ -220,7 +219,6 @@ export default {
     this.$pwsh.addCommand(GetSavedCredentials)
     setTimeout(() => {
       this.$pwsh.invoke().then(output => {
-        console.log('Running GetSavedCredentials')
         // Load Enter-PSSessionWithCredentials function to be used when user presses login button
         this.$pwsh.addCommand(EnterPSSessionWithCredentials)
         this.$pwsh.invoke()
