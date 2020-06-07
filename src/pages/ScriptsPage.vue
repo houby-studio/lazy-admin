@@ -15,19 +15,22 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input
-              clearable
-              lazy-rules
-              v-for="param in currentCommand.parameters"
+            <component
+              v-for="(param, index) in currentCommand.parameters"
               v-model="returnParams[param.parameter]"
+              :tabindex="index + 1"
+              :is="paramType[param.type][0]"
+              indeterminate-value="false"
               :label="param.parameter"
               :label-color="param.required ? 'primary' : ''"
               :key="param.parameter"
               :rules="param.required ? [ val => val && val.length > 0 || $t('requiredField') ] : [] "
               :hint="`${param.required ? $t('requiredParam') : $t('optionalParam') } | ${param.type} | ${param.hint ? param.hint[language] || param.hint['default'] : ''}`"
-              :type="param.type"
-              @keyup.enter="displayCommandDiag = false"
-            />
+              :type="paramType[param.type][1]"
+              @keyup.enter="$event.target.nextElementSibling.focus()"
+              clearable
+              lazy-rules
+            ></component>
           </q-card-section>
 
           <q-card-actions
@@ -36,13 +39,15 @@
           >
             <q-btn
               flat
-              :label="$t('cancel')"
               v-close-popup
+              tabindex="1000"
+              :label="$t('cancel')"
             />
             <q-btn
               flat
               type="submit"
               ref="execute"
+              tabindex="999"
               :label="$t('launch')"
             />
           </q-card-actions>
@@ -272,6 +277,13 @@ export default {
       displayCommandDiag: false,
       displayHelpDiag: false,
       displayResultsDiag: false,
+      paramType: {
+        'String': ['q-input', 'text'],
+        'Number': ['q-input', 'number'],
+        'ScriptBlock': ['q-input', 'textarea'],
+        'Boolean': ['q-toggle', ''],
+        'Switch': ['q-toggle', '']
+      },
       scriptsColumns: [
         { name: 'icon', align: 'center', label: 'Icon', field: row => row.icon, sortable: true },
         { name: 'commandName', required: true, label: 'Command Name', align: 'left', field: row => row.commandName, format: val => `${val}`, sortable: true },
@@ -371,6 +383,25 @@ export default {
         })
       }
     },
+    cancelCommand (key) {
+      if (key.key === 'Escape') {
+        console.log('Cancel!')
+        this.$pwsh.cancel()
+        this.$q.loading.hide()
+      }
+    },
+    toggleLoading (state) {
+      if (state) {
+        this.$q.loading.show({
+          // TODO: add translation
+          message: '<h6>Script running</h6><p>Press Escape to cancel</p>'
+        })
+        window.addEventListener('keyup', this.cancelCommand, true)
+      } else {
+        this.$q.loading.hide()
+        window.removeEventListener('keyup', this.cancelCommand, true)
+      }
+    },
     executeCommand () {
       // Insert parameter variables to command template
       let resultCommand = this.currentCommand.commandBlock
@@ -389,9 +420,7 @@ export default {
           resultCommand = resultCommand.replace(`{{${param.parameter}}}`, '')
         }
       }
-      this.$q.loading.show({
-        message: 'Script running'
-      })
+      this.toggleLoading(true)
       // TODO: Save command to history
       this.$pwsh.clear().then(() => {
         // this.$pwsh.on('output', (output) => { console.log(output) })
@@ -431,7 +460,7 @@ export default {
             }
           }
           this.displayResultsDiag = true
-          this.$q.loading.hide()
+          this.toggleLoading()
         }).catch(error => {
           // If PowerShell itself runs into problem and throws, catch and display error as raw output.
           console.log(error)

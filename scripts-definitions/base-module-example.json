@@ -1,6 +1,6 @@
 {
   "base-module-example": {
-    "version": "0.0.7",
+    "version": "0.0.8",
     "icon": "mdi-powershell",
     "displayName": {
       "default": "Base commands",
@@ -15,7 +15,7 @@
     "definition": [
       {
         "commandName": "Get-Disk",
-        "type": "simpleCommand",
+        "type": "simple",
         "icon": "mdi-harddisk",
         "returns": "PSObject",
         "insidePsSession": false,
@@ -34,7 +34,7 @@
             "parameter": "ComputerName",
             "format": "-ComputerName {{ComputerName}}",
             "required": true,
-            "type": "text",
+            "type": "String",
             "hint": {
               "default": "Supply name of the computer",
               "en-us": "Supply name of the computer",
@@ -45,7 +45,7 @@
             "parameter": "Number",
             "format": "-Number {{Number}}",
             "required": false,
-            "type": "number",
+            "type": "Number",
             "hint": {
               "default": "Supply index number  of the disk",
               "en-us": "Supply index number  of the disk",
@@ -57,6 +57,7 @@
       },
       {
         "commandName": "Get-Help",
+        "type": "simple",
         "returns": "raw",
         "insidePsSession": true,
         "friendlyName": {
@@ -69,7 +70,7 @@
             "parameter": "Name",
             "format": "-Name {{Name}}",
             "required": true,
-            "type": "text"
+            "type": "String"
           }
         ],
         "commandBlock": "Get-Help {{Name}}"
@@ -93,7 +94,7 @@
           {
             "parameter": "ScriptBlock",
             "required": true,
-            "type": "textarea",
+            "type": "ScriptBlock",
             "hint": {
               "default": "Insert full command to execute",
               "en-us": "Insert full command to execute",
@@ -105,6 +106,7 @@
       },
       {
         "commandName": "Invoke-Command",
+        "type": "simple",
         "icon": "mdi-powershell",
         "returns": "raw",
         "insidePsSession": false,
@@ -122,7 +124,7 @@
           {
             "parameter": "ScriptBlock",
             "required": true,
-            "type": "textarea",
+            "type": "ScriptBlock",
             "hint": {
               "default": "Insert full command to execute",
               "en-us": "Insert full command to execute",
@@ -134,6 +136,7 @@
       },
       {
         "commandName": "Start-Process",
+        "type": "simple",
         "icon": "mdi-powershell",
         "returns": "raw",
         "insidePsSession": false,
@@ -149,6 +152,48 @@
         },
         "parameters": [],
         "commandBlock": "Start-Process powershell.exe -WindowStyle Hidden -Credential $Global:CredentialObject -ArgumentList '-NoProfile -Command &{Start-Process powershell.exe -Verb runas}'"
+      },
+      {
+        "commandName": "Test-Connection",
+        "type": "simple",
+        "icon": "mdi-powershell",
+        "returns": "raw",
+        "insidePsSession": false,
+        "friendlyName": {
+          "default": "Test Connection",
+          "en-us": "Test Connection",
+          "cs-cz": "Ověřit připojení"
+        },
+        "description": {
+          "default": "Tests connection to target computer using ICMP.",
+          "en-us": "Tests connection to target computer using ICMP",
+          "cs-cz": "Otestuje připojení k počítači pomocí ICMP"
+        },
+        "parameters": [
+          {
+            "parameter": "TargetName",
+            "format": "-TargetName {{TargetName}}",
+            "required": true,
+            "type": "String",
+            "hint": {
+              "default": "Insert Computer Name",
+              "en-us": "Insert Computer Name",
+              "cs-cz": "Zadejte název počítače"
+            }
+          },
+          {
+            "parameter": "IPv4",
+            "format": "-IPv4",
+            "required": false,
+            "type": "Switch",
+            "hint": {
+              "default": "Use IPv4",
+              "en-us": "Use IPv4",
+              "cs-cz": "Použít IPv4"
+            }
+          }
+        ],
+        "commandBlock": "Test-Connection {{TargetName}} {{IPv4}}"
       }
     ]
   }

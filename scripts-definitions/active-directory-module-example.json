@@ -1,6 +1,6 @@
 {
   "active-directory-module-example": {
-    "version": "0.0.5",
+    "version": "0.0.6",
     "icon": "mdi-file-tree",
     "displayName": {
       "default": "Active Directory commands",
@@ -38,7 +38,7 @@
           {
             "parameter": "samAccountName",
             "required": true,
-            "type": "text",
+            "type": "String",
             "hint": {
               "default": "Full SamAccountName or wildcard expression.",
               "en-us": "Full SamAccountName or wildcard expression.",
