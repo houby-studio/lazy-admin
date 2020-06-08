@@ -5,22 +5,44 @@
       v-model="displayCommandDiag"
       transition-show="scale"
       transition-hide="scale"
+      :maximized="commandDialogMaximized"
     >
       <q-card class="full-width">
-        <q-form @submit="executeCommand">
+        <q-form
+          @submit="executeCommand"
+          @reset="resetForm"
+        >
           <q-card-section>
-            <div class="text-h6">
-              <q-icon :name="currentCommand.icon ? currentCommand.icon : 'mdi-powershell'"></q-icon> {{ currentCommand.commandName }}
-            </div>
-          </q-card-section>
+            <div class="row">
+              <div class="col">
+                <div class="text-h6 float-left">
+                  <q-icon :name="currentCommand.icon ? currentCommand.icon : 'mdi-powershell'"></q-icon> {{ currentCommand.commandName }}
+                </div>
+              </div>
+              <div class="col">
+                <q-card-actions
+                  align="right"
+                  class="text-primary q-pa-none"
+                >
 
+                  <q-btn
+                    flat
+                    icon="crop_square"
+                    @click="commandDialogMaximized = !commandDialogMaximized"
+                  />
+                </q-card-actions>
+              </div>
+            </div>
+
+          </q-card-section>
           <q-card-section class="q-pt-none">
             <component
               v-for="(param, index) in currentCommand.parameters"
               v-model="returnParams[param.parameter]"
               :tabindex="index + 1"
               :is="paramType[param.type][0]"
-              indeterminate-value="false"
+              :toggle-indeterminate="paramType[param.type][1]"
+              :false-value="paramType[param.type][1] ? 'false' : false"
               :label="param.parameter"
               :label-color="param.required ? 'primary' : ''"
               :key="param.parameter"
@@ -39,6 +61,12 @@
           >
             <q-btn
               flat
+              type="reset"
+              tabindex="999"
+              label="Reset"
+            />
+            <q-btn
+              flat
               v-close-popup
               tabindex="1000"
               :label="$t('cancel')"
@@ -46,8 +74,7 @@
             <q-btn
               flat
               type="submit"
-              ref="execute"
-              tabindex="999"
+              tabindex="998"
               :label="$t('launch')"
             />
           </q-card-actions>
@@ -277,12 +304,13 @@ export default {
       displayCommandDiag: false,
       displayHelpDiag: false,
       displayResultsDiag: false,
+      commandDialogMaximized: false,
       paramType: {
         'String': ['q-input', 'text'],
         'Number': ['q-input', 'number'],
         'ScriptBlock': ['q-input', 'textarea'],
-        'Boolean': ['q-toggle', ''],
-        'Switch': ['q-toggle', '']
+        'Boolean': ['q-toggle', true],
+        'Switch': ['q-toggle', false]
       },
       scriptsColumns: [
         { name: 'icon', align: 'center', label: 'Icon', field: row => row.icon, sortable: true },
@@ -386,7 +414,7 @@ export default {
     cancelCommand (key) {
       if (key.key === 'Escape') {
         console.log('Cancel!')
-        this.$pwsh.cancel()
+        // this.$pwsh.stop()
         this.$q.loading.hide()
       }
     },
@@ -402,15 +430,24 @@ export default {
         window.removeEventListener('keyup', this.cancelCommand, true)
       }
     },
+    resetForm () {
+      for (let i = 0; i < this.currentCommand.parameters.length; i++) {
+        let param = this.currentCommand.parameters[i]
+        this.returnParams[param.parameter] = ''
+      }
+    },
     executeCommand () {
       // Insert parameter variables to command template
       let resultCommand = this.currentCommand.commandBlock
       for (let i = 0; i < this.currentCommand.parameters.length; i++) {
         let param = this.currentCommand.parameters[i]
         let input = this.returnParams[param.parameter]
+        console.log('Checking input: ', input)
         if (input) {
+          console.log('input is here!')
           // If parameter has additional text format, insert it
           if (param.format) {
+            console.log('format is here!')
             resultCommand = resultCommand.replace(`{{${param.parameter}}}`, `${param.format}`)
           }
           // If parameter was supplied, insert param in place of template variable

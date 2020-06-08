@@ -1,6 +1,6 @@
 {
   "base-module-example": {
-    "version": "0.0.8",
+    "version": "0.0.9",
     "icon": "mdi-powershell",
     "displayName": {
       "default": "Base commands",
@@ -166,8 +166,8 @@
         },
         "description": {
           "default": "Tests connection to target computer using ICMP.",
-          "en-us": "Tests connection to target computer using ICMP",
-          "cs-cz": "Otestuje připojení k počítači pomocí ICMP"
+          "en-us": "Tests connection to target computer using ICMP.",
+          "cs-cz": "Otestuje připojení k počítači pomocí ICMP."
         },
         "parameters": [
           {
@@ -194,6 +194,76 @@
           }
         ],
         "commandBlock": "Test-Connection {{TargetName}} {{IPv4}}"
+      },
+      {
+        "commandName": "Test-Parameters",
+        "type": "simple",
+        "icon": "mdi-powershell",
+        "returns": "raw",
+        "insidePsSession": false,
+        "friendlyName": {
+          "default": "Test Parameters Output",
+          "en-us": "Test Parameters Output",
+          "cs-cz": "Ověřit výstup parametrů"
+        },
+        "description": {
+          "default": "Outputs all parameters as Lazy Admin processes them.",
+          "en-us": "Outputs all parameters as Lazy Admin processes them.",
+          "cs-cz": "Otestuje všechny parametry a vypíše je, jak je Lazy Admin zprocesoval."
+        },
+        "parameters": [
+          {
+            "parameter": "String",
+            "required": false,
+            "type": "String",
+            "hint": {
+              "default": "Insert String",
+              "en-us": "Insert String",
+              "cs-cz": "Zadejte řetězec"
+            }
+          },
+          {
+            "parameter": "Number",
+            "required": false,
+            "type": "Number",
+            "hint": {
+              "default": "Insert Number",
+              "en-us": "Insert Number",
+              "cs-cz": "Zadejte číslo"
+            }
+          },
+          {
+            "parameter": "Switch",
+            "required": false,
+            "type": "Switch",
+            "hint": {
+              "default": "Toggle Switch",
+              "en-us": "Toggle Switch",
+              "cs-cz": "Přepněte přepínač"
+            }
+          },
+          {
+            "parameter": "Boolean",
+            "required": false,
+            "type": "Boolean",
+            "hint": {
+              "default": "Set Boolean",
+              "en-us": "Set Boolean",
+              "cs-cz": "Zvolte Boolean"
+            }
+          },
+          {
+            "parameter": "ScriptBlock",
+            "required": false,
+            "type": "ScriptBlock",
+            "hint": {
+              "default": "Insert ScriptBlock",
+              "en-us": "Insert ScriptBlock",
+              "cs-cz": "Zadejte ScriptBlock"
+            }
+          }
+        ],
+        "commandBlock": "Write-Output \"String:{{String}}`nNumber:{{Number}}`nSwitch:{{Switch}}`nBoolean:{{Boolean}}`nScriptBlock:{{ScriptBlock}}\""
       }
     ]
   }
