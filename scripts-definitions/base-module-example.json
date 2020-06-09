@@ -1,6 +1,6 @@
 {
   "base-module-example": {
-    "version": "0.0.9",
+    "version": "0.1.0",
     "icon": "mdi-powershell",
     "displayName": {
       "default": "Base commands",
@@ -110,6 +110,7 @@
         "icon": "mdi-powershell",
         "returns": "raw",
         "insidePsSession": false,
+        "confirm": true,
         "friendlyName": {
           "default": "Run PowerShell command as logged on user",
           "en-us": "Run PowerShell command as logged on user",

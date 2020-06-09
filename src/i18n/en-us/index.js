@@ -16,7 +16,6 @@ export default {
   foundsavedCredential: 'Found stored credentials for user {usr}.', // Used in: LoginPage.vue
   search: 'Search', // Used in: FullLayout.vue
   history: 'History', // Used in: FullLayout.vue
-  // commands: 'Commands',
   visibleGroups: 'Shown commands', // Used in: FullLayout.vue
   all: 'All', // Used in: FullLayout.vue
   allDesc: 'All available commands', // Used in: FullLayout.vue
@@ -27,14 +26,19 @@ export default {
   requiredField: 'This parameter is required!', // Used in: ScriptsPage.vue
   requiredParam: 'Required', // Used in: ScriptsPage.vue
   optionalParam: 'Optional', // Used in: ScriptsPage.vue
+  confirm: 'Confirm', // Used in: ScriptsPage.vue
+  confirmMsg: 'Command requires confirmation. Do you want to continue?', // Used in: ScriptsPage.vue
   launch: 'Launch', // Used in: ScriptsPage.vue
   cancel: 'Cancel', // Used in: ScriptsPage.vue
+  reset: 'Reset', // Used in: ScriptsPage.vue
   results: `{commandName}: Results`, // Used in: ScriptsPage.vue
   exportCsv: 'Export to CSV', // Used in: ScriptsPage.vue
   copyClipboard: 'Copy to clipboard', // Used in: ScriptsPage.vue
   close: 'Close', // Used in: ScriptsPage.vue
   copied: 'Copied to clipboard', // Used in: ScriptsPage.vue
   exported: 'Exported', // Used in: ScriptsPage.vue
+  scriptRunning: 'Script is executing', // Used in: ScriptsPage.vue
+  pressToCancel: 'Press Escape to cancel', // Used in: ScriptsPage.vue
   updateFound: 'Downloading the latest version of Lazy Admin.', // Used in: FullLayout.vue
   updateError: 'Could not download update for Lazy Admin application.', // Used in: FullLayout.vue
   definitionsError: 'Definitions update error.', // Used in: AboutPage.vue

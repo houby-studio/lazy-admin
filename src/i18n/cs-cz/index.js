@@ -16,7 +16,6 @@ export default {
   foundsavedCredential: 'Nalezeny přihlašovací údaje pro uživatele {usr}.', // Used in: LoginPage.vue
   search: 'Vyhledat', // Used in: FullLayout.vue
   history: 'Historie', // Used in: FullLayout.vue
-  // commands: 'Příkazy',
   visibleGroups: 'Zobrazované příkazy', // Used in: FullLayout.vue
   all: 'Vše', // Used in: FullLayout.vue
   allDesc: 'Všechny dostupné příkazy', // Used in: FullLayout.vue
@@ -27,14 +26,19 @@ export default {
   requiredField: 'Tento parametr je povinný!', // Used in: ScriptsPage.vue
   requiredParam: 'Povinný', // Used in: ScriptsPage.vue
   optionalParam: 'Nepovinný', // Used in: ScriptsPage.vue
+  confirm: 'Potvrzení', // Used in: ScriptsPage.vue
+  confirmMsg: 'Příkaz vyžaduje potvrzení. Skutečně chcete pokračovat?', // Used in: ScriptsPage.vue
   launch: 'Spustit', // Used in: ScriptsPage.vue
   cancel: 'Zrušit', // Used in: ScriptsPage.vue
+  reset: 'Resetovat', // Used in: ScriptsPage.vue
   results: `{commandName}: Výsledek`, // Used in: ScriptsPage.vue
   exportCsv: 'Exportovat do CSV', // Used in: ScriptsPage.vue
   copyClipboard: 'Zkopírovat do schránky', // Used in: ScriptsPage.vue
   close: 'Zavřít', // Used in: ScriptsPage.vue
   copied: 'Zkopírováno do schránky', // Used in: ScriptsPage.vue
   exported: 'Exportováno', // Used in: ScriptsPage.vue
+  scriptRunning: 'Skript se vykonává', // Used in: ScriptsPage.vue
+  pressToCancel: 'Stiskněte Escape pro zrušení', // Used in: ScriptsPage.vue
   updateFound: 'Stahování nejnovější verze aplikace Lazy Admin.', // Used in: FullLayout.vue
   updateError: 'Nepodařilo se stáhnout aktualizaci aplikace Lazy Admin.', // Used in: FullLayout.vue
   definitionsError: 'Chyba aktualizace definic.', // Used in: AboutPage.vue

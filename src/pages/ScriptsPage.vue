@@ -9,7 +9,7 @@
     >
       <q-card class="full-width">
         <q-form
-          @submit="executeCommand"
+          @submit="preExecuteCheck"
           @reset="resetForm"
         >
           <q-card-section>
@@ -63,7 +63,7 @@
               flat
               type="reset"
               tabindex="999"
-              label="Reset"
+              :label="$t('reset')"
             />
             <q-btn
               flat
@@ -421,8 +421,7 @@ export default {
     toggleLoading (state) {
       if (state) {
         this.$q.loading.show({
-          // TODO: add translation
-          message: '<h6>Script running</h6><p>Press Escape to cancel</p>'
+          message: '<h6>' + this.$t('scriptRunning') + '</h6><p>' + this.$t('pressToCancel') + '</p>'
         })
         window.addEventListener('keyup', this.cancelCommand, true)
       } else {
@@ -434,6 +433,27 @@ export default {
       for (let i = 0; i < this.currentCommand.parameters.length; i++) {
         let param = this.currentCommand.parameters[i]
         this.returnParams[param.parameter] = ''
+      }
+    },
+    preExecuteCheck () {
+      if (this.currentCommand.confirm) {
+        this.$q.dialog({
+          color: 'primary',
+          title: this.$t('confirm'),
+          message: this.$t('confirmMsg'),
+          ok: {
+            label: this.$t('launch'),
+            flat: true
+          },
+          cancel: {
+            label: this.$t('cancel'),
+            flat: true
+          }
+        }).onOk(() => {
+          this.executeCommand()
+        })
+      } else {
+        this.executeCommand()
       }
     },
     executeCommand () {
