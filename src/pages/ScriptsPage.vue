@@ -272,6 +272,8 @@
 <script>
 import { exportFile } from 'quasar'
 import { mapGetters } from 'vuex'
+import Shell from 'node-powershell'
+const childProcess = require('child_process')
 
 //  Helper function which wraps table values for CSV export - https://quasar.dev/vue-components/table#Exporting-data
 function wrapCsvValue (val, formatFn) {
@@ -411,13 +413,6 @@ export default {
         })
       }
     },
-    cancelCommand (key) {
-      if (key.key === 'Escape') {
-        console.log('Cancel!')
-        // this.$pwsh.stop()
-        this.$q.loading.hide()
-      }
-    },
     toggleLoading (state) {
       if (state) {
         this.$q.loading.show({
@@ -455,6 +450,39 @@ export default {
       } else {
         this.executeCommand()
       }
+    },
+    cancelCommand (key) {
+      if (key.key === 'Escape') {
+        this.restartPwsh()
+        this.$q.loading.hide()
+      }
+    },
+    restartPwsh () {
+      childProcess.exec(`taskkill /f /pid ${this.$pwsh.pid}`, (error, stdout, stderr) => {
+        if (error) {
+          console.error('Could not stop PowerShell. Original error: ', error)
+          return
+        }
+        console.log('Killed PowerShell process.')
+        let pwsh
+        try {
+          pwsh = new Shell({
+            executionPolicy: 'Bypass',
+            noProfile: true,
+            nonInteractive: true,
+            pwsh: true
+          })
+        } catch {
+          pwsh = new Shell({
+            executionPolicy: 'Bypass',
+            noProfile: true,
+            nonInteractive: true
+          })
+          pwsh.fallback = true
+        }
+        this.$pwsh = pwsh
+        // TODO: Create Windows PowerShell session again and create Credentials object again
+      })
     },
     executeCommand () {
       // Insert parameter variables to command template
