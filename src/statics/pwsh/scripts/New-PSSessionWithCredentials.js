@@ -35,6 +35,8 @@ function New-PSSessionWithCredentials {
     [string]$Password
   )
 
+  Import-Module -Name "CredentialManager" -ErrorAction SilentlyContinue
+
   # If credential object should be used, attempt to retrieve it.
   if ($Credential) {
     $Global:CredentialObject = Get-StoredCredential -Target 'Lazy Admin' -Type Generic -ErrorAction SilentlyContinue

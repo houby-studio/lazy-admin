@@ -272,7 +272,6 @@
 <script>
 import { exportFile } from 'quasar'
 import { mapGetters } from 'vuex'
-import Shell from 'node-powershell'
 const childProcess = require('child_process')
 
 //  Helper function which wraps table values for CSV export - https://quasar.dev/vue-components/table#Exporting-data
@@ -453,36 +452,41 @@ export default {
     },
     cancelCommand (key) {
       if (key.key === 'Escape') {
-        this.restartPwsh()
-        this.$q.loading.hide()
+        this.$q.loading.show({
+          message: '<h6>Cancelling</h6>'
+        })
+        // Kill current powershell proccess
+        childProcess.exec(`taskkill /f /pid ${this.$pwsh.shell.pid}`, (error, stdout, stderr) => {
+          if (error) {
+            console.error('Could not stop PowerShell. Original error: ', error)
+          }
+          // Create new PowerShell instance
+          this.$q.loading.show({
+            message: '<h6>Creating new PowerShell</h6>'
+          })
+          this.$pwsh.createShell((done) => {
+            console.log('create nesmysl', done)
+            this.$q.loading.show({
+              message: '<h6>Loading functions</h6>'
+            })
+            // Load New-PSSessionWithCredentials
+            this.$pwsh.loadCredFunction(() => {
+              this.$pwsh.shell.invoke().then(() => {
+                // Create Credential Object and PSSession
+                this.$q.loading.show({
+                  message: '<h6>Creating new session</h6>'
+                })
+                this.$pwsh.loadCredString(() => {
+                  this.$pwsh.shell.invoke().then(() => {
+                    // PowerShell restarted, hide loading
+                    this.toggleLoading()
+                  })
+                })
+              })
+            })
+          })
+        })
       }
-    },
-    restartPwsh () {
-      childProcess.exec(`taskkill /f /pid ${this.$pwsh.pid}`, (error, stdout, stderr) => {
-        if (error) {
-          console.error('Could not stop PowerShell. Original error: ', error)
-          return
-        }
-        console.log('Killed PowerShell process.')
-        let pwsh
-        try {
-          pwsh = new Shell({
-            executionPolicy: 'Bypass',
-            noProfile: true,
-            nonInteractive: true,
-            pwsh: true
-          })
-        } catch {
-          pwsh = new Shell({
-            executionPolicy: 'Bypass',
-            noProfile: true,
-            nonInteractive: true
-          })
-          pwsh.fallback = true
-        }
-        this.$pwsh = pwsh
-        // TODO: Create Windows PowerShell session again and create Credentials object again
-      })
     },
     executeCommand () {
       // Insert parameter variables to command template
@@ -507,14 +511,14 @@ export default {
       }
       this.toggleLoading(true)
       // TODO: Save command to history
-      this.$pwsh.clear().then(() => {
-        // this.$pwsh.on('output', (output) => { console.log(output) })
+      this.$pwsh.shell.clear().then(() => {
+        // this.$pwsh.shell.on('output', (output) => { console.log(output) })
         if (this.currentCommand.insidePsSession) {
-          this.$pwsh.addCommand(`Invoke-Command -Session $Global:LazyAdminPSSession -ScriptBlock {${resultCommand}}`)
+          this.$pwsh.shell.addCommand(`Invoke-Command -Session $Global:LazyAdminPSSession -ScriptBlock {${resultCommand}}`)
         } else {
-          this.$pwsh.addCommand(resultCommand)
+          this.$pwsh.shell.addCommand(resultCommand)
         }
-        this.$pwsh.invoke().then(output => {
+        this.$pwsh.shell.invoke().then(output => {
           //  Code block to handle PowerShell return data
           let data
           let params
@@ -555,7 +559,7 @@ export default {
             output: error
           }
           this.displayResultsDiag = true
-          this.$q.loading.hide()
+          this.toggleLoading()
         })
       })
     }

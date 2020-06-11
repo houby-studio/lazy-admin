@@ -102,7 +102,7 @@
 import { openURL, throttle } from 'quasar'
 import { mapGetters } from 'vuex'
 import GetSavedCredentials from '../statics/pwsh/scripts/Get-SavedCredentials'
-import EnterPSSessionWithCredentials from '../statics/pwsh/scripts/New-PSSessionWithCredentials'
+import NewPSSessionWithCredentials from '../statics/pwsh/scripts/New-PSSessionWithCredentials'
 
 export default {
   name: 'LoginPage',
@@ -145,12 +145,12 @@ export default {
       // Invoke function with either credential object or username and password
       if (this.credentialsSaved) {
         console.log(`Creating new PowerShell session with saved credentials for user "${this.username}".`)
-        this.$pwsh.addCommand(`New-PSSessionWithCredentials -Credential`)
+        this.$pwsh.shell.addCommand(`New-PSSessionWithCredentials -Credential`)
       } else {
         console.log(`Creating new PowerShell session with supplied credentials for user "${this.username}".`)
-        this.$pwsh.addCommand(`New-PSSessionWithCredentials -Username "${this.username}" -Password "${this.password}"`)
+        this.$pwsh.shell.addCommand(`New-PSSessionWithCredentials -Username "${this.username}" -Password "${this.password}"`)
       }
-      this.$pwsh.invoke().then(output => {
+      this.$pwsh.shell.invoke().then(output => {
         let data
         try {
           data = JSON.parse(output)
@@ -179,11 +179,15 @@ export default {
           console.log(data.output) // Should write 'New Powershell session created succesfully.' from PS Function output
           // Route to main screen
           if (!this.credentialsSaved) {
-            this.$pwsh.addCommand(`if (Get-Command New-StoredCredential -ErrorAction SilentlyContinue) {New-StoredCredential -Target 'Lazy Admin' -UserName '${this.username}' -Password '${this.password}' -Comment 'Administrator credentials for Lazy Admin Utility.' -Type Generic -Persist LocalMachine | Out-Null}`)
-            this.$pwsh.invoke()
+            this.$pwsh.shell.addCommand(`if (Get-Command New-StoredCredential -ErrorAction SilentlyContinue) {New-StoredCredential -Target 'Lazy Admin' -UserName '${this.username}' -Password '${this.password}' -Comment 'Administrator credentials for Lazy Admin Utility.' -Type Generic -Persist LocalMachine | Out-Null}`)
+            this.$pwsh.shell.invoke()
           }
-          // this.$pwsh.addCommand('$OutputEncoding = [System.Console]::OutputEncoding = [System.Console]::InputEncoding = [System.Text.Encoding]::UTF8; $PSDefaultParameterValues[\'*:Encoding\'] = \'utf8\'')
-          // this.$pwsh.invoke()
+          // Succesfully created session, push login and session commands to private pwsh variable
+          if (this.credentialsSaved) {
+            this.$pwsh.setCredentialString('New-PSSessionWithCredentials -Credential')
+          } else {
+            this.$pwsh.setCredentialString(`New-PSSessionWithCredentials -Username "${this.username}" -Password "${this.password}"`)
+          }
           this.$router.push({ path: '/scripts' })
         }
       })
@@ -216,12 +220,12 @@ export default {
     this.login = throttle(this.login, 800)
     console.log(`Application started by user ${this.$q.electron.remote.process.env.USERDOMAIN}\\${this.$q.electron.remote.process.env.USERNAME} on computer ${this.$q.electron.remote.process.env.COMPUTERNAME}`)
     // Try to load saved credentials from Credential Manager
-    this.$pwsh.addCommand(GetSavedCredentials)
+    this.$pwsh.shell.addCommand(GetSavedCredentials)
     setTimeout(() => {
-      this.$pwsh.invoke().then(output => {
+      this.$pwsh.shell.invoke().then(output => {
         // Load Enter-PSSessionWithCredentials function to be used when user presses login button
-        this.$pwsh.addCommand(EnterPSSessionWithCredentials)
-        this.$pwsh.invoke()
+        this.$pwsh.shell.addCommand(NewPSSessionWithCredentials)
+        this.$pwsh.shell.invoke()
         // Attempt to parse output from Get-SavedCredentials as JSON
         let jsonOutput
         try {
