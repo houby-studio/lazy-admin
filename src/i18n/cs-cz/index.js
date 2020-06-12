@@ -37,8 +37,10 @@ export default {
   close: 'Zavřít', // Used in: ScriptsPage.vue
   copied: 'Zkopírováno do schránky', // Used in: ScriptsPage.vue
   exported: 'Exportováno', // Used in: ScriptsPage.vue
-  scriptRunning: 'Skript se vykonává', // Used in: ScriptsPage.vue
+  scriptRunning: 'Příkaz se vykonává', // Used in: ScriptsPage.vue
   pressToCancel: 'Stiskněte Escape pro zrušení', // Used in: ScriptsPage.vue
+  cancelling: 'Rušení', // Used in: ScriptsPage.vue
+  pleaseWait: 'Prosím vyčkejte...', // Used in: ScriptsPage.vue
   updateFound: 'Stahování nejnovější verze aplikace Lazy Admin.', // Used in: FullLayout.vue
   updateError: 'Nepodařilo se stáhnout aktualizaci aplikace Lazy Admin.', // Used in: FullLayout.vue
   definitionsError: 'Chyba aktualizace definic.', // Used in: AboutPage.vue

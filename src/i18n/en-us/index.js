@@ -37,8 +37,10 @@ export default {
   close: 'Close', // Used in: ScriptsPage.vue
   copied: 'Copied to clipboard', // Used in: ScriptsPage.vue
   exported: 'Exported', // Used in: ScriptsPage.vue
-  scriptRunning: 'Script is executing', // Used in: ScriptsPage.vue
+  scriptRunning: 'Command in progress', // Used in: ScriptsPage.vue
   pressToCancel: 'Press Escape to cancel', // Used in: ScriptsPage.vue
+  cancelling: 'Cancelling', // Used in: ScriptsPage.vue
+  pleaseWait: 'Please wait...', // Used in: ScriptsPage.vue
   updateFound: 'Downloading the latest version of Lazy Admin.', // Used in: FullLayout.vue
   updateError: 'Could not download update for Lazy Admin application.', // Used in: FullLayout.vue
   definitionsError: 'Definitions update error.', // Used in: AboutPage.vue

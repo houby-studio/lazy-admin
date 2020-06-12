@@ -452,8 +452,9 @@ export default {
     },
     cancelCommand (key) {
       if (key.key === 'Escape') {
+        this.toggleLoading()
         this.$q.loading.show({
-          message: '<h6>Cancelling</h6>'
+          message: '<h6>' + this.$t('cancelling') + '</h6><p>' + this.$t('pleaseWait') + '</p>'
         })
         // Kill current powershell proccess
         childProcess.exec(`taskkill /f /pid ${this.$pwsh.shell.pid}`, (error, stdout, stderr) => {
@@ -461,21 +462,20 @@ export default {
             console.error('Could not stop PowerShell. Original error: ', error)
           }
           // Create new PowerShell instance
-          this.$q.loading.show({
-            message: '<h6>Creating new PowerShell</h6>'
-          })
+          // this.$q.loading.show({
+          //   message: '<h6>Creating new PowerShell</h6>'
+          // })
           this.$pwsh.createShell((done) => {
-            console.log('create nesmysl', done)
-            this.$q.loading.show({
-              message: '<h6>Loading functions</h6>'
-            })
+            // this.$q.loading.show({
+            //   message: '<h6>Loading functions</h6>'
+            // })
             // Load New-PSSessionWithCredentials
             this.$pwsh.loadCredFunction(() => {
               this.$pwsh.shell.invoke().then(() => {
                 // Create Credential Object and PSSession
-                this.$q.loading.show({
-                  message: '<h6>Creating new session</h6>'
-                })
+                // this.$q.loading.show({
+                //   message: '<h6>Creating new session</h6>'
+                // })
                 this.$pwsh.loadCredString(() => {
                   this.$pwsh.shell.invoke().then(() => {
                     // PowerShell restarted, hide loading
