@@ -60,19 +60,19 @@ jobs:
         release_name: La💤y Admin 🏷${{ steps.autotag.outputs.tagname }}
         body: |
           # Changelog
-          ## 🚀 New Features
+          ## 🚀 New Features
           - No new features
 
-          ## 🐛 Bug Fixes
+          ## 🐛 Bug Fixes
           - No new bug fixes
 
-          ## ⭐ Improvements
+          ## ⭐ Improvements
           - No new improvements
 
-          ## 📃 Other Changes
+          ## 📃 Other Changes
           - No other changes
 
-          ## 💬 Release Notes
+          ## 💬 Release Notes
           This is a testing release.
 
           > Brought to you by 🍄 Houby Studio
