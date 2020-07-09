@@ -27,6 +27,7 @@
 
                   <q-btn
                     flat
+                    :ripple="false"
                     icon="crop_square"
                     @click="commandDialogMaximized = !commandDialogMaximized"
                   />
@@ -305,7 +306,6 @@ export default {
       displayCommandDiag: false,
       displayHelpDiag: false,
       displayResultsDiag: false,
-      commandDialogMaximized: false,
       paramType: {
         'String': ['q-input', 'text'],
         'Number': ['q-input', 'number'],
@@ -330,7 +330,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('lazystore', ['getLanguage', 'getSearch', 'getScriptsArray', 'getDefinitions']),
+    ...mapGetters('lazystore', ['getLanguage', 'getSearch', 'getScriptsArray', 'getDefinitions', 'getCommandMaximized']),
     searchText: function () {
       return this.getSearch
     },
@@ -343,6 +343,14 @@ export default {
     },
     definitions: function () {
       return this.getDefinitions
+    },
+    commandDialogMaximized: {
+      get () {
+        return this.getCommandMaximized
+      },
+      set (val) {
+        this.$store.dispatch('lazystore/setCommandMaximized', val)
+      }
     },
     resultsColumns: {
       get () {
@@ -505,7 +513,7 @@ export default {
           // If parameter was supplied, insert param in place of template variable
           resultCommand = resultCommand.replace(`{{${param.parameter}}}`, `${input}`)
         } else {
-          // If paramter was not supplied, remove template variable
+          // If parameter was not supplied, remove template variable
           resultCommand = resultCommand.replace(`{{${param.parameter}}}`, '')
         }
       }

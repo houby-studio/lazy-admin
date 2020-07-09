@@ -65,6 +65,7 @@ Possible values for definitions file:
     * icon: name of icon, if omitted, powershell icon is used
     * returns: type of the result, which application should expect after command is executed
     * insidePsSession: whether command should be run in Remote PSSession or locally
+    * confirm: before executing the command, ask user for confirmation
     * friendlyName: provided in languages you want to support, this is displayed to user to get better idea what the command might do
     * description: provided in languages you want to support, this is displayed to user to best describe what the command might do
     * parameters: array of parameters, which user is supposed to fill
@@ -78,6 +79,18 @@ Possible values for definitions file:
 
 #### Example file 
 [base-module-example.json](base-module-example.json)
+
+#### Parameters
+
+List of supported input types, which can be used in definitions and explanations:
+
+* String: Uses q-input of type 'text'
+* Number: Uses q-input of type 'number'
+* ScriptBlock: Uses q-input of type 'textarea'
+* Boolean: Uses q-toggle, which can either output 'true', 'false' or nothing
+* Switch: Uses q-toggle, which can either output your format, or not
+
+> Note: Difference between Boolean and Switch is more discussed on page TODO: Add Page
 
 #### Syntax
 

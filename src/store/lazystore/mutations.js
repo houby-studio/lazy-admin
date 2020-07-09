@@ -10,6 +10,10 @@ export const SET_SCRIPTSFILTER = (state, value) => {
   state.scripts_filter = value
 }
 
+export const SET_COMMANDMAXIMIZED = (state, value) => {
+  state.command_maximized = value
+}
+
 export const SET_MASTERDEFINITION = (state, value) => {
   state.master_definition = value
 }

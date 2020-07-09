@@ -10,6 +10,10 @@ export function getScriptsFilter (state) {
   return state.scripts_filter
 }
 
+export function getCommandMaximized (state) {
+  return state.command_maximized
+}
+
 export function getMasterDefinition (state) {
   return state.master_definition
 }

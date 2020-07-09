@@ -15,6 +15,11 @@ export async function setScriptsFilter ({ commit }, filter) {
   commit('SET_SCRIPTSFILTER', filter)
 }
 
+// Commit mutation to set scripts filter - Accessed in FullLayout.vue
+export async function setCommandMaximized ({ commit }, maximized) {
+  commit('SET_COMMANDMAXIMIZED', maximized)
+}
+
 // Commit mutation to set master definition - Accessed in FullLayout.vue
 export async function setMasterDefinition ({ commit }, definition) {
   console.log('Updating master definition with newer configuration:', definition)

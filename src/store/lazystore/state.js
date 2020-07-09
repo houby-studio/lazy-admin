@@ -3,6 +3,7 @@ export default function () {
     language: 'en-us', // Handles application language - Changeable on logon screen
     search: '', // Holds search string value
     scripts_filter: [], // Holds current filter for scripts table
+    command_maximized: false, // Is command dialog window maximized?
     master_definition: {}, // Contains scripts definitions data, holding url to all modules
     definitions: {}, // Object holding script definitions in their respective module objects
     custom_definitions: [], // Contains user defined script definitions
