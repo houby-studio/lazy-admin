@@ -113,7 +113,7 @@
       <q-card class="full-width">
         <q-card-section>
           <div class="text-h6">
-            <q-icon :name="currentCommand.icon ? currentCommand.icon : 'mdi-powershell'"></q-icon> {{ $t('results', { commandName: currentCommand.commandName }) }}
+            <q-icon :name="currentCommand.icon ? currentCommand.icon : 'mdi-powershell'"></q-icon> {{ $t('results', { commandName: currentCommand.commandName }) }} {{ currentCommand.workflow ? 'Workflow' : '' }}
           </div>
         </q-card-section>
         <q-card-section>
@@ -122,7 +122,10 @@
             <q-table
               :data="results.output"
               :columns="resultsColumns"
-              row-key="name"
+              :pagination.sync="outputPagination"
+              :selection="resultsTableSelection"
+              :selected.sync="resultsSelected"
+              :row-key="results.id ? results.id : 'id'"
             >
             </q-table>
           </div>
@@ -191,7 +194,7 @@
           :data="scriptsArray"
           :columns="scriptsColumns"
           :filter="searchText"
-          :pagination.sync="pagination"
+          :pagination.sync="scriptsPagination"
           row-key="parameter"
           hide-bottom
           hide-header
@@ -301,8 +304,10 @@ export default {
   data () {
     return {
       currentCommand: {}, // User click "Execute" on datatable, chosen command is set to this object, which gets rendered with dialog
+      currentWorkflowIndex: 0, // Index of currently workflow step to run
       returnParams: {}, // User defined parameters from Command Dialog
       results: {}, // Command result object displayed in Results Dialog
+      resultsSelected: [], // Array of selected objects from Results Dialog
       displayCommandDiag: false,
       displayHelpDiag: false,
       displayResultsDiag: false,
@@ -314,17 +319,21 @@ export default {
         'Switch': ['q-toggle', false]
       },
       scriptsColumns: [
-        { name: 'icon', align: 'center', label: 'Icon', field: row => row.icon, sortable: true },
+        { name: 'icon', align: 'center', label: 'Icon', field: row => row.icon, sortable: true, classes: 'gt-xs' },
         { name: 'commandName', required: true, label: 'Command Name', align: 'left', field: row => row.commandName, format: val => `${val}`, sortable: true },
         { name: 'friendlyName', label: 'Friendly Name', align: 'left', field: row => row.friendlyName ? row.friendlyName[(this.$i18n.locale)] ? row.friendlyName[(this.$i18n.locale)] : row.friendlyName['default'] : '', format: val => `${val}`, sortable: true, classes: 'hidden' },
         { name: 'description', align: 'left', label: 'Description', field: row => row.description ? row.description[(this.$i18n.locale)] ? row.description[(this.$i18n.locale)] : row.description.default : '', sortable: true, classes: 'gt-sm' },
         { name: 'spacer', align: 'center', label: 'Spacer', field: '', sortable: false, classes: 'full-width' },
-        { name: 'favorite', align: 'center', label: 'Icon', field: 'star', sortable: true },
-        { name: 'help', align: 'center', label: 'Icon', field: 'help', sortable: true },
+        { name: 'favorite', align: 'center', label: 'Icon', field: 'star', sortable: true, classes: 'gt-xs' },
+        { name: 'help', align: 'center', label: 'Icon', field: 'help', sortable: true, classes: 'gt-xs' },
         { name: 'execute', label: 'Execute', field: 'Execute', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) }
       ],
-      pagination: {
+      scriptsPagination: {
         // all records per page
+        rowsPerPage: 0
+      },
+      outputPagination: {
+        // all records per page, user may change that via GUI
         rowsPerPage: 0
       }
     }
@@ -360,6 +369,19 @@ export default {
           columns.push(definition)
         }
         return columns
+      }
+    },
+    resultsTableSelection: {
+      get () {
+        if (this.currentCommand.workflow) {
+          if (this.currentCommand.workflow[this.currentWorkflowIndex].passthru) {
+            return this.currentCommand.workflow[this.currentWorkflowIndex].passthru
+          } else {
+            return 'none'
+          }
+        } else {
+          return 'none'
+        }
       }
     }
   },
@@ -502,12 +524,12 @@ export default {
       for (let i = 0; i < this.currentCommand.parameters.length; i++) {
         let param = this.currentCommand.parameters[i]
         let input = this.returnParams[param.parameter]
-        console.log('Checking input: ', input)
+        // console.log('Checking input: ', input)
         if (input) {
-          console.log('input is here!')
+          // console.log('input is here!')
           // If parameter has additional text format, insert it
           if (param.format) {
-            console.log('format is here!')
+            // console.log('format is here!')
             resultCommand = resultCommand.replace(`{{${param.parameter}}}`, `${param.format}`)
           }
           // If parameter was supplied, insert param in place of template variable
@@ -527,6 +549,7 @@ export default {
           this.$pwsh.shell.addCommand(resultCommand)
         }
         this.$pwsh.shell.invoke().then(output => {
+          // console.log('Command results: ', output)
           //  Code block to handle PowerShell return data
           let data
           let params
@@ -546,6 +569,7 @@ export default {
               error: params.error,
               returnType: 'object',
               params: params,
+              id: this.currentCommand.id,
               output: dataArray
             }
           } catch (error) {

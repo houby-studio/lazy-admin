@@ -65,6 +65,7 @@ Possible values for definitions file:
     * icon: name of icon, if omitted, powershell icon is used
     * returns: type of the result, which application should expect after command is executed
     * insidePsSession: whether command should be run in Remote PSSession or locally
+    * usesLoggedUser: whether command utilizes $CredentialObject or $LazySession created upon logging in. May be ommited when insidePsSession is true
     * confirm: before executing the command, ask user for confirmation
     * friendlyName: provided in languages you want to support, this is displayed to user to get better idea what the command might do
     * description: provided in languages you want to support, this is displayed to user to best describe what the command might do
@@ -111,6 +112,7 @@ This is only example, there are many possibilities how to write definitions.
         "icon": "{icon-name}",
         "returns": "{returnType}",
         "insidePsSession": {Boolean},
+        "usesLoggedUser": {Boolean},
         "friendlyName": "{friendlyName}",
         "description": "{Description}",
         "parameters": [
@@ -143,8 +145,10 @@ This is only example, there are many possibilities how to write definitions.
         "workflow": [
           {
             "passedParameters": [
-              "parameter": "{parameterName}",
-              "propertyName": "{propertyName}"
+              {
+                "parameter": "{parameterName}",
+                "propertyName": "{propertyName}"
+              }
             ],
             "parameters": [
               {
@@ -160,7 +164,7 @@ This is only example, there are many possibilities how to write definitions.
           },
           {
             "commandBlock": "{Verb-Noun {{parameterName}}}",
-            "passthru": {Boolean},
+            "passthru": {single|multiple|none},
             "confirm": {Boolean}
           }
         ]

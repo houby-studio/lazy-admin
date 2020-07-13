@@ -1,6 +1,6 @@
 {
   "name": "lazy-admin",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "GUI for PowerShell scripts to simplify day to day IT tasks.",
   "productName": "Lazy Admin",
   "cordovaId": "eu.houby-studio.lazy-admin",
@@ -18,7 +18,7 @@
     "electron-log": "^4.1.1",
     "electron-updater": "^4.3.1",
     "node-powershell": "^4.0.0",
-    "quasar": "^1.12.8",
+    "quasar": "^1.12.11",
     "regedit": "^3.0.3",
     "vue-clipboard2": "^0.3.1",
     "vue-i18n": "^8.0.0",

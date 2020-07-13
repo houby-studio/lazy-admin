@@ -1,6 +1,6 @@
 {
   "base-module-example": {
-    "version": "0.1.0",
+    "version": "0.1.1",
     "icon": "mdi-powershell",
     "displayName": {
       "default": "Base commands",
@@ -265,6 +265,59 @@
           }
         ],
         "commandBlock": "Write-Output \"String:{{String}}`nNumber:{{Number}}`nSwitch:{{Switch}}`nBoolean:{{Boolean}}`nScriptBlock:{{ScriptBlock}}\""
+      },
+      {
+        "commandName": "Get-CommandExamples",
+        "type": "workflow",
+        "icon": "mdi-checkbox-multiple-marked",
+        "returns": "PSObject",
+        "id": "Name",
+        "insidePsSession": false,
+        "friendlyName": {
+          "default": "Get examples for command",
+          "en-us": "Get examples for command",
+          "cs-cz": "Získat příklady pro příkaz"
+        },
+        "description": {
+          "default": "Example workflow, which obtains list of matching commands based on first query, then gets examples for selected one.",
+          "en-us": "Example workflow, which obtains list of matching commands based on first query, then gets examples for selected one.",
+          "cs-cz": "Ukázkové workflow, které získá seznam odpovídajících příkazů na základě prvního dotazu, následně získá příklady pro zvolený příkaz."
+        },
+        "parameters": [
+          {
+            "parameter": "Name",
+            "format": "-Name \"*{{Name}}*\"",
+            "required": true,
+            "type": "String",
+            "hint": {
+              "default": "Supply name of command",
+              "en-us": "Supply name of the command",
+              "cs-cz": "Zadejte název příkazu"
+            }
+          }
+        ],
+        "commandBlock": "Get-Command {{Name}} | Select-Object Name, @{n='Type';e={$_.CommandType.ToString()}} | ConvertTo-Json -Compress",
+        "workflow": [
+          {
+            "passedParameters": [
+              {
+                "parameter": "Name",
+                "propertyName": "Name"
+              }
+            ],
+            "parameters": [
+              {
+                "parameter": "{parameterName}",
+                "required": true,
+                "type": "{inputType}",
+                "hint": "{hint}"
+              }
+            ],
+            "commandBlock": "{Verb-Noun {{parameterName}}}",
+            "passthru": "single",
+            "confirm": false
+          }
+        ]
       }
     ]
   }
