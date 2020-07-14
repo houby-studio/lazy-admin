@@ -11,6 +11,7 @@
       <string id="MasterDefinitionUrlExplain">Plná URL Cesta k definicím skriptů ve formátu JSON pro Lazy Admina.
 
 Příklad: https://raw.githubusercontent.com/houby-studio/lazy-admin/master/scripts-definitions/definition-lazy-admin-base.json
+Příklad: \\fileserver.local\share\definition-lazy-admin-base.json
 
 Poznámka: Měli byste vytvořit vlastní soubor definic a odkazovat na něj vaše administrátory, abyste využili všechny vaše firemní PowerShell Cmdlety v Lazy Adminovi.
 

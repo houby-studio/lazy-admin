@@ -11,6 +11,7 @@
       <string id="MasterDefinitionUrlExplain">Full URL Path to scripts definition in JSON format for Lazy Admin.
 
 Example: https://raw.githubusercontent.com/houby-studio/lazy-admin/master/scripts-definitions/definition-lazy-admin-base.json
+Example: \\fileserver.local\share\definition-lazy-admin-base.json
 
 Note: You should create your own definitions file and point your administrators to it to use all your company's PowerShell Cmdlets in Lazy Admin.
 

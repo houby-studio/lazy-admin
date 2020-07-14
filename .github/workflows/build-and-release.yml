@@ -77,7 +77,7 @@ jobs:
 
           > Brought to you by 🍄 Houby Studio
         draft: true
-        prerelease: true
+        prerelease: false
     # Install yarn, quasar CLI, install depedencies and build and publish if tag and draft was created
     - name: Setup Node.js
       uses: actions/setup-node@v1

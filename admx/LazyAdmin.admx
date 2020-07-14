@@ -4,7 +4,7 @@
     <target prefix="fullarmor" namespace="FullArmor.97b05ae5-486a-4252-90d2-76fdd32b4233" />
     <using prefix="windows" namespace="Microsoft.Policies.Windows" />
   </policyNamespaces>
-  <supersededAdm fileName="C:\git\lazy-admin\admx\adm\LazyAdmin.adm" />
+  <supersededAdm fileName="LazyAdmin.adm" />
   <resources minRequiredRevision="1.0" />
   <supportedOn>
     <definitions>
