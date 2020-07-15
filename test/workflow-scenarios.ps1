@@ -45,3 +45,6 @@ Get-Command -Name "Join-Path" ; Get-Location
 Get-Command -Name "Join-Path"
 Get-Command -Name "Get-Help"
 
+# TODO: walk over options with splatting 
+# https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_splatting?view=powershell-7
+
