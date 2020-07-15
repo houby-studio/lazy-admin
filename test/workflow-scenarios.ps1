@@ -21,10 +21,6 @@ $TestResultStringArrayJson = $TestResultStringArray | ConvertTo-Json -Compress
 $TestResultObjectArray = Get-Command -Name "*Path*" | Select-Object Name, Source
 $TestResultObjectArrayJson = $TestResultObjectArray | ConvertTo-Json -Compress
 
-# Next commmand may split previous results into parameters, or pass all output as a string
-
-
-
 # Theorycrafting
 
 # Multiple same commands with different parameters at once
@@ -45,6 +41,59 @@ Get-Command -Name "Join-Path" ; Get-Location
 Get-Command -Name "Join-Path"
 Get-Command -Name "Get-Help"
 
+# One command, multiple same arguments - for commands which accept arrays
+# Works
+Get-Command -Name "Get-Help", "Get-Acl"
+# Does not work
+Get-Date -Year 2019, 2018
+
+$Array = "Get-Help", "Get-Acl"
+$Array.GetType()
+# Does not work
+Get-Command -Name @Array
+# Does work
+Get-Command -Name $Array
+
 # TODO: walk over options with splatting 
 # https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_splatting?view=powershell-7
 
+# Storing output to variable
+$OutputArray = @()
+$OutputHash = @{}
+
+foreach ($i in (1..10)) {
+  $OutputArray += (Get-Process)[$i]
+  $OutputHash.Add($i, (Get-Process)[$i])
+}
+
+$OutputArray[1]
+
+# Possible scenarios to be integrated to Lazy Admin
+
+<#
+
+1. No arguments passed
+
+Example:
+- First command creates AD User - no output, or text stating that user was succesfully created.
+- Second command queries AAD to check when last sync was executed, again, returning date.
+
+In that example, only choice admin gets is whether to run second command after the first or not.
+
+2. Single choice from data table is passed
+
+Example:
+- Query AD Users to get user named 'John'.
+- Choose single account 'John Smith' from all results and that account gets disabled.
+
+In that example, admin can choose to not run second command, possibly searching for another name, or select single user which gets linked via definition to second command and that gets executed.
+
+3. Array is passed to single command
+
+4. Array is passed and for each, command is run with other parameters being the same
+
+5. Array is passed and for each, command is run with other parameters being unique for each value
+
+4 and 5 could possibly be same type - dialog with either arrows to navigate between passed parameters and checkbox, which makes all input values same for eachchosen result.
+
+#>
