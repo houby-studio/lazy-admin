@@ -195,6 +195,9 @@
           :columns="scriptsColumns"
           :filter="searchText"
           :pagination.sync="scriptsPagination"
+          :no-data-label="$t('noScriptsFound')"
+          :no-results-label="$t('noScriptsFound')"
+          wrap-cells
           row-key="parameter"
           hide-bottom
           hide-header
@@ -320,10 +323,10 @@ export default {
       },
       scriptsColumns: [
         { name: 'icon', align: 'center', label: 'Icon', field: row => row.icon, sortable: true, classes: 'gt-xs' },
-        { name: 'commandName', required: true, label: 'Command Name', align: 'left', field: row => row.commandName, format: val => `${val}`, sortable: true },
+        { name: 'commandName', required: true, label: 'Command Name', align: 'left', field: row => row.commandName, format: val => `${val}`, sortable: true, classes: 'text-no-wrap' },
         { name: 'friendlyName', label: 'Friendly Name', align: 'left', field: row => row.friendlyName ? row.friendlyName[(this.$i18n.locale)] ? row.friendlyName[(this.$i18n.locale)] : row.friendlyName['default'] : '', format: val => `${val}`, sortable: true, classes: 'hidden' },
         { name: 'description', align: 'left', label: 'Description', field: row => row.description ? row.description[(this.$i18n.locale)] ? row.description[(this.$i18n.locale)] : row.description.default : '', sortable: true, classes: 'gt-sm' },
-        { name: 'spacer', align: 'center', label: 'Spacer', field: '', sortable: false, classes: 'full-width' },
+        { name: 'spacer', align: 'center', label: 'Spacer', field: '', sortable: false },
         { name: 'favorite', align: 'center', label: 'Icon', field: 'star', sortable: true, classes: 'gt-xs' },
         { name: 'help', align: 'center', label: 'Icon', field: 'help', sortable: true, classes: 'gt-xs' },
         { name: 'execute', label: 'Execute', field: 'Execute', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) }

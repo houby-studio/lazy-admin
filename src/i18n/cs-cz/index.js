@@ -41,6 +41,7 @@ export default {
   pressToCancel: 'Stiskněte Escape pro zrušení', // Used in: ScriptsPage.vue
   cancelling: 'Rušení', // Used in: ScriptsPage.vue
   pleaseWait: 'Prosím vyčkejte...', // Used in: ScriptsPage.vue
+  noScriptsFound: 'Žádné příkazy nenalezeny. Zkuste aktualizovat definice.', // Used in: ScriptsPage.vue
   updateFound: 'Stahování nejnovější verze aplikace Lazy Admin.', // Used in: FullLayout.vue
   updateError: 'Nepodařilo se stáhnout aktualizaci aplikace Lazy Admin.', // Used in: FullLayout.vue
   definitionsError: 'Chyba aktualizace definic.', // Used in: AboutPage.vue
