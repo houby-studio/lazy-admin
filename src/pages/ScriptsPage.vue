@@ -37,6 +37,25 @@
 
           </q-card-section>
           <q-card-section class="q-pt-none">
+            <!-- Workflows only - Previous command parameters -->
+            <!-- <component
+              v-for="(param, index) in currentCommand.parameters"
+              v-model="returnParams[param.parameter]"
+              :tabindex="index + 1"
+              :is="paramType[param.type][0]"
+              :toggle-indeterminate="paramType[param.type][1]"
+              :false-value="paramType[param.type][1] ? 'false' : false"
+              :label="param.parameter"
+              :label-color="param.required ? 'primary' : ''"
+              :key="param.parameter"
+              :rules="param.required ? [ val => val && val.length > 0 || $t('requiredField') ] : [] "
+              :hint="`${param.required ? $t('requiredParam') : $t('optionalParam') } | ${param.type} | ${param.hint ? param.hint[language] || param.hint['default'] : ''}`"
+              :type="paramType[param.type][1]"
+              @keyup.enter="$event.target.nextElementSibling.focus()"
+              clearable
+              lazy-rules
+            ></component> -->
+            <!-- Command parameters -->
             <component
               v-for="(param, index) in currentCommand.parameters"
               v-model="returnParams[param.parameter]"
@@ -125,7 +144,7 @@
               :pagination.sync="outputPagination"
               :selection="resultsTableSelection"
               :selected.sync="resultsSelected"
-              :row-key="results.id ? results.id : 'id'"
+              row-key="__id"
             >
             </q-table>
           </div>
@@ -366,7 +385,9 @@ export default {
     },
     resultsColumns: {
       get () {
-        let columns = []
+        let columns = [
+          { name: '__id', align: 'left', label: '__id', field: row => row.__id, classes: 'hidden', headerClasses: 'hidden' }
+        ]
         for (let i = 0; i < this.results.params.length; i++) {
           let definition = { name: this.results.params[i], align: 'left', label: this.results.params[i], field: this.results.params[i], sortable: true }
           columns.push(definition)
@@ -375,6 +396,7 @@ export default {
       }
     },
     resultsTableSelection: {
+      // Table selection can be either single, multiple or none. If command is not part of workflow or passthru is not defined in JSON, defaults to none.
       get () {
         if (this.currentCommand.workflow) {
           if (this.currentCommand.workflow[this.currentWorkflowIndex].passthru) {
@@ -562,6 +584,10 @@ export default {
             data = JSON.parse(output)
             try {
               params = Object.keys(data[0]) // Get param names from array
+              if (this.currentCommand.type === 'workflow') {
+                // If command is part of workflow, calculate indexes to allow selection
+                data = data.map((val, index) => ({ ...val, __id: index }))
+              }
               dataArray.push(...data)
             } catch (error) {
               //  If array of objects fails, assume it is single object
@@ -572,7 +598,6 @@ export default {
               error: params.error,
               returnType: 'object',
               params: params,
-              id: this.currentCommand.id,
               output: dataArray
             }
           } catch (error) {
