@@ -66,7 +66,16 @@ foreach ($i in (1..10)) {
 
 $OutputArray[1]
 
+function Get-Lost {
+  param (
+    [String]$mate = "ay",
+    [String]$4mate = "ay",
+    [String]$c_mate = "ay"
+  )
+  Write-Output $mate $4mate $c_mate
+}
 
+Get-Lost -mate "lmao" -4mate "rekt" -c_mate "ll"
 
 # Possible scenarios to be integrated to Lazy Admin
 
@@ -117,5 +126,23 @@ Example:
 
 Get-ADUser -Filter "GivenName -eq 'John'" -Properties mail
 Send-MailMessage -From system@contoso.com -To john.smith@contoso.com -SmtpServer mail.contoso.local -Body "Congratulations!"; Send-MailMessage -From system@contoso.com -To john.jack@contoso.com -SmtpServer mail.contoso.local -Body "Congratulations!"; Send-MailMessage -From system@contoso.com -To john.tooth@contoso.com -SmtpServer mail.contoso.local -Body "Congratulations!"
+
+# Passing multiple results to new parameters 
+
+If we want to store params inside object which is accessed via v-model, we cannot use multidimensional array
+
+Instead we could do workaround and work with number we get from pagination, since PowerShell parameter cannot start with number, then we may split by some very unusual parameter string, lets say double underscore
+
+So each v-model parameter would be something like
+
+1__Name
+2__Name
+3__Name
+1__Path
+2__Path
+3__Path
+
+Then execute command would split this object to multidimensional array, replace parameters for each one and execute, either each one separately, or joined as powershell array, or any other possible method
+[[Name,Path],[Name,Path],[Name,Path]] # Each Name and Path is paired by their number in array.
 
 #>

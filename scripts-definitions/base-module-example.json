@@ -1,6 +1,6 @@
 {
   "base-module-example": {
-    "version": "0.1.1",
+    "version": "0.1.2",
     "icon": "mdi-powershell",
     "displayName": {
       "default": "Base commands",
@@ -268,10 +268,8 @@
       },
       {
         "commandName": "Get-CommandExamples",
-        "type": "workflow",
         "icon": "mdi-checkbox-multiple-marked",
         "returns": "PSObject",
-        "id": "Name",
         "insidePsSession": false,
         "friendlyName": {
           "default": "Get examples for command",
@@ -307,14 +305,19 @@
             ],
             "parameters": [
               {
-                "parameter": "{parameterName}",
+                "parameter": "WhatToDo",
                 "required": true,
-                "type": "{inputType}",
-                "hint": "{hint}"
+                "type": "String",
+                "hint": {
+                  "default": "Supply name of command",
+                  "en-us": "Supply name of the command",
+                  "cs-cz": "Zadejte název příkazu"
+                }
               }
             ],
-            "commandBlock": "{Verb-Noun {{parameterName}}}",
-            "passthru": "single",
+            "acceptsParams": "single",
+            "commandBlock": "Write-Output \"Verb-Noun {{Name}} {{WhatToDo}}\"",
+            "insidePsSession": false,
             "confirm": false
           }
         ]

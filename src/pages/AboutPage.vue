@@ -137,7 +137,7 @@
 import { mapGetters } from 'vuex'
 
 export default {
-  name: 'PageAbout',
+  name: 'AboutPage',
   data () {
     return {
       updateButtonDisabled: false, // Handles Update/Restart button availability

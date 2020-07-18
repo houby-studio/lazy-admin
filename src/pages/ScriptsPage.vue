@@ -5,7 +5,8 @@
       v-model="displayCommandDiag"
       transition-show="scale"
       transition-hide="scale"
-      :maximized="commandDialogMaximized"
+      :full-width="commandDialogMaximized"
+      :full-height="commandDialogMaximized"
     >
       <q-card class="full-width">
         <q-form
@@ -28,7 +29,7 @@
                   <q-btn
                     flat
                     :ripple="false"
-                    icon="crop_square"
+                    :icon="commandDialogMaximized ? 'fas fa-compress-alt' : 'fas fa-expand-alt'"
                     @click="commandDialogMaximized = !commandDialogMaximized"
                   />
                 </q-card-actions>
@@ -38,27 +39,17 @@
           </q-card-section>
           <q-card-section class="q-pt-none">
             <!-- Workflows only - Previous command parameters -->
-            <!-- <component
-              v-for="(param, index) in currentCommand.parameters"
-              v-model="returnParams[param.parameter]"
-              :tabindex="index + 1"
-              :is="paramType[param.type][0]"
-              :toggle-indeterminate="paramType[param.type][1]"
-              :false-value="paramType[param.type][1] ? 'false' : false"
-              :label="param.parameter"
-              :label-color="param.required ? 'primary' : ''"
-              :key="param.parameter"
-              :rules="param.required ? [ val => val && val.length > 0 || $t('requiredField') ] : [] "
-              :hint="`${param.required ? $t('requiredParam') : $t('optionalParam') } | ${param.type} | ${param.hint ? param.hint[language] || param.hint['default'] : ''}`"
-              :type="paramType[param.type][1]"
-              @keyup.enter="$event.target.nextElementSibling.focus()"
-              clearable
-              lazy-rules
-            ></component> -->
+            <!-- <q-input
+              v-for="(param) in resultsSelected"
+              v-model="returnParams[param.Name][]"
+              :label="param.Name"
+              :key="param.Name"
+              type="text"
+            ></q-input> -->
             <!-- Command parameters -->
             <component
               v-for="(param, index) in currentCommand.parameters"
-              v-model="returnParams[param.parameter]"
+              v-model="returnParams[returnParamsPaginate+'__'+param.parameter]"
               :tabindex="index + 1"
               :is="paramType[param.type][0]"
               :toggle-indeterminate="paramType[param.type][1]"
@@ -79,6 +70,13 @@
             align="right"
             class="text-primary"
           >
+            <q-pagination
+              v-model="returnParamsPaginate"
+              :max="resultsSelected.length"
+              v-if="resultsSelected.length > 1"
+              :input="true"
+            >
+            </q-pagination>
             <q-btn
               flat
               type="reset"
@@ -202,6 +200,18 @@
                 {{ $t('close') }}
               </q-tooltip>
             </q-btn>
+            <!-- Button to launch another workflow step -->
+            <q-btn
+              icon="mdi-arrow-right-bold"
+              size="lg"
+              round
+              color="primary"
+              @click="nextWorkflowStep"
+            >
+              <q-tooltip>
+                {{ $t('workflowContinue') }}
+              </q-tooltip>
+            </q-btn>
           </q-card-actions>
         </q-page-sticky>
       </q-card>
@@ -322,24 +332,26 @@ function wrapCsvValue (val, formatFn) {
 }
 
 export default {
-  name: 'PageIndex',
+  name: 'ScriptsPage',
   data () {
     return {
       currentCommand: {}, // User click "Execute" on datatable, chosen command is set to this object, which gets rendered with dialog
+      currentCommandMaster: {}, // User click "Execute" on datatable, chosen command is set to this object, which is held as reference for workflows
       currentWorkflowIndex: 0, // Index of currently workflow step to run
       returnParams: {}, // User defined parameters from Command Dialog
+      returnParamsPaginate: 1, // In multiple selection workflows allows parameters for each selection
       results: {}, // Command result object displayed in Results Dialog
       resultsSelected: [], // Array of selected objects from Results Dialog
-      displayCommandDiag: false,
-      displayHelpDiag: false,
-      displayResultsDiag: false,
-      paramType: {
+      displayCommandDiag: false, // Visibility state for command dialog
+      displayHelpDiag: false, // Visibility state for help dialog
+      displayResultsDiag: false, // Visibility state for results dialog
+      paramType: { // Table translating PowerShell variable types to Quasar components names and options
         'String': ['q-input', 'text'],
         'Number': ['q-input', 'number'],
         'ScriptBlock': ['q-input', 'textarea'],
         'Boolean': ['q-toggle', true],
         'Switch': ['q-toggle', false]
-      },
+      }, // Column definitions for scripts table
       scriptsColumns: [
         { name: 'icon', align: 'center', label: 'Icon', field: row => row.icon, sortable: true, classes: 'gt-xs' },
         { name: 'commandName', required: true, label: 'Command Name', align: 'left', field: row => row.commandName, format: val => `${val}`, sortable: true, classes: 'text-no-wrap' },
@@ -350,14 +362,10 @@ export default {
         { name: 'help', align: 'center', label: 'Icon', field: 'help', sortable: true, classes: 'gt-xs' },
         { name: 'execute', label: 'Execute', field: 'Execute', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) }
       ],
-      scriptsPagination: {
-        // all records per page
-        rowsPerPage: 0
-      },
-      outputPagination: {
-        // all records per page, user may change that via GUI
-        rowsPerPage: 0
-      }
+      // table pagination options for scripts table
+      scriptsPagination: { rowsPerPage: 0 },
+      // table pagination options for scripts table, user may change this value in GUI
+      outputPagination: { rowsPerPage: 0 }
     }
   },
   computed: {
@@ -369,7 +377,6 @@ export default {
       return this.getLanguage
     },
     scriptsArray: function () {
-      // Filter definitions and spread to single array to display in scripts page data table
       return this.getScriptsArray
     },
     definitions: function () {
@@ -386,8 +393,10 @@ export default {
     resultsColumns: {
       get () {
         let columns = [
+          // Auto generated __id column for workflow commands
           { name: '__id', align: 'left', label: '__id', field: row => row.__id, classes: 'hidden', headerClasses: 'hidden' }
         ]
+        // For every parameter received from command, generate column definition.
         for (let i = 0; i < this.results.params.length; i++) {
           let definition = { name: this.results.params[i], align: 'left', label: this.results.params[i], field: this.results.params[i], sortable: true }
           columns.push(definition)
@@ -396,11 +405,11 @@ export default {
       }
     },
     resultsTableSelection: {
-      // Table selection can be either single, multiple or none. If command is not part of workflow or passthru is not defined in JSON, defaults to none.
+      // Table selection can be either single, multiple or none. If command is not part of workflow or acceptsParams is not defined in JSON, defaults to none.
       get () {
         if (this.currentCommand.workflow) {
-          if (this.currentCommand.workflow[this.currentWorkflowIndex].passthru) {
-            return this.currentCommand.workflow[this.currentWorkflowIndex].passthru
+          if (this.currentCommand.workflow[this.currentWorkflowIndex].acceptsParams) {
+            return this.currentCommand.workflow[this.currentWorkflowIndex].acceptsParams
           } else {
             return 'none'
           }
@@ -413,6 +422,7 @@ export default {
   methods: {
     showCommandDiag (commandCtx) {
       this.currentCommand = commandCtx
+      this.currentCommandMaster = commandCtx
       this.displayCommandDiag = !this.displayCommandDiag
     },
     showHelpDiag (helpCtx) {
@@ -434,6 +444,7 @@ export default {
     },
     exportTable () {
       // https://quasar.dev/vue-components/table#Exporting-data
+      // TODO: rework and add better, complex solution
       const content = [this.resultsColumns.map(col => wrapCsvValue(col.label))].concat(
         this.results.output.map(row => this.resultsColumns.map(col => wrapCsvValue(
           typeof col.field === 'function'
@@ -484,6 +495,7 @@ export default {
         this.returnParams[param.parameter] = ''
       }
     },
+    // If command or user requires confirmation before executing, display this dialog.
     preExecuteCheck () {
       if (this.currentCommand.confirm) {
         this.$q.dialog({
@@ -505,6 +517,8 @@ export default {
         this.executeCommand()
       }
     },
+    // If user needs to stop PowerShell execution for whatever reason, he can smash Esc to kill process and launch new one.
+    // This requires user to have credential saved in Credential Manager, otherwise CredentialObject and Session cannot be created.
     cancelCommand (key) {
       if (key.key === 'Escape') {
         this.toggleLoading()
@@ -517,20 +531,11 @@ export default {
             console.error('Could not stop PowerShell. Original error: ', error)
           }
           // Create new PowerShell instance
-          // this.$q.loading.show({
-          //   message: '<h6>Creating new PowerShell</h6>'
-          // })
           this.$pwsh.createShell((done) => {
-            // this.$q.loading.show({
-            //   message: '<h6>Loading functions</h6>'
-            // })
             // Load New-PSSessionWithCredentials
             this.$pwsh.loadCredFunction(() => {
               this.$pwsh.shell.invoke().then(() => {
                 // Create Credential Object and PSSession
-                // this.$q.loading.show({
-                //   message: '<h6>Creating new session</h6>'
-                // })
                 this.$pwsh.loadCredString(() => {
                   this.$pwsh.shell.invoke().then(() => {
                     // PowerShell restarted, hide loading
@@ -543,7 +548,39 @@ export default {
         })
       }
     },
+    // Takes selected results and pushes next workflow step to command dialog
+    nextWorkflowStep () {
+      this.displayResultsDiag = false
+      this.displayCommandDiag = true // TODO: Currently not required, but we may close commands dialog after showing results diag
+      // By forcing currentCommand to be array, we can detect workflow and apply pagination and other options for multiple selection
+      this.currentCommand = []
+      // For each selected result, push command object to currentCommand array
+      for (let i = 0; i < this.resultsSelected.length; i++) {
+        let tempCommand = Object.assign({}, this.currentCommandMaster.workflow[this.currentWorkflowIndex])
+        // For each passed parameter expected in workflow, add to currendCommand instance
+        // for (let j = 0; j < tempCommand.passedParameters.length; j++) {
+        //   tempCommand.parameters.push(this.resultsSelected[tempCommand.passedParameters[j].propertyName])
+        // }
+        console.log('tempCommand', tempCommand)
+        console.log('tempCommand.parameters', tempCommand.parameters)
+        console.log('this.resultsSelected', this.resultsSelected)
+      }
+      // this.currentCommand.push(this.currentCommandMaster.workflow[this.currentWorkflowIndex])
+      // TODO: What if there is no passed parameter or it is not array (has no length)
+    },
     executeCommand () {
+      let inputArray = []
+      for (let key in this.returnParams) {
+        console.log('splittin')
+        let helperArray = key.toString().split('__')
+        console.log('creating helper object')
+        let helperObject = inputArray[[helperArray[0] - 1]]
+        console.log('adding to helper object')
+        helperObject[helperArray[1]] = this.returnParams[key]
+        console.log('splicing array')
+        inputArray = inputArray.splice(helperArray[0] - 1, 0, helperObject) // Object.assign(helperArray[1], this.returnParams[key])
+      }
+      console.log(inputArray)
       // Insert parameter variables to command template
       let resultCommand = this.currentCommand.commandBlock
       for (let i = 0; i < this.currentCommand.parameters.length; i++) {
@@ -584,7 +621,7 @@ export default {
             data = JSON.parse(output)
             try {
               params = Object.keys(data[0]) // Get param names from array
-              if (this.currentCommand.type === 'workflow') {
+              if (this.currentCommand.workflow) {
                 // If command is part of workflow, calculate indexes to allow selection
                 data = data.map((val, index) => ({ ...val, __id: index }))
               }

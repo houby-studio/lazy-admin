@@ -31,7 +31,7 @@
 
 <script>
 export default {
-  name: 'PageAbout',
+  name: 'SettingsPage',
   data () {
     return {
       computerName: ''
