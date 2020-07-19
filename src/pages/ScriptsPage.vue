@@ -3,10 +3,12 @@
     <!-- Dialog window is shown when command is selected with 'Execute' button -->
     <q-dialog
       v-model="displayCommandDiag"
-      transition-show="scale"
-      transition-hide="scale"
       :full-width="commandDialogMaximized"
       :full-height="commandDialogMaximized"
+      @hide="resetAllParams"
+      no-backdrop-dismiss
+      transition-show="scale"
+      transition-hide="scale"
     >
       <q-card class="full-width">
         <q-form
@@ -17,7 +19,7 @@
             <div class="row">
               <div class="col">
                 <div class="text-h6 float-left">
-                  <q-icon :name="currentCommand.icon ? currentCommand.icon : 'mdi-powershell'"></q-icon> {{ currentCommand.commandName }}
+                  <q-icon :name="currentCommandMaster.icon ? currentCommandMaster.icon : 'mdi-powershell'"></q-icon> {{ currentCommandMaster.commandName }}
                 </div>
               </div>
               <div class="col">
@@ -27,10 +29,10 @@
                 >
 
                   <q-btn
-                    flat
                     :ripple="false"
                     :icon="commandDialogMaximized ? 'fas fa-compress-alt' : 'fas fa-expand-alt'"
                     @click="commandDialogMaximized = !commandDialogMaximized"
+                    flat
                   />
                 </q-card-actions>
               </div>
@@ -39,17 +41,33 @@
           </q-card-section>
           <q-card-section class="q-pt-none">
             <!-- Workflows only - Previous command parameters -->
-            <!-- <q-input
-              v-for="(param) in resultsSelected"
-              v-model="returnParams[param.Name][]"
-              :label="param.Name"
-              :key="param.Name"
-              type="text"
-            ></q-input> -->
+            <q-expansion-item
+              v-if="currentCommand.passedParameters ? currentCommand.passedParameters.length > 0 : false"
+              :default-opened="resultsSelected.length > 1"
+              :caption="$t('workflowReadOnly')"
+              :label="$t('workflowParameters')"
+              expand-separator
+              icon="mdi-cogs"
+            >
+              <q-input
+                v-for="param in currentCommand.passedParameters"
+                v-model="returnParams[returnParamsPaginate + '__' + param.parameter]"
+                :label="param.parameter"
+                :key="param.parameter"
+                hide-bottom-space
+                standout
+                readonly
+                type="text"
+              ></q-input>
+            </q-expansion-item>
+            <q-separator
+              v-if="currentCommand.passedParameters ? currentCommand.passedParameters.length > 0 : false"
+              spaced
+            ></q-separator>
             <!-- Command parameters -->
             <component
               v-for="(param, index) in currentCommand.parameters"
-              v-model="returnParams[returnParamsPaginate+'__'+param.parameter]"
+              v-model="returnParams[returnParamsPaginate + '__' + param.parameter]"
               :tabindex="index + 1"
               :is="paramType[param.type][0]"
               :toggle-indeterminate="paramType[param.type][1]"
@@ -61,39 +79,41 @@
               :hint="`${param.required ? $t('requiredParam') : $t('optionalParam') } | ${param.type} | ${param.hint ? param.hint[language] || param.hint['default'] : ''}`"
               :type="paramType[param.type][1]"
               @keyup.enter="$event.target.nextElementSibling.focus()"
+              filled
               clearable
               lazy-rules
             ></component>
           </q-card-section>
-
+          <!-- Actions for command dialog -->
           <q-card-actions
             align="right"
             class="text-primary"
           >
+            <!-- Show pagination if there is more than one selected result from previous command -->
             <q-pagination
+              v-if="resultsSelected.length > 1"
               v-model="returnParamsPaginate"
               :max="resultsSelected.length"
-              v-if="resultsSelected.length > 1"
               :input="true"
             >
             </q-pagination>
             <q-btn
+              v-close-popup
+              :label="$t('cancel')"
+              tabindex="1000"
+              flat
+            />
+            <q-btn
+              :label="$t('reset')"
               flat
               type="reset"
               tabindex="999"
-              :label="$t('reset')"
             />
             <q-btn
-              flat
-              v-close-popup
-              tabindex="1000"
-              :label="$t('cancel')"
-            />
-            <q-btn
+              :label="$t('launch')"
               flat
               type="submit"
               tabindex="998"
-              :label="$t('launch')"
             />
           </q-card-actions>
         </q-form>
@@ -125,12 +145,12 @@
       transition-hide="scale"
       full-width
       full-height
-      persistent
+      no-backdrop-dismiss
     >
       <q-card class="full-width">
         <q-card-section>
           <div class="text-h6">
-            <q-icon :name="currentCommand.icon ? currentCommand.icon : 'mdi-powershell'"></q-icon> {{ $t('results', { commandName: currentCommand.commandName }) }} {{ currentCommand.workflow ? 'Workflow' : '' }}
+            <q-icon :name="currentCommandMaster.icon ? currentCommandMaster.icon : 'mdi-powershell'"></q-icon> {{ $t('results', { commandName: currentCommandMaster.commandName }) }} {{ currentCommandMaster.workflow ? 'Workflow' : '' }}
           </div>
         </q-card-section>
         <q-card-section>
@@ -142,35 +162,59 @@
               :pagination.sync="outputPagination"
               :selection="resultsTableSelection"
               :selected.sync="resultsSelected"
+              :filter="resultsFilter"
               row-key="__id"
             >
+              <template v-slot:top-right>
+                <q-input
+                  v-model="resultsFilter"
+                  :placeholder="$t('search')"
+                  borderless
+                  dense
+                >
+                  <template v-slot:append>
+                    <q-icon
+                      v-if="resultsFilter === ''"
+                      name="search"
+                      color="white"
+                    />
+                    <q-icon
+                      v-else
+                      @click="resultsFilter = ''"
+                      name="clear"
+                      class="cursor-pointer"
+                      color="white"
+                    />
+                  </template>
+                </q-input>
+              </template>
             </q-table>
           </div>
           <!-- Display RAW String value returned from PowerShell - this is displayed when cast to JSON object fails -->
           <div v-else>
             <q-input
+              :value="results.output"
+              @keyup.enter.stop
               type="textarea"
               readonly
               autogrow
               borderless
-              :value="results.output"
-              @keyup.enter.stop
             />
           </div>
         </q-card-section>
         <!-- Always display buttons on the center bottom of the main window -->
         <q-page-sticky
-          position="bottom"
           :offset="[0, 0]"
+          position="bottom"
         >
           <q-card-actions>
             <!-- Allow objects to be exported to CSV -->
             <q-btn
               v-if="results.returnType === 'object'"
+              @click="exportTable"
               icon="mdi-file-delimited"
               round
               color="primary"
-              @click="exportTable"
             >
               <q-tooltip>
                 {{ $t('exportCsv') }}
@@ -179,11 +223,11 @@
             <!-- Allow raw text to be copied to clipboard -->
             <q-btn
               v-if="results.returnType === 'raw'"
+              v-clipboard:copy="results.output"
+              @click="notifyCopied"
               icon="mdi-content-copy"
               round
               color="primary"
-              @click="notifyCopied"
-              v-clipboard:copy="results.output"
             >
               <q-tooltip>
                 {{ $t('copyClipboard') }}
@@ -191,10 +235,10 @@
             </q-btn>
             <!-- Button to close results -->
             <q-btn
+              v-close-popup
               icon="close"
               round
               color="primary"
-              v-close-popup
             >
               <q-tooltip>
                 {{ $t('close') }}
@@ -202,11 +246,13 @@
             </q-btn>
             <!-- Button to launch another workflow step -->
             <q-btn
+              v-if="currentCommandMaster.workflow ? currentWorkflowIndex < currentCommandMaster.workflow.length : false"
+              :disable="resultsSelected.length === 0 && results.returnType !== 'raw'"
+              @click="nextWorkflowStep"
               icon="mdi-arrow-right-bold"
               size="lg"
               round
               color="primary"
-              @click="nextWorkflowStep"
             >
               <q-tooltip>
                 {{ $t('workflowContinue') }}
@@ -264,11 +310,11 @@
               auto-width
             >
               <q-btn
+                @click="showHelpDiag(props.row)"
                 dense
                 round
                 flat
                 icon="star_outline"
-                @click="showHelpDiag(props.row)"
               />
             </q-td>
           </template>
@@ -342,6 +388,7 @@ export default {
       returnParamsPaginate: 1, // In multiple selection workflows allows parameters for each selection
       results: {}, // Command result object displayed in Results Dialog
       resultsSelected: [], // Array of selected objects from Results Dialog
+      resultsFilter: '', // Filter for results table
       displayCommandDiag: false, // Visibility state for command dialog
       displayHelpDiag: false, // Visibility state for help dialog
       displayResultsDiag: false, // Visibility state for results dialog
@@ -405,15 +452,11 @@ export default {
       }
     },
     resultsTableSelection: {
-      // Table selection can be either single, multiple or none. If command is not part of workflow or acceptsParams is not defined in JSON, defaults to none.
+      // Table selection can be either single, multiple or none. If command is not part of workflow or acceptsParams is not defined in JSON, or there is no next workflow step, defaults to none.
       get () {
-        if (this.currentCommand.workflow) {
-          if (this.currentCommand.workflow[this.currentWorkflowIndex].acceptsParams) {
-            return this.currentCommand.workflow[this.currentWorkflowIndex].acceptsParams
-          } else {
-            return 'none'
-          }
-        } else {
+        try {
+          return this.currentCommandMaster.workflow[this.currentWorkflowIndex].acceptsParams
+        } catch {
           return 'none'
         }
       }
@@ -490,10 +533,29 @@ export default {
       }
     },
     resetForm () {
-      for (let i = 0; i < this.currentCommand.parameters.length; i++) {
-        let param = this.currentCommand.parameters[i]
-        this.returnParams[param.parameter] = ''
+      // Always assume one set of parameters passed, unless there is more than one resultsSelected
+      let parametersSetsNum = 1
+      if (this.resultsSelected.length > 1) {
+        parametersSetsNum = this.resultsSelected.length
       }
+      // Loop through parameterSets and get parameters for each one to resultsCommand
+      for (let paramSetIndex = 1; paramSetIndex <= parametersSetsNum; paramSetIndex++) {
+        for (let i = 0; i < this.currentCommand.parameters.length; i++) {
+          this.returnParams[paramSetIndex + '__' + this.currentCommand.parameters[i].parameter] = ''
+        }
+      }
+    },
+    resetAllParams () {
+      this.displayCommandDiag = false
+      this.displayResultsDiag = false
+      this.currentCommand = {} // User click "Execute" on datatable, chosen command is set to this object, which gets rendered with dialog
+      this.currentCommandMaster = {} // User click "Execute" on datatable, chosen command is set to this object, which is held as reference for workflows
+      this.currentWorkflowIndex = 0 // Index of currently workflow step to run
+      this.returnParams = {} // User defined parameters from Command Dialog
+      this.returnParamsPaginate = 1 // In multiple selection workflows allows parameters for each selection
+      this.results = {} // Command result object displayed in Results Dialog
+      this.resultsSelected = [] // Array of selected objects from Results Dialog
+      this.resultsFilter = '' // Filter for results table
     },
     // If command or user requires confirmation before executing, display this dialog.
     preExecuteCheck () {
@@ -548,63 +610,97 @@ export default {
         })
       }
     },
-    // Takes selected results and pushes next workflow step to command dialog
+    // Processes selected results to parameters and pushes next workflow step to current command dialog
     nextWorkflowStep () {
       this.displayResultsDiag = false
-      this.displayCommandDiag = true // TODO: Currently not required, but we may close commands dialog after showing results diag
-      // By forcing currentCommand to be array, we can detect workflow and apply pagination and other options for multiple selection
-      this.currentCommand = []
-      // For each selected result, push command object to currentCommand array
-      for (let i = 0; i < this.resultsSelected.length; i++) {
-        let tempCommand = Object.assign({}, this.currentCommandMaster.workflow[this.currentWorkflowIndex])
-        // For each passed parameter expected in workflow, add to currendCommand instance
-        // for (let j = 0; j < tempCommand.passedParameters.length; j++) {
-        //   tempCommand.parameters.push(this.resultsSelected[tempCommand.passedParameters[j].propertyName])
-        // }
-        console.log('tempCommand', tempCommand)
-        console.log('tempCommand.parameters', tempCommand.parameters)
-        console.log('this.resultsSelected', this.resultsSelected)
-      }
-      // this.currentCommand.push(this.currentCommandMaster.workflow[this.currentWorkflowIndex])
-      // TODO: What if there is no passed parameter or it is not array (has no length)
-    },
-    executeCommand () {
-      let inputArray = []
-      for (let key in this.returnParams) {
-        console.log('splittin')
-        let helperArray = key.toString().split('__')
-        console.log('creating helper object')
-        let helperObject = inputArray[[helperArray[0] - 1]]
-        console.log('adding to helper object')
-        helperObject[helperArray[1]] = this.returnParams[key]
-        console.log('splicing array')
-        inputArray = inputArray.splice(helperArray[0] - 1, 0, helperObject) // Object.assign(helperArray[1], this.returnParams[key])
-      }
-      console.log(inputArray)
-      // Insert parameter variables to command template
-      let resultCommand = this.currentCommand.commandBlock
-      for (let i = 0; i < this.currentCommand.parameters.length; i++) {
-        let param = this.currentCommand.parameters[i]
-        let input = this.returnParams[param.parameter]
-        // console.log('Checking input: ', input)
-        if (input) {
-          // console.log('input is here!')
-          // If parameter has additional text format, insert it
-          if (param.format) {
-            // console.log('format is here!')
-            resultCommand = resultCommand.replace(`{{${param.parameter}}}`, `${param.format}`)
+      this.currentCommand = this.currentCommandMaster.workflow[this.currentWorkflowIndex] // Set current workflow step as currentCommand
+      // For each parameter expected in passedParameters, loop through all of them and then throigh all selections to either join them to single string or insert as numbered parameters separately to returnParams
+      for (let passedParamsIndex = 0; passedParamsIndex < this.currentCommand.passedParameters.length; passedParamsIndex++) {
+        let parameterString = '' // Helper string for joining input arrays to single string
+        for (let i = 1; i <= this.resultsSelected.length; i++) {
+          // If parameters are to be passed as array of values separated by commas to parameter withing one command, join them
+          if (this.currentCommand.joinParamsAsString) {
+            // First parameter value does not have join format in front of it, only subsequent ones
+            if (i !== 1) {
+              parameterString += this.currentCommand.passedParameters[passedParamsIndex].joinFormat
+            }
+            // Add value from resultsSelected for given command e.g. resultsSelected[0]['Name']
+            parameterString += this.resultsSelected[i - 1][this.currentCommand.passedParameters[passedParamsIndex].passedParamName]
+          } else {
+            // If parameters join method set is 'separate', set each result param to its own property with value
+            this.returnParams[i + '__' + this.currentCommand.passedParameters[passedParamsIndex].parameter] = this.resultsSelected[i - 1][this.currentCommand.passedParameters[passedParamsIndex].passedParamName]
+
+            if (this.currentCommandMaster.workflow[this.currentWorkflowIndex].passedParameters[passedParamsIndex].format) {
+              parameterString = this.currentCommandMaster.workflow[this.currentWorkflowIndex].passedParameters[passedParamsIndex].format.replace(`{{${this.currentCommandMaster.workflow[this.currentWorkflowIndex].passedParameters[passedParamsIndex].parameter}}}`, `${parameterString}`)
+            }
           }
-          // If parameter was supplied, insert param in place of template variable
-          resultCommand = resultCommand.replace(`{{${param.parameter}}}`, `${input}`)
-        } else {
-          // If parameter was not supplied, remove template variable
-          resultCommand = resultCommand.replace(`{{${param.parameter}}}`, '')
+        }
+        // After looping though all selections is done, apply format to whole parameter if it is array parameter and insert to object
+        if (this.currentCommand.joinParamsAsString) {
+          // If parameter has format, apply it
+          if (this.currentCommandMaster.workflow[this.currentWorkflowIndex].passedParameters[passedParamsIndex].format) {
+            parameterString = this.currentCommandMaster.workflow[this.currentWorkflowIndex].passedParameters[passedParamsIndex].format.replace(`{{${this.currentCommandMaster.workflow[this.currentWorkflowIndex].passedParameters[passedParamsIndex].parameter}}}`, `${parameterString}`)
+          }
+          // Set parameter to returnParams
+          this.returnParams['1__' + this.currentCommandMaster.workflow[this.currentWorkflowIndex].passedParameters[passedParamsIndex].parameter] = parameterString
         }
       }
+      if (this.currentCommand.joinParamsAsString) { this.resultsSelected = [] } // clear resultsSelected to make command dialog behave in single input mode
+      this.currentWorkflowIndex++
+    },
+    executeCommand () {
+      // Always assume one set of parameters passed, unless there is more than one resultsSelected
+      let parametersSetsNum = 1
+      if (this.resultsSelected.length > 1) {
+        parametersSetsNum = this.resultsSelected.length
+      }
+      this.resultsSelected = [] // Clear variable as we do not need it anymore
+      let resultCommand = '' // Command to be executed
+      // Loop through parameterSets and get parameters for each one to resultsCommand
+      for (let paramSetIndex = 1; paramSetIndex <= parametersSetsNum; paramSetIndex++) {
+        // Get commandBlock with template variables and replace with real values
+        let tempResultCommand = this.currentCommand.commandBlock
+        for (let i = 0; i < this.currentCommand.parameters.length; i++) {
+          let param = this.currentCommand.parameters[i]
+          let input = this.returnParams[paramSetIndex + '__' + param.parameter]
+          // console.log('Checking input: ', input)
+          if (input) {
+            // console.log('input is here!')
+            // If parameter has additional text format, insert it
+            if (param.format) {
+              // console.log('format is here!')
+              tempResultCommand = tempResultCommand.replace(`{{${param.parameter}}}`, `${param.format}`)
+            }
+            // If parameter was supplied, insert param in place of template variable
+            tempResultCommand = tempResultCommand.replace(`{{${param.parameter}}}`, `${input}`)
+          } else {
+            // If parameter was not supplied, remove template variable
+            tempResultCommand = tempResultCommand.replace(`{{${param.parameter}}}`, '')
+          }
+        }
+        // If command is part of workflow, load passed parameters
+        if (this.currentCommand.passedParameters) {
+          for (let i = 0; i < this.currentCommand.passedParameters.length; i++) {
+            let param = this.currentCommand.passedParameters[i]
+            let input = this.returnParams[paramSetIndex + '__' + param.parameter]
+            if (input) {
+              // If parameter was supplied, insert param in place of template variable
+              tempResultCommand = tempResultCommand.replace(`{{${param.parameter}}}`, `${input}`)
+            } else {
+              // If parameter was not supplied, remove template variable
+              tempResultCommand = tempResultCommand.replace(`{{${param.parameter}}}`, '')
+            }
+          }
+          // If user uses raw parameter, replace
+          tempResultCommand = tempResultCommand.replace(`{{__raw_argument}}`, `${this.results.output}`)
+        }
+        resultCommand += tempResultCommand + ';'
+        resultCommand = resultCommand.replace(/(\r\n|\n|\r)/gm, '')
+      }
+      // TODO: Above move to preexecute command, so user can see it and edit it before running
       this.toggleLoading(true)
       // TODO: Save command to history
       this.$pwsh.shell.clear().then(() => {
-        // this.$pwsh.shell.on('output', (output) => { console.log(output) })
         if (this.currentCommand.insidePsSession) {
           this.$pwsh.shell.addCommand(`Invoke-Command -Session $Global:LazyAdminPSSession -ScriptBlock {${resultCommand}}`)
         } else {
@@ -621,7 +717,7 @@ export default {
             data = JSON.parse(output)
             try {
               params = Object.keys(data[0]) // Get param names from array
-              if (this.currentCommand.workflow) {
+              if (this.currentCommandMaster.workflow) {
                 // If command is part of workflow, calculate indexes to allow selection
                 data = data.map((val, index) => ({ ...val, __id: index }))
               }
@@ -638,6 +734,9 @@ export default {
               output: dataArray
             }
           } catch (error) {
+            if (output === '') {
+              output = this.$t('powershellNoOutput')
+            }
             // Result was not an array of objects or single object. Console returned error, additional text or that's how command was written.
             this.results = {
               error: this.currentCommand.returns !== 'raw', // If command should return raw, it is not an error (or there is no way to tell)

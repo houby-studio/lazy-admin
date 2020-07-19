@@ -1,6 +1,6 @@
 {
   "base-module-example": {
-    "version": "0.1.2",
+    "version": "0.1.3",
     "icon": "mdi-powershell",
     "displayName": {
       "default": "Base commands",
@@ -267,19 +267,179 @@
         "commandBlock": "Write-Output \"String:{{String}}`nNumber:{{Number}}`nSwitch:{{Switch}}`nBoolean:{{Boolean}}`nScriptBlock:{{ScriptBlock}}\""
       },
       {
-        "commandName": "Get-CommandExamples",
+        "commandName": "Stop-Process",
         "icon": "mdi-checkbox-multiple-marked",
         "returns": "PSObject",
         "insidePsSession": false,
         "friendlyName": {
-          "default": "Get examples for command",
-          "en-us": "Get examples for command",
-          "cs-cz": "Získat příklady pro příkaz"
+          "default": "Get and stop selected process",
+          "en-us": "Get and stop selected process",
+          "cs-cz": "Získá a ukončí vybraný proces"
         },
         "description": {
-          "default": "Example workflow, which obtains list of matching commands based on first query, then gets examples for selected one.",
-          "en-us": "Example workflow, which obtains list of matching commands based on first query, then gets examples for selected one.",
-          "cs-cz": "Ukázkové workflow, které získá seznam odpovídajících příkazů na základě prvního dotazu, následně získá příklady pro zvolený příkaz."
+          "default": "Example workflow, which obtains list of running processes, then you select one to kill.",
+          "en-us": "Example workflow, which obtains list of running processes, then you select one to kill.",
+          "cs-cz": "Ukázkové workflow, které získá seznam běžících procesů, následně vyberete jeden, který se ukončí."
+        },
+        "parameters": [
+          {
+            "parameter": "Name",
+            "format": "-Name \"*{{Name}}*\"",
+            "required": false,
+            "type": "String",
+            "hint": {
+              "default": "Supply name of process, otherwise all processes are listed.",
+              "en-us": "Supply name of process, otherwise all processes are listed.",
+              "cs-cz": "Zadejte název procesu, jinak se zobrazí seznam všech."
+            }
+          }
+        ],
+        "commandBlock": "Get-Process {{Name}} | Select-Object Name, Id | ConvertTo-Json -Compress",
+        "workflow": [
+          {
+            "acceptsParams": "single",
+            "joinParamsAsString": false,
+            "returns": "raw",
+            "insidePsSession": false,
+            "confirm": false,
+            "passedParameters": [
+              {
+                "parameter": "Id",
+                "passedParamName": "Id",
+                "format": "-Id {{Id}}"
+              },
+              {
+                "parameter": "Name",
+                "passedParamName": "Name"
+              }
+            ],
+            "parameters": [],
+            "commandBlock": "Stop-Process {{Id}} -Force; if ($?) {Write-Output \"Process {{Name}} killed succesfully\"}"
+          }
+        ]
+      },
+      {
+        "commandName": "Stop-Processes",
+        "icon": "mdi-checkbox-multiple-marked",
+        "returns": "PSObject",
+        "insidePsSession": false,
+        "friendlyName": {
+          "default": "Get and stop selected processes",
+          "en-us": "Get and stop selected processes",
+          "cs-cz": "Získá a ukončí vybraný proceses"
+        },
+        "description": {
+          "default": "Example workflow, which obtains list of running processes, then you select multiple to kill.",
+          "en-us": "Example workflow, which obtains list of running processes, then you select multiple to kill.",
+          "cs-cz": "Ukázkové workflow, které získá seznam běžících procesů, následně vyberete ty, které se ukončí."
+        },
+        "parameters": [
+          {
+            "parameter": "Name",
+            "format": "-Name \"*{{Name}}*\"",
+            "required": false,
+            "type": "String",
+            "hint": {
+              "default": "Supply name of process, otherwise all processes are listed.",
+              "en-us": "Supply name of process, otherwise all processes are listed.",
+              "cs-cz": "Zadejte název procesu, jinak se zobrazí seznam všech."
+            }
+          }
+        ],
+        "commandBlock": "Get-Process {{Name}} | Select-Object Name, Id | ConvertTo-Json -Compress",
+        "workflow": [
+          {
+            "acceptsParams": "multiple",
+            "joinParamsAsString": false,
+            "returns": "raw",
+            "insidePsSession": false,
+            "confirm": true,
+            "passedParameters": [
+              {
+                "parameter": "Id",
+                "passedParamName": "Id",
+                "format": "-Id {{Id}}"
+              },
+              {
+                "parameter": "Name",
+                "passedParamName": "Name"
+              }
+            ],
+            "parameters": [],
+            "commandBlock": "Stop-Process {{Id}} -Force; if ($?) {Write-Output \"Process {{Name}} killed succesfully\"}"
+          }
+        ]
+      },
+      {
+        "commandName": "Stop-ProcessesArr",
+        "icon": "mdi-checkbox-multiple-marked",
+        "returns": "PSObject",
+        "insidePsSession": false,
+        "usesLoginObjects": false,
+        "friendlyName": {
+          "default": "Get and stop selected processes",
+          "en-us": "Get and stop selected processes",
+          "cs-cz": "Získá a ukončí vybraný proceses"
+        },
+        "description": {
+          "default": "Example workflow, which obtains list of running processes, then you select multiple to kill.",
+          "en-us": "Example workflow, which obtains list of running processes, then you select multiple to kill.",
+          "cs-cz": "Ukázkové workflow, které získá seznam běžících procesů, následně vyberete ty, které se ukončí."
+        },
+        "parameters": [
+          {
+            "parameter": "Name",
+            "format": "-Name \"*{{Name}}*\"",
+            "required": false,
+            "type": "String",
+            "hint": {
+              "default": "Supply name of process, otherwise all processes are listed.",
+              "en-us": "Supply name of process, otherwise all processes are listed.",
+              "cs-cz": "Zadejte název procesu, jinak se zobrazí seznam všech."
+            }
+          }
+        ],
+        "commandBlock": "Get-Process {{Name}} | Select-Object Name, Id | ConvertTo-Json -Compress",
+        "workflow": [
+          {
+            "acceptsParams": "multiple",
+            "joinParamsAsString": true,
+            "returns": "raw",
+            "insidePsSession": false,
+            "confirm": true,
+            "passedParameters": [
+              {
+                "parameter": "Id",
+                "passedParamName": "Id",
+                "format": "-Id {{Id}}",
+                "joinFormat": ", "
+              },
+              {
+                "parameter": "Name",
+                "passedParamName": "Name",
+                "format": "{{Name}}",
+                "joinFormat": " and "
+              }
+            ],
+            "parameters": [],
+            "commandBlock": "Stop-Process {{Id}} -Force; if ($?) {Write-Output \"Process(es) {{Name}} killed succesfully\"}"
+          }
+        ]
+      },
+      {
+        "commandName": "Get-CommandNameByArray",
+        "icon": "mdi-checkbox-multiple-marked",
+        "returns": "PSObject",
+        "insidePsSession": false,
+        "friendlyName": {
+          "default": "Get names of the command",
+          "en-us": "Get names of the command",
+          "cs-cz": "Získat názvy příkazů"
+        },
+        "description": {
+          "default": "Example workflow, which obtains list of matching commands based on first query, then writes their names.",
+          "en-us": "Example workflow, which obtains list of matching commands based on first query, then writes their names",
+          "cs-cz": "Ukázkové workflow, které získá seznam odpovídajících příkazů na základě prvního dotazu, následně získá názvy pro zvolené příkazy."
         },
         "parameters": [
           {
@@ -299,26 +459,189 @@
           {
             "passedParameters": [
               {
-                "parameter": "Name",
-                "propertyName": "Name"
+                "parameter": "TestParam",
+                "passedParamName": "Name",
+                "format": "-TestParam \"{{TestParam}}\"",
+                "joinFormat": "\", \""
               }
             ],
             "parameters": [
               {
-                "parameter": "WhatToDo",
+                "parameter": "ShouldOutput",
+                "required": true,
+                "type": "Switch",
+                "hint": {
+                  "default": "Should commands be outputed to console",
+                  "en-us": "Should commands be outputed to console",
+                  "cs-cz": "Zobrazit názvy příkazů v konzoli"
+                }
+              },
+              {
+                "parameter": "DebugText",
+                "format": "-DebugText {{DebugText}}",
                 "required": true,
                 "type": "String",
                 "hint": {
-                  "default": "Supply name of command",
-                  "en-us": "Supply name of the command",
-                  "cs-cz": "Zadejte název příkazu"
+                  "default": "Text to print to console",
+                  "en-us": "Text to print to console",
+                  "cs-cz": "Zobrazit text v konzoli"
                 }
               }
             ],
-            "acceptsParams": "single",
-            "commandBlock": "Write-Output \"Verb-Noun {{Name}} {{WhatToDo}}\"",
+            "acceptsParams": "multiple",
+            "multipleParamsJoinMethod": "array",
+            "commandBlock": "Write-Output 'Verb-Noun {{TestParam}} {{ShouldOutput}} {{DebugText}}'",
             "insidePsSession": false,
             "confirm": false
+          }
+        ]
+      },
+      {
+        "commandName": "Get-Definition",
+        "icon": "mdi-powershell",
+        "returns": "PSObject",
+        "insidePsSession": false,
+        "usesLoginObjects": false,
+        "friendlyName": {
+          "default": "Nothing really",
+          "en-us": "Nothing really",
+          "cs-cz": "Skutečně nic"
+        },
+        "description": {
+          "default": "Basically definition holding all possible parameters.",
+          "en-us": "Basically definition holding all possible parameters.",
+          "cs-cz": "Víceméně definice obsahující všechny možné parametry."
+        },
+        "help": {
+          "default": "https://example.com/help/get-definition-en.html",
+          "en-us": "https://example.com/help/get-definition-en.html",
+          "cs-cz": "https://example.com/help/get-definition-cs.html"
+        },
+        "parameters": [
+          {
+            "parameter": "SampleString",
+            "format": "-SampleString \"*{{SampleString}}*\"",
+            "required": false,
+            "type": "String",
+            "hint": {
+              "default": "Supply name of process, otherwise all processes are listed.",
+              "en-us": "Supply name of process, otherwise all processes are listed.",
+              "cs-cz": "Zadejte název procesu, jinak se zobrazí seznam všech."
+            }
+          },
+          {
+            "parameter": "SambleNumber",
+            "format": "-SambleNumber \"*{{SambleNumber}}*\"",
+            "required": false,
+            "type": "Number",
+            "hint": {
+              "default": "Supply name of process, otherwise all processes are listed.",
+              "en-us": "Supply name of process, otherwise all processes are listed.",
+              "cs-cz": "Zadejte název procesu, jinak se zobrazí seznam všech."
+            }
+          },
+          {
+            "parameter": "SampleScriptBlock",
+            "format": "-SampleScriptBlock \"*{{SampleScriptBlock}}*\"",
+            "required": false,
+            "type": "ScriptBlock",
+            "hint": {
+              "default": "Supply name of process, otherwise all processes are listed.",
+              "en-us": "Supply name of process, otherwise all processes are listed.",
+              "cs-cz": "Zadejte název procesu, jinak se zobrazí seznam všech."
+            }
+          },
+          {
+            "parameter": "SampleSwitch",
+            "format": "-SampleSwitch",
+            "required": false,
+            "type": "Switch",
+            "hint": {
+              "default": "Supply name of process, otherwise all processes are listed.",
+              "en-us": "Supply name of process, otherwise all processes are listed.",
+              "cs-cz": "Zadejte název procesu, jinak se zobrazí seznam všech."
+            }
+          },
+          {
+            "parameter": "SampleBoolean",
+            "format": "-SampleBoolean \"*{{SampleBoolean}}*\"",
+            "required": false,
+            "type": "Boolean",
+            "hint": {
+              "default": "Supply name of process, otherwise all processes are listed.",
+              "en-us": "Supply name of process, otherwise all processes are listed.",
+              "cs-cz": "Zadejte název procesu, jinak se zobrazí seznam všech."
+            }
+          }
+        ],
+        "commandBlock": "Write-Output '{{SampleString}} {{SambleNumber}} {{SampleScriptBlock}} {{SampleSwitch}} {{SampleBoolean}}'",
+        "workflow": [
+          {
+            "acceptsParams": "none",
+            "joinParamsAsString": false,
+            "returns": "PSObject",
+            "insidePsSession": false,
+            "confirm": false,
+            "passedParameters": [],
+            "parameters": [
+              {
+                "parameter": "Name",
+                "format": "-Name \"*{{Name}}*\"",
+                "required": true,
+                "type": "String",
+                "hint": {
+                  "default": "Supply name of process, otherwise all processes are listed.",
+                  "en-us": "Supply name of process, otherwise all processes are listed.",
+                  "cs-cz": "Zadejte název procesu, jinak se zobrazí seznam všech."
+                }
+              }
+            ],
+            "commandBlock": "Get-Process {{Name}} | Select-Object Name, Id | ConvertTo-Json -Compress"
+          },
+          {
+            "acceptsParams": "multiple",
+            "joinParamsAsString": true,
+            "returns": "raw",
+            "insidePsSession": false,
+            "confirm": false,
+            "passedParameters": [
+              {
+                "parameter": "Id",
+                "passedParamName": "Id",
+                "format": "{{Id}}",
+                "joinFormat": ", "
+              },
+              {
+                "parameter": "Name",
+                "passedParamName": "Name",
+                "format": "{{Name}}",
+                "joinFormat": " and "
+              }
+            ],
+            "parameters": [],
+            "commandBlock": "Write-Output 'You have selected processes with Ids {{Id}} and names {{Name}}.'"
+          },
+          {
+            "acceptsParams": "single",
+            "joinParamsAsString": false,
+            "returns": "raw",
+            "insidePsSession": false,
+            "confirm": true,
+            "passedParameters": [],
+            "parameters": [
+              {
+                "parameter": "Repeat",
+                "format": "${{Repeat}}",
+                "required": false,
+                "type": "Boolean",
+                "hint": {
+                  "default": "Would you like to repeat what you just saw?",
+                  "en-us": "Would you like to repeat what you just saw?",
+                  "cs-cz": "Chtěl byste znovu zobrazit to, co jste právě viděl?"
+                }
+              }
+            ],
+            "commandBlock": "if ({{Repeat}}) {Write-Output '{{__raw_argument}}'}"
           }
         ]
       }

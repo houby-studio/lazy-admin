@@ -32,6 +32,7 @@ export default {
   cancel: 'Zrušit', // Used in: ScriptsPage.vue
   reset: 'Resetovat', // Used in: ScriptsPage.vue
   results: `{commandName}: Výsledek`, // Used in: ScriptsPage.vue
+  powershellNoOutput: 'PowerShell nevrátil žádnou hodnotu.', // Used in: ScriptsPage.vue
   exportCsv: 'Exportovat do CSV', // Used in: ScriptsPage.vue
   copyClipboard: 'Zkopírovat do schránky', // Used in: ScriptsPage.vue
   close: 'Zavřít', // Used in: ScriptsPage.vue
@@ -43,6 +44,8 @@ export default {
   pleaseWait: 'Prosím vyčkejte...', // Used in: ScriptsPage.vue
   noScriptsFound: 'Žádné příkazy nenalezeny. Zkuste aktualizovat definice.', // Used in: ScriptsPage.vue
   workflowContinue: 'Další krok', // Used in: ScriptsPage.vue
+  workflowParameters: 'Parametry z předchozího kroku', // Used in: ScriptsPage.vue
+  workflowReadOnly: 'Tyto parametry jsou pouze pro čtení', // Used in: ScriptsPage.vue
   updateFound: 'Stahování nejnovější verze aplikace Lazy Admin.', // Used in: FullLayout.vue
   updateError: 'Nepodařilo se stáhnout aktualizaci aplikace Lazy Admin.', // Used in: FullLayout.vue
   definitionsError: 'Chyba aktualizace definic.', // Used in: AboutPage.vue

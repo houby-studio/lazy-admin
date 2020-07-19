@@ -38,11 +38,11 @@ This is simple JSON file, which contains following keys and values:
 
 ```
 {
-  "version": "{version}",
-  "releaseDate": "{YYYY-MM-DD}",
+  "version": "${version}",
+  "releaseDate": "${YYYY-MM-DD}",
   "definitionsUrl": [
-    "{https://URL/file.json}",
-    "{\\Path\To\JSON\file.json}"
+    "${https://URL/file.json}",
+    "${\\Path\To\JSON\file.json}"
   ]
 }
 ```
@@ -56,27 +56,30 @@ Possible values for definitions file:
 * **unique-definitions-key**: Unique name, preferably kebab-case, but is really up to you, just don't break javascript, various functions access specific definitions module by associative array names. 
 **IMPORTANT**: All other keys are children of this one
 * version: Very important, Lazy Admin compares this value when checking for updates. So when you release newer version of scripts definition file, you have to increment version to trigger update
-* icon: name of icon, if omitted, powershell icon is used
+* icon: name of icon, if omitted, powershell icon is used, this is what user sees on side panel when filtering commands based on definitions/modules
 * displayName: provided in languages you want to support, this is what user sees on side panel when filtering commands based on definitions/modules
 * description: provided in languages you want to support, this is what user sees on side panel below displayName when filtering commands based on definitions/modules
-* definition: array of definitions for each command you want to define
+* definition: array of definitions for each command you define
     * commandName: Preferably name of the Cmdlet or function, which this definition uses, displayed to user to get the idea what the command might do
-    * type: defines what type of command is it. Determines how application should treat it
     * icon: name of icon, if omitted, powershell icon is used
-    * returns: type of the result, which application should expect after command is executed
-    * insidePsSession: whether command should be run in Remote PSSession or locally
-    * usesLoggedUser: whether command utilizes $CredentialObject or $LazySession created upon logging in. May be ommited when insidePsSession is true
-    * confirm: before executing the command, ask user for confirmation
+    * returns: type of the result, which application should expect after command is executed ("raw", "PSObject")
+    * insidePsSession: whether command should be run in Remote PSSession or locally (true, false)
+    * usesLoginObjects: whether command utilizes $CredentialObject or $LazySession created upon logging in (true, false)
+    * confirm: before executing the command, ask user for confirmation (true, false)
     * friendlyName: provided in languages you want to support, this is displayed to user to get better idea what the command might do
     * description: provided in languages you want to support, this is displayed to user to best describe what the command might do
+    * help: provided in languages you want to support, this is displayed to user when clicked on help icon. (url to http)
     * parameters: array of parameters, which user is supposed to fill
-    * commandBlock: String containing Cmdlet or function and parameters enclosed in {{ double curly braces }}
+    * commandBlock: String containing Cmdlet or function and parameters enclosed in {{double curly braces}}
     * workflow: array of commands, when you need to run multiple commands sequentially, passing results from previous ones or asking for another user input in between
-        * passedParameters: array of parameters obtained from previous command, referred by the property name
-        * parameters: array of parameters, which user is supposed to fill
-        * commandBlock: String containing Cmdlet or function and parameters enclosed in {{ double curly braces }}
-        * passthru: display table of results and allow user to choose single or multiple results to be passed to another command, similar to `Out-GridView -Passthru`
-        * confirm: before proceeding to another command, ask user for confirmation
+      * acceptsParams: selection mode for results table from previous command to be passed to this command ('none', 'single', 'multiple')
+      * joinParamsAsString: whether to join selected parameters to single command or run command for each parameters separately  (true, false)
+      * returns: type of the result, which application should expect after command is executed ("raw", "PSObject")
+      * insidePsSession: whether command should be run in Remote PSSession or locally (true, false)
+      * confirm: before executing the command, ask user for confirmation (true, false)
+      * passedParameters: array of parameters obtained from previous command, referred by the property name 'passedParamName'
+      * parameters: array of parameters, which user is supposed to fill
+      * commandBlock: String containing Cmdlet or function and parameters enclosed in {{double curly braces}}
 
 #### Example file 
 [base-module-example.json](base-module-example.json)
@@ -100,72 +103,72 @@ This is only example, there are many possibilities how to write definitions.
 ```
 
 {
-  "{unique-definitions-key}": {
-    "version": "{version}",
-    "icon": "{icon-name}",
-    "displayName": "{DisplayName}",
-    "description": "{Description}",
+  "${unique-definitions-key}": {
+    "version": "${version}",
+    "icon": "${icon-name}",
+    "displayName": "${DisplayName}",
+    "description": "${Description}",
     "definition": [
       {
-        "commandName": "{Verb-Noun}",
-        "type": "{type}",
-        "icon": "{icon-name}",
-        "returns": "{returnType}",
-        "insidePsSession": {Boolean},
-        "usesLoggedUser": {Boolean},
-        "friendlyName": "{friendlyName}",
-        "description": "{Description}",
+        "commandName": "${Verb-Noun}",
+        "icon": "${icon-name}",
+        "returns": "${returnType}",
+        "insidePsSession": ${Boolean},
+        "usesLoginObjects": ${Boolean},
+        "friendlyName": "${friendlyName}",
+        "description": "${Description}",
+        "help": "${HelpUrls}",
         "parameters": [
           {
-            "parameter": "{parameterName}",
-            "format": "some format {parameterName}",
-            "required": {Boolean},
-            "type": "{inputType}",
-            "hint": "{hint}"
+            "parameter": "${parameterName}",
+            "format": "some format ${parameterName}",
+            "required": ${Boolean},
+            "type": "${inputType}",
+            "hint": "${hint}"
           }
         ],
-        "commandBlock": "{Verb-Noun {{parameterName}}}"
+        "commandBlock": "${Verb-Noun {{parameterName}}}"
       },
       {
-        "commandName": "{Verb-Noun}",
+        "commandName": "${Verb-Noun}",
         "type": "workflow",
-        "icon": "{icon-name}",
-        "returns": "{returnType}",
-        "friendlyName": "{friendlyName}",
-        "description": "{Description}",
+        "icon": "${icon-name}",
+        "returns": "${returnType}",
+        "friendlyName": "${friendlyName}",
+        "description": "${Description}",
         "parameters": [
           {
-            "parameter": "{parameterName}",
-            "required": {Boolean},
-            "type": "{inputType}",
-            "hint": "{hint}"
+            "parameter": "${parameterName}",
+            "required": ${Boolean},
+            "type": "${inputType}",
+            "hint": "${hint}"
           }
         ],
-        "commandBlock": "{Verb-Noun {{parameterName}}}",
+        "commandBlock": "${Verb-Noun {{parameterName}}}",
         "workflow": [
           {
+            "acceptsParams": ${Boolean},
+            "joinParamsAsString": ${Boolean},
+            "returns": "${returnType}",
+            "insidePsSession": ${Boolean},
+            "confirm": ${Boolean},
             "passedParameters": [
               {
-                "parameter": "{parameterName}",
-                "propertyName": "{propertyName}"
+                "parameter": "${parameterName}",
+                "passedParamName": "${passedParamName}",
+                "format": "${passedParamFormat}",
+                "joinFormat": "${passedParamJoinFormat}",
               }
             ],
             "parameters": [
               {
-                "parameter": "{parameterName}",
-                "required": {Boolean},
-                "type": "{inputType}",
-                "hint": "{hint}"
+                "parameter": "${parameterName}",
+                "required": ${Boolean},
+                "type": "${inputType}",
+                "hint": "${hint}"
               }
             ],
-            "commandBlock": "{Verb-Noun {{parameterName}}}",
-            "passthru": {Boolean},
-            "confirm": {Boolean}
-          },
-          {
-            "commandBlock": "{Verb-Noun {{parameterName}}}",
-            "passthru": {single|multiple|none},
-            "confirm": {Boolean}
+            "commandBlock": "${Verb-Noun {{parameterName}}}"
           }
         ]
       }

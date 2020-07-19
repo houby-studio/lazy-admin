@@ -32,6 +32,7 @@ export default {
   cancel: 'Cancel', // Used in: ScriptsPage.vue
   reset: 'Reset', // Used in: ScriptsPage.vue
   results: `{commandName}: Results`, // Used in: ScriptsPage.vue
+  powershellNoOutput: 'PowerShell did not return any value.', // Used in: ScriptsPage.vue
   exportCsv: 'Export to CSV', // Used in: ScriptsPage.vue
   copyClipboard: 'Copy to clipboard', // Used in: ScriptsPage.vue
   close: 'Close', // Used in: ScriptsPage.vue
@@ -43,6 +44,8 @@ export default {
   pleaseWait: 'Please wait...', // Used in: ScriptsPage.vue
   noScriptsFound: 'No commands found. Try updating definitions.', // Used in: ScriptsPage.vue
   workflowContinue: 'Next step', // Used in: ScriptsPage.vue
+  workflowParameters: 'Parameters from previous step', // Used in: ScriptsPage.vue
+  workflowReadOnly: 'Those parameters are read only', // Used in: ScriptsPage.vue
   updateFound: 'Downloading the latest version of Lazy Admin.', // Used in: FullLayout.vue
   updateError: 'Could not download update for Lazy Admin application.', // Used in: FullLayout.vue
   definitionsError: 'Definitions update error.', // Used in: AboutPage.vue
