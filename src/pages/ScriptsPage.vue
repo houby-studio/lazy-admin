@@ -262,6 +262,52 @@
         </q-page-sticky>
       </q-card>
     </q-dialog>
+    <!-- Dialog to show preexecute window -->
+    <q-dialog
+      v-model="displayPreExecuteCheck"
+      transition-show="scale"
+      transition-hide="scale"
+      full-width
+      no-backdrop-dismiss
+    >
+      <q-card class="full-width">
+        <q-card-section>
+          <div class="text-h6">
+            <q-icon
+              name="mdi-help-circle"
+              size="md"
+            ></q-icon> {{ $t('confirm') }}
+          </div>
+        </q-card-section>
+        <q-card-section> {{ $t('confirmMsg') }} </q-card-section>
+        <q-card-section>
+          <div class="text-h6">
+            {{ $t('commandToBeExecuted') }}
+          </div>
+        </q-card-section>
+        <q-card-section>
+          <code>{{ resultCommand }}</code>
+        </q-card-section>
+        <q-card-actions
+          align="right"
+          class="text-primary"
+        >
+          <q-btn
+            v-close-popup
+            :label="$t('cancel')"
+            tabindex="1000"
+            flat
+          />
+          <q-btn
+            v-close-popup
+            :label="$t('launch')"
+            @click="executeCommand"
+            flat
+            tabindex="999"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
     <!-- Datatable showing all commands in main window -->
     <div class="row fit">
       <div class="col">
@@ -386,12 +432,14 @@ export default {
       currentWorkflowIndex: 0, // Index of currently workflow step to run
       returnParams: {}, // User defined parameters from Command Dialog
       returnParamsPaginate: 1, // In multiple selection workflows allows parameters for each selection
+      resultCommand: '', // Command ready to be executed, that is variables replaced for user set parameters
       results: {}, // Command result object displayed in Results Dialog
       resultsSelected: [], // Array of selected objects from Results Dialog
       resultsFilter: '', // Filter for results table
       displayCommandDiag: false, // Visibility state for command dialog
       displayHelpDiag: false, // Visibility state for help dialog
       displayResultsDiag: false, // Visibility state for results dialog
+      displayPreExecuteCheck: false, // Visibility state for preexecute dialog
       paramType: { // Table translating PowerShell variable types to Quasar components names and options
         'String': ['q-input', 'text'],
         'Number': ['q-input', 'number'],
@@ -476,6 +524,9 @@ export default {
       this.results = resultspCtx
       this.displayResultsDiag = !this.displayResultsDiag
     },
+    showPreExecuteCheck () {
+      this.displayPreExecuteCheck = !this.displayPreExecuteCheck
+    },
     notifyCopied () {
       this.$q.notify({
         icon: 'check',
@@ -548,36 +599,16 @@ export default {
     resetAllParams () {
       this.displayCommandDiag = false
       this.displayResultsDiag = false
+      this.displayPreExecuteCheck = false
       this.currentCommand = {} // User click "Execute" on datatable, chosen command is set to this object, which gets rendered with dialog
       this.currentCommandMaster = {} // User click "Execute" on datatable, chosen command is set to this object, which is held as reference for workflows
       this.currentWorkflowIndex = 0 // Index of currently workflow step to run
+      this.resultCommand = '' // Command ready to be executed, that is variables replaced for user set parameters
       this.returnParams = {} // User defined parameters from Command Dialog
       this.returnParamsPaginate = 1 // In multiple selection workflows allows parameters for each selection
       this.results = {} // Command result object displayed in Results Dialog
       this.resultsSelected = [] // Array of selected objects from Results Dialog
       this.resultsFilter = '' // Filter for results table
-    },
-    // If command or user requires confirmation before executing, display this dialog.
-    preExecuteCheck () {
-      if (this.currentCommand.confirm) {
-        this.$q.dialog({
-          color: 'primary',
-          title: this.$t('confirm'),
-          message: this.$t('confirmMsg'),
-          ok: {
-            label: this.$t('launch'),
-            flat: true
-          },
-          cancel: {
-            label: this.$t('cancel'),
-            flat: true
-          }
-        }).onOk(() => {
-          this.executeCommand()
-        })
-      } else {
-        this.executeCommand()
-      }
     },
     // If user needs to stop PowerShell execution for whatever reason, he can smash Esc to kill process and launch new one.
     // This requires user to have credential saved in Credential Manager, otherwise CredentialObject and Session cannot be created.
@@ -648,14 +679,25 @@ export default {
       if (this.currentCommand.joinParamsAsString) { this.resultsSelected = [] } // clear resultsSelected to make command dialog behave in single input mode
       this.currentWorkflowIndex++
     },
-    executeCommand () {
+    // If command or user requires confirmation before executing, display this dialog.
+    preExecuteCheck () {
+      this.prepareCommand()
+      // TODO: Add settings allowing user to display confirmation before each command, regardless of command preferences
+      if (this.currentCommand.confirm) {
+        this.showPreExecuteCheck()
+      } else {
+        this.executeCommand()
+      }
+    },
+    // Run command template through preparations, replacing template variables with user defined input
+    prepareCommand () {
+      // Clear resultCommand before inserting values to it
+      this.resultCommand = ''
       // Always assume one set of parameters passed, unless there is more than one resultsSelected
       let parametersSetsNum = 1
       if (this.resultsSelected.length > 1) {
         parametersSetsNum = this.resultsSelected.length
       }
-      this.resultsSelected = [] // Clear variable as we do not need it anymore
-      let resultCommand = '' // Command to be executed
       // Loop through parameterSets and get parameters for each one to resultsCommand
       for (let paramSetIndex = 1; paramSetIndex <= parametersSetsNum; paramSetIndex++) {
         // Get commandBlock with template variables and replace with real values
@@ -663,6 +705,12 @@ export default {
         for (let i = 0; i < this.currentCommand.parameters.length; i++) {
           let param = this.currentCommand.parameters[i]
           let input = this.returnParams[paramSetIndex + '__' + param.parameter]
+          // if (input.match(/(\r\n|\n|\r)/gm)) {
+          //   input = `@"
+          //   ${input}
+          //   @"
+          //   `
+          // }
           // console.log('Checking input: ', input)
           if (input) {
             // console.log('input is here!')
@@ -694,17 +742,24 @@ export default {
           // If user uses raw parameter, replace
           tempResultCommand = tempResultCommand.replace(`{{__raw_argument}}`, `${this.results.output}`)
         }
-        resultCommand += tempResultCommand + ';'
-        resultCommand = resultCommand.replace(/(\r\n|\n|\r)/gm, '')
+        this.resultCommand += tempResultCommand + ';'
+        // TODO: Possibly allow multiline strings, instead of replacing them with ';'
+        this.resultCommand = this.resultCommand.replace(/(\r\n|\n|\r)/gm, ';')
       }
+    },
+    executeCommand () {
+      this.resultsSelected = [] // Clear variable as we do not need it anymore
       // TODO: Above move to preexecute command, so user can see it and edit it before running
       this.toggleLoading(true)
       // TODO: Save command to history
       this.$pwsh.shell.clear().then(() => {
         if (this.currentCommand.insidePsSession) {
-          this.$pwsh.shell.addCommand(`Invoke-Command -Session $Global:LazyAdminPSSession -ScriptBlock {${resultCommand}}`)
+          // if (this.resultCommand.match(/(\r\n|\n|\r)/gm)) {
+          //   console.log('multiline!')
+          // }
+          this.$pwsh.shell.addCommand(`Invoke-Command -Session $Global:LazyAdminPSSession -ScriptBlock {${this.resultCommand}}`)
         } else {
-          this.$pwsh.shell.addCommand(resultCommand)
+          this.$pwsh.shell.addCommand(this.resultCommand)
         }
         this.$pwsh.shell.invoke().then(output => {
           // console.log('Command results: ', output)
@@ -752,7 +807,8 @@ export default {
           this.results = {
             error: true,
             returnType: 'raw',
-            output: error
+            // eslint-disable-next-line no-control-regex
+            output: (error.toString().replace(/\x1b\[[0-9;]*m/g, ''))
           }
           this.displayResultsDiag = true
           this.toggleLoading()

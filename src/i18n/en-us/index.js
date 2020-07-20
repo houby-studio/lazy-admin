@@ -46,6 +46,7 @@ export default {
   workflowContinue: 'Next step', // Used in: ScriptsPage.vue
   workflowParameters: 'Parameters from previous step', // Used in: ScriptsPage.vue
   workflowReadOnly: 'Those parameters are read only', // Used in: ScriptsPage.vue
+  commandToBeExecuted: 'Complete command', // Used in: ScriptsPage.vue
   updateFound: 'Downloading the latest version of Lazy Admin.', // Used in: FullLayout.vue
   updateError: 'Could not download update for Lazy Admin application.', // Used in: FullLayout.vue
   definitionsError: 'Definitions update error.', // Used in: AboutPage.vue
