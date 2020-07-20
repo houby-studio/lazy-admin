@@ -286,7 +286,11 @@
           </div>
         </q-card-section>
         <q-card-section>
-          <code>{{ resultCommand }}</code>
+          <!-- <prism language="powershell">{{ resultCommand }}</prism> -->
+          <prism
+            language="powershell"
+            :code="resultCommand"
+          ></prism>
         </q-card-section>
         <q-card-actions
           align="right"
@@ -400,6 +404,8 @@
 <script>
 import { exportFile } from 'quasar'
 import { mapGetters } from 'vuex'
+import Prism from 'vue-prismjs'
+import 'src/assets/prism.css'
 const childProcess = require('child_process')
 
 //  Helper function which wraps table values for CSV export - https://quasar.dev/vue-components/table#Exporting-data
@@ -425,6 +431,9 @@ function wrapCsvValue (val, formatFn) {
 
 export default {
   name: 'ScriptsPage',
+  components: {
+    Prism
+  },
   data () {
     return {
       currentCommand: {}, // User click "Execute" on datatable, chosen command is set to this object, which gets rendered with dialog
