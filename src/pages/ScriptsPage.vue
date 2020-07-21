@@ -798,14 +798,14 @@ export default {
               output: dataArray
             }
           } catch (error) {
-            if (output === '') {
+            if (output.trim() === '') {
               output = this.$t('powershellNoOutput')
             }
             // Result was not an array of objects or single object. Console returned error, additional text or that's how command was written.
             this.results = {
               error: this.currentCommand.returns !== 'raw', // If command should return raw, it is not an error (or there is no way to tell)
               returnType: 'raw',
-              output: output
+              output: output.trim()
             }
           }
           this.displayResultsDiag = true
