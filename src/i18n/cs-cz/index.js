@@ -47,6 +47,11 @@ export default {
   workflowParameters: 'Parametry z předchozího kroku', // Used in: ScriptsPage.vue
   workflowReadOnly: 'Tyto parametry jsou pouze pro čtení', // Used in: ScriptsPage.vue
   commandToBeExecuted: 'Kompletní příkaz', // Used in: ScriptsPage.vue
+  help: 'Nápověda', // Used in: ScriptsPage.vue
+  loadingHelp: 'Načítání nápovědy, prosím vyčkejte...', // Used in: ScriptsPage.vue
+  externalHelpNotFound: 'Nápovědu se nepodařilo načíst.\r\nURL nápovědy: {helpUrl}', // Used in: ScriptsPage.vue
+  noExternalHelp: 'Pro tento příkaz neexistuje externí nápověda.\r\nMístní nápověda: {description}', // Used in: ScriptsPage.vue
+  noDescription: 'Není vyplněna.', // Used in: ScriptsPage.vue
   updateFound: 'Stahování nejnovější verze aplikace Lazy Admin.', // Used in: FullLayout.vue
   updateError: 'Nepodařilo se stáhnout aktualizaci aplikace Lazy Admin.', // Used in: FullLayout.vue
   definitionsError: 'Chyba aktualizace definic.', // Used in: AboutPage.vue

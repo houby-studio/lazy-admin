@@ -47,6 +47,11 @@ export default {
   workflowParameters: 'Parameters from previous step', // Used in: ScriptsPage.vue
   workflowReadOnly: 'Those parameters are read only', // Used in: ScriptsPage.vue
   commandToBeExecuted: 'Complete command', // Used in: ScriptsPage.vue
+  help: 'Help', // Used in: ScriptsPage.vue
+  loadingHelp: 'Loading help, please wait...', // Used in: ScriptsPage.vue
+  externalHelpNotFound: 'Help could not be loaded.\r\nHelp URL: {helpUrl}', // Used in: ScriptsPage.vue
+  noExternalHelp: 'There is no external help for this command.\r\nLocal help: {description}', // Used in: ScriptsPage.vue
+  noDescription: 'Not available.', // Used in: ScriptsPage.vue
   updateFound: 'Downloading the latest version of Lazy Admin.', // Used in: FullLayout.vue
   updateError: 'Could not download update for Lazy Admin application.', // Used in: FullLayout.vue
   definitionsError: 'Definitions update error.', // Used in: AboutPage.vue

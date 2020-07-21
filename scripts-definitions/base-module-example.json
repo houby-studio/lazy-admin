@@ -1,6 +1,6 @@
 {
   "base-module-example": {
-    "version": "0.1.3",
+    "version": "0.1.4",
     "icon": "mdi-powershell",
     "displayName": {
       "default": "Base commands",
@@ -19,15 +19,20 @@
         "icon": "mdi-harddisk",
         "returns": "PSObject",
         "insidePsSession": false,
+        "usesLoginObjects": true,
         "friendlyName": {
           "default": "Get disk information",
           "en-us": "Get disk information",
           "cs-cz": "Získat informace o disku"
         },
         "description": {
-          "default": "Retrievies information like model, size and operational status.",
-          "en-us": "Retrievies information like model, size and operational status.",
-          "cs-cz": "Získá informace o modelu, velikosti a o provozním stavu."
+          "default": "Retrieves information like index, model, size and operational status.",
+          "en-us": "Retrieves information like index, model, size and operational status.",
+          "cs-cz": "Získá informace o pořadí, modelu, velikosti a o provozním stavu."
+        },
+        "help": {
+          "default": "https://raw.githubusercontent.com/wiki/houby-studio/lazy-admin/Get-Disk.md",
+          "en-us": "https://raw.githubusercontent.com/wiki/houby-studio/lazy-admin/Get-Disk.md"
         },
         "parameters": [
           {
@@ -65,6 +70,10 @@
           "en-us": "Get help about command",
           "cs-cz": "Získat pomoc o příkazu"
         },
+        "help": {
+          "default": "https://raw.githubusercontent.com/wiki/houby-studio/lazy-admin/Get-Help.md",
+          "en-us": "https://raw.githubusercontent.com/wiki/houby-studio/lazy-admin/Get-Help.md"
+        },
         "parameters": [
           {
             "parameter": "Name",
@@ -76,7 +85,7 @@
         "commandBlock": "Get-Help {{Name}}"
       },
       {
-        "commandName": "Invoke-Command",
+        "commandName": "Invoke-CommandInSession",
         "icon": "mdi-powershell",
         "returns": "raw",
         "insidePsSession": true,
@@ -86,9 +95,13 @@
           "cs-cz": "Spustit PowerShell příkaz"
         },
         "description": {
-          "default": "Invokes command as you wrote it without further changes.",
-          "en-us": "Invokes command as you wrote it without further changes.",
-          "cs-cz": "Spustí příkaz přesně jak jste jej zadal, bez dalších úprav."
+          "default": "Invokes command as you wrote it without further changes inside PSSession",
+          "en-us": "Invokes command as you wrote it without further changes inside PSSession",
+          "cs-cz": "Spustí příkaz přesně jak jste jej zadal, bez dalších úprav v PSSession."
+        },
+        "help": {
+          "default": "https://raw.githubusercontent.com/wiki/houby-studio/lazy-admin/Invoke-CommandInSession.md",
+          "en-us": "https://raw.githubusercontent.com/wiki/houby-studio/lazy-admin/Invoke-CommandInSession.md"
         },
         "parameters": [
           {
@@ -121,6 +134,10 @@
           "en-us": "Invokes command as you wrote it without further changes.",
           "cs-cz": "Spustí příkaz přesně jak jste jej zadal, bez dalších úprav."
         },
+        "help": {
+          "default": "https://raw.githubusercontent.com/wiki/houby-studio/lazy-admin/Invoke-Command.md",
+          "en-us": "https://raw.githubusercontent.com/wiki/houby-studio/lazy-admin/Invoke-Command.md"
+        },
         "parameters": [
           {
             "parameter": "ScriptBlock",
@@ -136,7 +153,7 @@
         "commandBlock": "{{ScriptBlock}}"
       },
       {
-        "commandName": "Start-Process",
+        "commandName": "Start-PowerShell",
         "type": "simple",
         "icon": "mdi-powershell",
         "returns": "raw",
@@ -150,6 +167,10 @@
           "default": "Opens new PowerShell terminal in admin context.",
           "en-us": "Opens new PowerShell terminal in admin context.",
           "cs-cz": "Otevře nový PowerShell terminál v administrátorském kontextu."
+        },
+        "help": {
+          "default": "https://raw.githubusercontent.com/wiki/houby-studio/lazy-admin/Start-PowerShell.md",
+          "en-us": "https://raw.githubusercontent.com/wiki/houby-studio/lazy-admin/Start-PowerShell.md"
         },
         "parameters": [],
         "commandBlock": "Start-Process powershell.exe -WindowStyle Hidden -Credential $Global:CredentialObject -ArgumentList '-NoProfile -Command &{Start-Process powershell.exe -Verb runas}'"
@@ -169,6 +190,10 @@
           "default": "Tests connection to target computer using ICMP.",
           "en-us": "Tests connection to target computer using ICMP.",
           "cs-cz": "Otestuje připojení k počítači pomocí ICMP."
+        },
+        "help": {
+          "default": "https://raw.githubusercontent.com/wiki/houby-studio/lazy-admin/Test-Connection.md",
+          "en-us": "https://raw.githubusercontent.com/wiki/houby-studio/lazy-admin/Test-Connection.md"
         },
         "parameters": [
           {
@@ -211,6 +236,10 @@
           "default": "Outputs all parameters as Lazy Admin processes them.",
           "en-us": "Outputs all parameters as Lazy Admin processes them.",
           "cs-cz": "Otestuje všechny parametry a vypíše je, jak je Lazy Admin zprocesoval."
+        },
+        "help": {
+          "default": "https://raw.githubusercontent.com/wiki/houby-studio/lazy-admin/Test-Parameters.md",
+          "en-us": "https://raw.githubusercontent.com/wiki/houby-studio/lazy-admin/Test-Parameters.md"
         },
         "parameters": [
           {
@@ -281,6 +310,10 @@
           "en-us": "Example workflow, which obtains list of running processes, then you select one to kill.",
           "cs-cz": "Ukázkové workflow, které získá seznam běžících procesů, následně vyberete jeden, který se ukončí."
         },
+        "help": {
+          "default": "https://raw.githubusercontent.com/wiki/houby-studio/lazy-admin/Stop-Process.md",
+          "en-us": "https://raw.githubusercontent.com/wiki/houby-studio/lazy-admin/Stop-Process.md"
+        },
         "parameters": [
           {
             "parameter": "Name",
@@ -326,12 +359,16 @@
         "friendlyName": {
           "default": "Get and stop selected processes",
           "en-us": "Get and stop selected processes",
-          "cs-cz": "Získá a ukončí vybraný proceses"
+          "cs-cz": "Získá a ukončí vybrané procesy"
         },
         "description": {
           "default": "Example workflow, which obtains list of running processes, then you select multiple to kill.",
           "en-us": "Example workflow, which obtains list of running processes, then you select multiple to kill.",
           "cs-cz": "Ukázkové workflow, které získá seznam běžících procesů, následně vyberete ty, které se ukončí."
+        },
+        "help": {
+          "default": "https://raw.githubusercontent.com/wiki/houby-studio/lazy-admin/Stop-Processes.md",
+          "en-us": "https://raw.githubusercontent.com/wiki/houby-studio/lazy-admin/Stop-Processes.md"
         },
         "parameters": [
           {
@@ -371,7 +408,7 @@
         ]
       },
       {
-        "commandName": "Stop-ProcessesArr",
+        "commandName": "Stop-ProcessesArray",
         "icon": "mdi-checkbox-multiple-marked",
         "returns": "PSObject",
         "insidePsSession": false,
@@ -379,12 +416,16 @@
         "friendlyName": {
           "default": "Get and stop selected processes",
           "en-us": "Get and stop selected processes",
-          "cs-cz": "Získá a ukončí vybraný proceses"
+          "cs-cz": "Získá a ukončí vybrané procesy"
         },
         "description": {
           "default": "Example workflow, which obtains list of running processes, then you select multiple to kill.",
           "en-us": "Example workflow, which obtains list of running processes, then you select multiple to kill.",
           "cs-cz": "Ukázkové workflow, které získá seznam běžících procesů, následně vyberete ty, které se ukončí."
+        },
+        "help": {
+          "default": "https://raw.githubusercontent.com/wiki/houby-studio/lazy-admin/Stop-ProcessesArray.md",
+          "en-us": "https://raw.githubusercontent.com/wiki/houby-studio/lazy-admin/Stop-ProcessesArray.md"
         },
         "parameters": [
           {
@@ -427,76 +468,6 @@
         ]
       },
       {
-        "commandName": "Get-CommandNameByArray",
-        "icon": "mdi-checkbox-multiple-marked",
-        "returns": "PSObject",
-        "insidePsSession": false,
-        "friendlyName": {
-          "default": "Get names of the command",
-          "en-us": "Get names of the command",
-          "cs-cz": "Získat názvy příkazů"
-        },
-        "description": {
-          "default": "Example workflow, which obtains list of matching commands based on first query, then writes their names.",
-          "en-us": "Example workflow, which obtains list of matching commands based on first query, then writes their names",
-          "cs-cz": "Ukázkové workflow, které získá seznam odpovídajících příkazů na základě prvního dotazu, následně získá názvy pro zvolené příkazy."
-        },
-        "parameters": [
-          {
-            "parameter": "Name",
-            "format": "-Name \"*{{Name}}*\"",
-            "required": true,
-            "type": "String",
-            "hint": {
-              "default": "Supply name of command",
-              "en-us": "Supply name of the command",
-              "cs-cz": "Zadejte název příkazu"
-            }
-          }
-        ],
-        "commandBlock": "Get-Command {{Name}} | Select-Object Name, @{n='Type';e={$_.CommandType.ToString()}} | ConvertTo-Json -Compress",
-        "workflow": [
-          {
-            "passedParameters": [
-              {
-                "parameter": "TestParam",
-                "passedParamName": "Name",
-                "format": "-TestParam \"{{TestParam}}\"",
-                "joinFormat": "\", \""
-              }
-            ],
-            "parameters": [
-              {
-                "parameter": "ShouldOutput",
-                "required": true,
-                "type": "Switch",
-                "hint": {
-                  "default": "Should commands be outputed to console",
-                  "en-us": "Should commands be outputed to console",
-                  "cs-cz": "Zobrazit názvy příkazů v konzoli"
-                }
-              },
-              {
-                "parameter": "DebugText",
-                "format": "-DebugText {{DebugText}}",
-                "required": true,
-                "type": "String",
-                "hint": {
-                  "default": "Text to print to console",
-                  "en-us": "Text to print to console",
-                  "cs-cz": "Zobrazit text v konzoli"
-                }
-              }
-            ],
-            "acceptsParams": "multiple",
-            "multipleParamsJoinMethod": "array",
-            "commandBlock": "Write-Output 'Verb-Noun {{TestParam}} {{ShouldOutput}} {{DebugText}}'",
-            "insidePsSession": false,
-            "confirm": false
-          }
-        ]
-      },
-      {
         "commandName": "Get-Definition",
         "icon": "mdi-powershell",
         "returns": "PSObject",
@@ -508,14 +479,13 @@
           "cs-cz": "Skutečně nic"
         },
         "description": {
-          "default": "Basically definition holding all possible parameters.",
-          "en-us": "Basically definition holding all possible parameters.",
-          "cs-cz": "Víceméně definice obsahující všechny možné parametry."
+          "default": "Does nothing, it is but a definition holding all possible parameters.",
+          "en-us": "Does nothing, it is but a definition holding all possible parameters.",
+          "cs-cz": "Nic nedělá, je to jen definice obsahující všechny možné parametry."
         },
         "help": {
-          "default": "https://example.com/help/get-definition-en.html",
-          "en-us": "https://example.com/help/get-definition-en.html",
-          "cs-cz": "https://example.com/help/get-definition-cs.html"
+          "default": "https://raw.githubusercontent.com/wiki/houby-studio/lazy-admin/Get-Definition.md",
+          "en-us": "https://raw.githubusercontent.com/wiki/houby-studio/lazy-admin/Get-Definition.md"
         },
         "parameters": [
           {

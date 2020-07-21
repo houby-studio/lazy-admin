@@ -124,18 +124,42 @@
       v-model="displayHelpDiag"
       transition-show="scale"
       transition-hide="scale"
+      full-width
+      full-height
     >
       <q-card class="full-width">
         <q-card-section>
           <div class="text-h6">
-            <q-icon :name="currentCommand.icon ? currentCommand.icon : 'mdi-powershell'"></q-icon> {{ currentCommand.commandName }}
+            <q-icon :name="currentCommand.icon ? currentCommand.icon : 'mdi-powershell'"></q-icon> {{ currentCommand.commandName }} - {{ $t('help') }}
           </div>
         </q-card-section>
         <q-card-section>
           <div>
-            {{ currentCommand.description ?  currentCommand.description[language] ? currentCommand.description[language] : currentCommand.description.default : '' }}
+            <q-markdown
+              no-line-numbers
+              :src="externalHelpFile"
+            />
           </div>
         </q-card-section>
+        <!-- Always display buttons on the center bottom of the main window -->
+        <q-page-sticky
+          :offset="[0, 0]"
+          position="bottom"
+        >
+          <q-card-actions>
+            <!-- Button to close help -->
+            <q-btn
+              v-close-popup
+              icon="close"
+              round
+              color="primary"
+            >
+              <q-tooltip>
+                {{ $t('close') }}
+              </q-tooltip>
+            </q-btn>
+          </q-card-actions>
+        </q-page-sticky>
       </q-card>
     </q-dialog>
     <!-- Dialog to show results window -->
@@ -404,8 +428,9 @@
 <script>
 import { exportFile } from 'quasar'
 import { mapGetters } from 'vuex'
+import { QMarkdown } from '@quasar/quasar-ui-qmarkdown'
 import Prism from 'vue-prismjs'
-import 'src/assets/prism.css'
+import 'src/assets/prism_tomorrowlight.css'
 const childProcess = require('child_process')
 
 //  Helper function which wraps table values for CSV export - https://quasar.dev/vue-components/table#Exporting-data
@@ -432,7 +457,8 @@ function wrapCsvValue (val, formatFn) {
 export default {
   name: 'ScriptsPage',
   components: {
-    Prism
+    Prism,
+    QMarkdown
   },
   data () {
     return {
@@ -445,6 +471,7 @@ export default {
       results: {}, // Command result object displayed in Results Dialog
       resultsSelected: [], // Array of selected objects from Results Dialog
       resultsFilter: '', // Filter for results table
+      externalHelpFile: '', // Holds Help text loaded from external source
       displayCommandDiag: false, // Visibility state for command dialog
       displayHelpDiag: false, // Visibility state for help dialog
       displayResultsDiag: false, // Visibility state for results dialog
@@ -526,8 +553,22 @@ export default {
       this.displayCommandDiag = !this.displayCommandDiag
     },
     showHelpDiag (helpCtx) {
+      this.externalHelpFile = this.$t('loadingHelp')
       this.currentCommand = helpCtx
       this.displayHelpDiag = !this.displayHelpDiag
+      if (this.currentCommand.help) {
+        let helpUrl = this.currentCommand.help[this.language] ? this.currentCommand.help[this.language] : this.currentCommand.help.default
+        this.$utils.downloadDefinitions(helpUrl, (err, result) => {
+          if (err) {
+            this.externalHelpFile = this.$t('externalHelpNotFound', { helpUrl: helpUrl })
+            return
+          }
+          this.externalHelpFile = result.data
+        })
+      } else {
+        let description = this.currentCommand.description ? this.currentCommand.description[this.language] ? this.currentCommand.description[this.language] : this.currentCommand.description.default : this.$t('noDescription')
+        this.externalHelpFile = this.$t('noExternalHelp', { description: description })
+      }
     },
     showResultsDiag (resultspCtx) {
       this.results = resultspCtx
@@ -827,3 +868,9 @@ export default {
   }
 }
 </script>
+
+<style>
+.q-markdown--link {
+  color: aqua;
+}
+</style>

@@ -40,6 +40,12 @@ function createWindow () {
   mainWindow.on('closed', () => {
     mainWindow = null
   })
+
+  // Prevent opening external URL in app, open in default browser instead
+  mainWindow.webContents.on('new-window', function (e, url) {
+    e.preventDefault()
+    require('electron').shell.openExternal(url)
+  })
 }
 
 app.on('ready', createWindow)
