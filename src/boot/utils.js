@@ -46,9 +46,9 @@ const utils = {
       }
     })
   },
-  downloadDefinitions (updateUrl, done) {
-    if (fs.existsSync(updateUrl)) {
-      fs.readFile(updateUrl, { encoding: 'utf-8' }, function (e, data) {
+  downloadDefinitions (downloadUrl, done) {
+    if (fs.existsSync(downloadUrl)) {
+      fs.readFile(downloadUrl, { encoding: 'utf-8' }, function (e, data) {
         if (e) {
           return done(e)
         } else {
@@ -64,10 +64,10 @@ const utils = {
       })
     } else {
       // Resolve URL and attempt to obtain definitions file
-      axios.get(`${updateUrl}?date=${new Date().getTime()}`).then(result => {
+      axios.get(`${downloadUrl}?date=${new Date().getTime()}`).then(result => {
         return done(null, result)
       }).catch(e => {
-        e.url = updateUrl
+        e.url = downloadUrl
         return done(e)
       })
     }
