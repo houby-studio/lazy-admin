@@ -19,10 +19,9 @@ export default {
   visibleGroups: 'Shown commands', // Used in: FullLayout.vue
   all: 'All', // Used in: FullLayout.vue
   allDesc: 'All available commands', // Used in: FullLayout.vue
-  settings: 'Settings', // Used in: FullLayout.vue
+  settings: 'Settings', // Used in: FullLayout.vue, SettingsPage.vue
+  of: 'of', // Used in: FullLayout.vue
   about: 'About', // Used in: FullLayout.vue, AboutPage.vue
-  masterDefinition: 'Master definition', // Used in: AboutPage.vue
-  update: 'Update', // Used in: AboutPage.vue
   requiredField: 'This parameter is required!', // Used in: ScriptsPage.vue
   requiredParam: 'Required', // Used in: ScriptsPage.vue
   optionalParam: 'Optional', // Used in: ScriptsPage.vue
@@ -52,11 +51,15 @@ export default {
   externalHelpNotFound: 'Help could not be loaded.\r\nHelp URL: {helpUrl}', // Used in: ScriptsPage.vue
   noExternalHelp: 'There is no external help for this command.\r\nLocal help: {description}', // Used in: ScriptsPage.vue
   noDescription: 'Not available.', // Used in: ScriptsPage.vue
+  csvExportError: 'Could not export results to CSV file.', // Used in: ScriptsPage.vue
   updateFound: 'Downloading the latest version of Lazy Admin.', // Used in: FullLayout.vue
   updateError: 'Could not download update for Lazy Admin application.', // Used in: FullLayout.vue
   definitionsError: 'Definitions update error.', // Used in: AboutPage.vue
   downloadCompleted: 'Download completed, close the application to start the update.', // Used in: FullLayout.vue
-  of: 'of', // Used in: FullLayout.vue
+  alwaysConfirm: 'Always require confirmation before script execution.', // Used in: SettingsPage.vue
+  autoClipboard: 'Automatically store command results to clipboard.', // Used in: SettingsPage.vue
+  masterDefinition: 'Master definition', // Used in: AboutPage.vue
+  update: 'Update', // Used in: AboutPage.vue
   restartRequired: 'Restart required.', // Used in: AboutPage.vue
   restart: 'Restart', // Used in: AboutPage.vue
   errorPage: 'Oops, never should have come here.', // Used in: Error404.vue

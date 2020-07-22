@@ -500,12 +500,12 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('lazystore', ['getLanguage', 'getSearch', 'getScriptsArray', 'getDefinitions', 'getCommandMaximized']),
-    searchText: function () {
-      return this.getSearch
-    },
+    ...mapGetters('lazystore', ['getLanguage', 'getSearch', 'getScriptsArray', 'getDefinitions', 'getCommandMaximized', 'getAlwaysConfirm']),
     language: function () {
       return this.getLanguage
+    },
+    searchText: function () {
+      return this.getSearch
     },
     scriptsArray: function () {
       return this.getScriptsArray
@@ -520,6 +520,9 @@ export default {
       set (val) {
         this.$store.dispatch('lazystore/setCommandMaximized', val)
       }
+    },
+    alwaysConfirm: function () {
+      return this.getAlwaysConfirm
     },
     resultsColumns: {
       get () {
@@ -610,7 +613,7 @@ export default {
           color: 'negative',
           position: 'bottom-left',
           timeout: 1500,
-          message: 'Super big error - something is very wrong'
+          message: this.$t('csvExportError')
         })
       } else {
         this.$q.notify({
@@ -733,7 +736,7 @@ export default {
     preExecuteCheck () {
       this.prepareCommand()
       // TODO: Add settings allowing user to display confirmation before each command, regardless of command preferences
-      if (this.currentCommand.confirm) {
+      if (this.currentCommand.confirm || this.alwaysConfirm) {
         this.showPreExecuteCheck()
       } else {
         this.executeCommand()

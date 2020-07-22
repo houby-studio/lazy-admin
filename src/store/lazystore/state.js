@@ -12,6 +12,7 @@ export default function () {
     update_in_progress: false, // Is application update in progress?
     definitions_update_in_progress: false, // Are definitions update in progress?
     restart_required: false, // Is application restart required? (To install updates)
-    update_progress: '' // Update Progress message
+    update_progress: '', // Update Progress message
+    always_confirm: false // Should confirmation dialog be always displayed regardless script definition
   }
 }

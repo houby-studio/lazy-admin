@@ -1,46 +1,52 @@
 <template>
   <q-page class="row justify-center items-center">
     <div class="column">
-      <q-card
-        square
-        bordered
-        class="q-pa-lg shadow-1"
-      >
+      <q-card class="full-width">
         <q-card-section>
-          About
+          <q-toolbar-title class="text-h2 text-center">
+            {{ $t('settings') }}
+          </q-toolbar-title>
         </q-card-section>
         <q-card-section>
-          Version: {{ lazyVersion }}
+          <div class="row">
+            <div class="col-12">
+              <q-checkbox
+                v-model="alwaysConfirm"
+                :label="$t('alwaysConfirm')"
+              />
+            </div>
+            <!-- <div class="col-12">
+              <q-checkbox
+                v-model="teal"
+                label="Teal"
+              />
+              <p>Always show confirmation dialog before executing</p>
+            </div> -->
+          </div>
         </q-card-section>
-        <q-card-actions class="q-px-md">
-          <q-btn
-            autofocus
-            unelevated
-            color="primary"
-            size="lg"
-            class="full-width"
-            type="submit"
-            ref="login"
-            label="TODO"
-          />
-        </q-card-actions>
       </q-card>
     </div>
   </q-page>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'SettingsPage',
   data () {
     return {
-      computerName: ''
+      test: ''
     }
   },
   computed: {
-    lazyVersion: {
+    ...mapGetters('lazystore', ['getAlwaysConfirm']),
+    alwaysConfirm: {
       get () {
-        return require('electron').remote.app.getVersion()
+        return this.getAlwaysConfirm
+      },
+      set (val) {
+        this.$store.dispatch('lazystore/setAlwaysConfirm', val)
       }
     }
   }

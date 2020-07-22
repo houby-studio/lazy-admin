@@ -19,10 +19,9 @@ export default {
   visibleGroups: 'Zobrazované příkazy', // Used in: FullLayout.vue
   all: 'Vše', // Used in: FullLayout.vue
   allDesc: 'Všechny dostupné příkazy', // Used in: FullLayout.vue
-  settings: 'Nastavení', // Used in: FullLayout.vue
-  about: 'O aplikaci', // Used in: FullLayout.vue
-  masterDefinition: 'Hlavní definice', // Used in: AboutPage.vue
-  update: 'Aktualizovat', // Used in: AboutPage.vue
+  settings: 'Nastavení', // Used in: FullLayout.vue, SettingsPage.vue
+  of: 'z', // Used in: FullLayout.vue
+  about: 'O aplikaci', // Used in: FullLayout.vue, AboutPage.vue
   requiredField: 'Tento parametr je povinný!', // Used in: ScriptsPage.vue
   requiredParam: 'Povinný', // Used in: ScriptsPage.vue
   optionalParam: 'Nepovinný', // Used in: ScriptsPage.vue
@@ -52,11 +51,15 @@ export default {
   externalHelpNotFound: 'Nápovědu se nepodařilo načíst.\r\nURL nápovědy: {helpUrl}', // Used in: ScriptsPage.vue
   noExternalHelp: 'Pro tento příkaz neexistuje externí nápověda.\r\nMístní nápověda: {description}', // Used in: ScriptsPage.vue
   noDescription: 'Není vyplněna.', // Used in: ScriptsPage.vue
+  csvExportError: 'Nepodařilo se uložit výsledky do CSV souboru.', // Used in: ScriptsPage.vue
   updateFound: 'Stahování nejnovější verze aplikace Lazy Admin.', // Used in: FullLayout.vue
   updateError: 'Nepodařilo se stáhnout aktualizaci aplikace Lazy Admin.', // Used in: FullLayout.vue
   definitionsError: 'Chyba aktualizace definic.', // Used in: AboutPage.vue
   downloadCompleted: 'Stahování dokončeno, zavřete aplikaci ke spuštění aktualizace.', // Used in: FullLayout.vue
-  of: 'z', // Used in: FullLayout.vue
+  alwaysConfirm: 'Vždy požadovat potvrzení před spuštěním příkazu.', // Used in: SettingsPage.vue
+  autoClipboard: 'Automaticky vkládat výsledek příkazu do schránky.', // Used in: SettingsPage.vue
+  masterDefinition: 'Hlavní definice', // Used in: AboutPage.vue
+  update: 'Aktualizovat', // Used in: AboutPage.vue
   restartRequired: 'Vyžadován restart.', // Used in: AboutPage.vue
   restart: 'Restartovat', // Used in: AboutPage.vue
   errorPage: 'Jejda, sem jste se nikdy neměli dostat.', // Used in: Error404.vue

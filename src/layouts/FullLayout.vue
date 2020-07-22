@@ -138,7 +138,7 @@
 
         <q-item
           clickable
-          to="/"
+          to="/settings"
           active-class="dark"
         >
           <q-item-section avatar>

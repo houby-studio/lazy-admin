@@ -42,6 +42,10 @@ export function getUpdateProgress (state) {
   return state.update_progress
 }
 
+export function getAlwaysConfirm (state) {
+  return state.always_confirm
+}
+
 // Dynamically build array of scripts to display in ScriptsPage.vue page
 export function getScriptsArray (state) {
   try {

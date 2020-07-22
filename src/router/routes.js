@@ -12,6 +12,7 @@ const routes = [
     component: () => import('layouts/FullLayout.vue'),
     children: [
       { path: '/scripts', component: () => import('pages/ScriptsPage.vue') },
+      { path: '/settings', component: () => import('pages/SettingsPage.vue') },
       { path: '/about', component: () => import('pages/AboutPage.vue') }
     ]
   }

@@ -50,3 +50,7 @@ export const SET_RESTARTREQUIRED = (state, value) => {
 export const SET_UPDATEPROGRESS = (state, value) => {
   state.update_progress = value
 }
+
+export const SET_ALWAYSCONFIRM = (state, value) => {
+  state.always_confirm = value
+}

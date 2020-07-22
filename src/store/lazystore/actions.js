@@ -67,3 +67,8 @@ export async function setRestartRequired ({ commit }, restartRequired) {
 export async function setUpdateProgress ({ commit }, updateProgress) {
   commit('SET_UPDATEPROGRESS', updateProgress)
 }
+
+// Commit mutation to set confirm preference - Accessed in SettingsPage.vue
+export async function setAlwaysConfirm ({ commit }, alwaysConfirm) {
+  commit('SET_ALWAYSCONFIRM', alwaysConfirm)
+}
