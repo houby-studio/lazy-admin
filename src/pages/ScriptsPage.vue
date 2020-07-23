@@ -14,6 +14,7 @@
         <q-form
           @submit="preExecuteCheck"
           @reset="resetForm"
+          autofocus
         >
           <q-card-section>
             <div class="row">
@@ -33,6 +34,7 @@
                     :icon="commandDialogMaximized ? 'fas fa-compress-alt' : 'fas fa-expand-alt'"
                     @click="commandDialogMaximized = !commandDialogMaximized"
                     flat
+                    tabindex="-1"
                   />
                 </q-card-actions>
               </div>
@@ -43,7 +45,7 @@
             <!-- Workflows only - Previous command parameters -->
             <q-expansion-item
               v-if="currentCommand.passedParameters ? currentCommand.passedParameters.length > 0 : false"
-              :default-opened="resultsSelected.length > 1"
+              :default-opened="resultsSelected[currentWorkflowIndex].length > 1"
               :caption="$t('workflowReadOnly')"
               :label="$t('workflowParameters')"
               expand-separator
@@ -91,17 +93,17 @@
           >
             <!-- Show pagination if there is more than one selected result from previous command -->
             <q-pagination
-              v-if="resultsSelected.length > 1"
+              v-if="resultsSelected[currentWorkflowIndex -1 ] ? resultsSelected[currentWorkflowIndex-1].length > 1 : false"
               v-model="returnParamsPaginate"
-              :max="resultsSelected.length"
+              :max="resultsSelected[currentWorkflowIndex-1].length"
               :input="true"
             >
             </q-pagination>
             <q-btn
               v-close-popup
               :label="$t('cancel')"
-              tabindex="1000"
               flat
+              tabindex="1000"
             />
             <q-btn
               :label="$t('reset')"
@@ -185,7 +187,7 @@
               :columns="resultsColumns"
               :pagination.sync="outputPagination"
               :selection="resultsTableSelection"
-              :selected.sync="resultsSelected"
+              :selected.sync="resultsSelected[currentWorkflowIndex]"
               :filter="resultsFilter"
               row-key="__id"
             >
@@ -271,7 +273,7 @@
             <!-- Button to launch another workflow step -->
             <q-btn
               v-if="currentCommandMaster.workflow ? currentWorkflowIndex < currentCommandMaster.workflow.length : false"
-              :disable="resultsSelected.length === 0 && results.returnType !== 'raw'"
+              :disable="resultsSelected[currentWorkflowIndex].length === 0 && results.returnType !== 'raw'"
               @click="nextWorkflowStep"
               icon="mdi-arrow-right-bold"
               size="lg"
@@ -295,45 +297,45 @@
       no-backdrop-dismiss
     >
       <q-card class="full-width">
-        <q-card-section>
-          <div class="text-h6">
-            <q-icon
-              name="mdi-help-circle"
-              size="md"
-            ></q-icon> {{ $t('confirm') }}
-          </div>
-        </q-card-section>
-        <q-card-section> {{ $t('confirmMsg') }} </q-card-section>
-        <q-card-section>
-          <div class="text-h6">
-            {{ $t('commandToBeExecuted') }}
-          </div>
-        </q-card-section>
-        <q-card-section>
-          <!-- <prism language="powershell">{{ resultCommand }}</prism> -->
-          <prism
-            language="powershell"
-            :code="resultCommand"
-          ></prism>
-        </q-card-section>
-        <q-card-actions
-          align="right"
-          class="text-primary"
-        >
-          <q-btn
-            v-close-popup
-            :label="$t('cancel')"
-            tabindex="1000"
-            flat
-          />
-          <q-btn
-            v-close-popup
-            :label="$t('launch')"
-            @click="executeCommand"
-            flat
-            tabindex="999"
-          />
-        </q-card-actions>
+        <q-form autofocus>
+          <q-card-section>
+            <div class="text-h6">
+              <q-icon
+                name="mdi-help-circle"
+                size="md"
+              ></q-icon> {{ $t('confirm') }}
+            </div>
+          </q-card-section>
+          <q-card-section> {{ $t('confirmMsg') }} </q-card-section>
+          <q-card-section>
+            <div class="text-h6">
+              {{ $t('commandToBeExecuted') }}
+            </div>
+          </q-card-section>
+          <q-card-section>
+            <prism
+              language="powershell"
+              :code="resultCommand"
+            ></prism>
+          </q-card-section>
+          <q-card-actions
+            align="right"
+            class="text-primary"
+          >
+            <q-btn
+              v-close-popup
+              :label="$t('cancel')"
+              flat
+            />
+            <q-btn
+              v-close-popup
+              :label="$t('launch')"
+              @click="executeCommand"
+              flat
+              type="submit"
+            />
+          </q-card-actions>
+        </q-form>
       </q-card>
     </q-dialog>
     <!-- Datatable showing all commands in main window -->
@@ -469,7 +471,7 @@ export default {
       returnParamsPaginate: 1, // In multiple selection workflows allows parameters for each selection
       resultCommand: '', // Command ready to be executed, that is variables replaced for user set parameters
       results: {}, // Command result object displayed in Results Dialog
-      resultsSelected: [], // Array of selected objects from Results Dialog
+      resultsSelected: { '0': [] }, // Array of selected objects from Results Dialog
       resultsFilter: '', // Filter for results table
       externalHelpFile: '', // Holds Help text loaded from external source
       displayCommandDiag: false, // Visibility state for command dialog
@@ -639,8 +641,8 @@ export default {
     resetForm () {
       // Always assume one set of parameters passed, unless there is more than one resultsSelected
       let parametersSetsNum = 1
-      if (this.resultsSelected.length > 1) {
-        parametersSetsNum = this.resultsSelected.length
+      if (this.resultsSelected[this.currentWorkflowIndex].length > 1) {
+        parametersSetsNum = this.resultsSelected[this.currentWorkflowIndex].length
       }
       // Loop through parameterSets and get parameters for each one to resultsCommand
       for (let paramSetIndex = 1; paramSetIndex <= parametersSetsNum; paramSetIndex++) {
@@ -660,7 +662,7 @@ export default {
       this.returnParams = {} // User defined parameters from Command Dialog
       this.returnParamsPaginate = 1 // In multiple selection workflows allows parameters for each selection
       this.results = {} // Command result object displayed in Results Dialog
-      this.resultsSelected = [] // Array of selected objects from Results Dialog
+      this.resultsSelected = { '0': [] } // Array of selected objects from Results Dialog
       this.resultsFilter = '' // Filter for results table
     },
     // If user needs to stop PowerShell execution for whatever reason, he can smash Esc to kill process and launch new one.
@@ -701,7 +703,7 @@ export default {
       // For each parameter expected in passedParameters, loop through all of them and then throigh all selections to either join them to single string or insert as numbered parameters separately to returnParams
       for (let passedParamsIndex = 0; passedParamsIndex < this.currentCommand.passedParameters.length; passedParamsIndex++) {
         let parameterString = '' // Helper string for joining input arrays to single string
-        for (let i = 1; i <= this.resultsSelected.length; i++) {
+        for (let i = 1; i <= this.resultsSelected[this.currentWorkflowIndex].length; i++) {
           // If parameters are to be passed as array of values separated by commas to parameter withing one command, join them
           if (this.currentCommand.joinParamsAsString) {
             // First parameter value does not have join format in front of it, only subsequent ones
@@ -709,10 +711,10 @@ export default {
               parameterString += this.currentCommand.passedParameters[passedParamsIndex].joinFormat
             }
             // Add value from resultsSelected for given command e.g. resultsSelected[0]['Name']
-            parameterString += this.resultsSelected[i - 1][this.currentCommand.passedParameters[passedParamsIndex].passedParamName]
+            parameterString += this.resultsSelected[this.currentWorkflowIndex][i - 1][this.currentCommand.passedParameters[passedParamsIndex].passedParamName]
           } else {
             // If parameters join method set is 'separate', set each result param to its own property with value
-            this.returnParams[i + '__' + this.currentCommand.passedParameters[passedParamsIndex].parameter] = this.resultsSelected[i - 1][this.currentCommand.passedParameters[passedParamsIndex].passedParamName]
+            this.returnParams[i + '__' + this.currentCommand.passedParameters[passedParamsIndex].parameter] = this.resultsSelected[this.currentWorkflowIndex][i - 1][this.currentCommand.passedParameters[passedParamsIndex].passedParamName]
 
             if (this.currentCommandMaster.workflow[this.currentWorkflowIndex].passedParameters[passedParamsIndex].format) {
               parameterString = this.currentCommandMaster.workflow[this.currentWorkflowIndex].passedParameters[passedParamsIndex].format.replace(`{{${this.currentCommandMaster.workflow[this.currentWorkflowIndex].passedParameters[passedParamsIndex].parameter}}}`, `${parameterString}`)
@@ -729,8 +731,10 @@ export default {
           this.returnParams['1__' + this.currentCommandMaster.workflow[this.currentWorkflowIndex].passedParameters[passedParamsIndex].parameter] = parameterString
         }
       }
-      if (this.currentCommand.joinParamsAsString) { this.resultsSelected = [] } // clear resultsSelected to make command dialog behave in single input mode
+      if (this.currentCommand.joinParamsAsString) { this.resultsSelected[this.currentWorkflowIndex] = [] } // clear resultsSelected to make command dialog behave in single input mode
       this.currentWorkflowIndex++
+      // Reactivity solution how to add keys to object https://vuejs.org/v2/guide/reactivity.html#Change-Detection-Caveats
+      this.$set(this.resultsSelected, [this.currentWorkflowIndex], [])
     },
     // If command or user requires confirmation before executing, display this dialog.
     preExecuteCheck () {
@@ -748,8 +752,10 @@ export default {
       this.resultCommand = ''
       // Always assume one set of parameters passed, unless there is more than one resultsSelected
       let parametersSetsNum = 1
-      if (this.resultsSelected.length > 1) {
-        parametersSetsNum = this.resultsSelected.length
+      if (this.resultsSelected[this.currentWorkflowIndex - 1]) {
+        if (this.resultsSelected[this.currentWorkflowIndex - 1].length > 1) {
+          parametersSetsNum = this.resultsSelected[this.currentWorkflowIndex - 1].length
+        }
       }
       // Loop through parameterSets and get parameters for each one to resultsCommand
       for (let paramSetIndex = 1; paramSetIndex <= parametersSetsNum; paramSetIndex++) {
@@ -801,7 +807,7 @@ export default {
       }
     },
     executeCommand () {
-      this.resultsSelected = [] // Clear variable as we do not need it anymore
+      // this.resultsSelected = [] // Clear variable as we do not need it anymore
       // TODO: Above move to preexecute command, so user can see it and edit it before running
       this.toggleLoading(true)
       // TODO: Save command to history
