@@ -80,7 +80,7 @@
               :rules="param.required ? [ val => val && val.length > 0 || $t('requiredField') ] : [] "
               :hint="`${param.required ? $t('requiredParam') : $t('optionalParam') } | ${param.type} | ${param.hint ? param.hint[language] || param.hint['default'] : ''}`"
               :type="paramType[param.type][1]"
-              @keyup.enter="$event.target.nextElementSibling.focus()"
+              @keydown.enter.prevent
               filled
               clearable
               lazy-rules
@@ -297,7 +297,10 @@
       no-backdrop-dismiss
     >
       <q-card class="full-width">
-        <q-form autofocus>
+        <q-form
+          autofocus
+          @submit="executeCommand"
+        >
           <q-card-section>
             <div class="text-h6">
               <q-icon
@@ -330,7 +333,6 @@
             <q-btn
               v-close-popup
               :label="$t('launch')"
-              @click="executeCommand"
               flat
               type="submit"
             />
@@ -432,6 +434,7 @@ import { exportFile } from 'quasar'
 import { mapGetters } from 'vuex'
 import { QMarkdown } from '@quasar/quasar-ui-qmarkdown'
 import Prism from 'vue-prismjs'
+import _ from 'lodash'
 import 'src/assets/prism_tomorrowlight.css'
 const childProcess = require('child_process')
 
@@ -471,7 +474,7 @@ export default {
       returnParamsPaginate: 1, // In multiple selection workflows allows parameters for each selection
       resultCommand: '', // Command ready to be executed, that is variables replaced for user set parameters
       results: {}, // Command result object displayed in Results Dialog
-      resultsSelected: { '0': [] }, // Array of selected objects from Results Dialog
+      resultsSelected: [[]], // Array of selected objects from Results Dialog
       resultsFilter: '', // Filter for results table
       externalHelpFile: '', // Holds Help text loaded from external source
       displayCommandDiag: false, // Visibility state for command dialog
@@ -502,7 +505,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('lazystore', ['getLanguage', 'getSearch', 'getScriptsArray', 'getDefinitions', 'getCommandMaximized', 'getAlwaysConfirm']),
+    ...mapGetters('lazystore', ['getLanguage', 'getSearch', 'getScriptsArray', 'getDefinitions', 'getCommandMaximized', 'getAlwaysConfirm', 'getHistoryLength', 'getHistory']),
     language: function () {
       return this.getLanguage
     },
@@ -525,6 +528,18 @@ export default {
     },
     alwaysConfirm: function () {
       return this.getAlwaysConfirm
+    },
+    historyLength: function () {
+      return this.getHistoryLength
+    },
+    history: {
+      get () {
+        return this.getHistory
+      },
+      set (val) {
+        let history = _.cloneDeep(val)
+        this.$store.dispatch('lazystore/setHistory', history)
+      }
     },
     resultsColumns: {
       get () {
@@ -662,7 +677,7 @@ export default {
       this.returnParams = {} // User defined parameters from Command Dialog
       this.returnParamsPaginate = 1 // In multiple selection workflows allows parameters for each selection
       this.results = {} // Command result object displayed in Results Dialog
-      this.resultsSelected = { '0': [] } // Array of selected objects from Results Dialog
+      this.resultsSelected = [[]] // Array of selected objects from Results Dialog
       this.resultsFilter = '' // Filter for results table
     },
     // If user needs to stop PowerShell execution for whatever reason, he can smash Esc to kill process and launch new one.
@@ -807,21 +822,14 @@ export default {
       }
     },
     executeCommand () {
-      // this.resultsSelected = [] // Clear variable as we do not need it anymore
-      // TODO: Above move to preexecute command, so user can see it and edit it before running
       this.toggleLoading(true)
-      // TODO: Save command to history
       this.$pwsh.shell.clear().then(() => {
         if (this.currentCommand.insidePsSession) {
-          // if (this.resultCommand.match(/(\r\n|\n|\r)/gm)) {
-          //   console.log('multiline!')
-          // }
           this.$pwsh.shell.addCommand(`Invoke-Command -Session $Global:LazyAdminPSSession -ScriptBlock {${this.resultCommand}}`)
         } else {
           this.$pwsh.shell.addCommand(this.resultCommand)
         }
         this.$pwsh.shell.invoke().then(output => {
-          // console.log('Command results: ', output)
           //  Code block to handle PowerShell return data
           let data
           let params
@@ -857,6 +865,16 @@ export default {
               returnType: 'raw',
               output: output.trim()
             }
+          }
+          // Save to history
+          this.history = {
+            currentCommand: this.currentCommand,
+            currentCommandMaster: this.currentCommandMaster,
+            currentWorkflowIndex: this.currentWorkflowIndex,
+            resultCommand: this.resultCommand,
+            returnParams: this.returnParams,
+            returnParamsPaginate: this.returnParamsPaginate,
+            results: this.results
           }
           this.displayResultsDiag = true
           this.toggleLoading()

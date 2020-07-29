@@ -1,7 +1,11 @@
 <template>
   <q-page class="row justify-center items-center">
     <div class="column">
-      <q-card class="full-width">
+      <q-card
+        class="full-width"
+        square
+        bordered
+      >
         <q-card-section>
           <q-toolbar-title class="text-h2 text-center">
             {{ $t('settings') }}

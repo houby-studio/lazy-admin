@@ -72,3 +72,23 @@ export async function setUpdateProgress ({ commit }, updateProgress) {
 export async function setAlwaysConfirm ({ commit }, alwaysConfirm) {
   commit('SET_ALWAYSCONFIRM', alwaysConfirm)
 }
+
+// Commit mutation to set history length - Accessed in SettingsPage.vue
+export async function setHistoryLength ({ commit }, historyLength) {
+  commit('SET_HISTORYLENGTH', historyLength)
+}
+
+// Commit mutation to set history dialog visibility - Accessed in FullLayout.vue
+export async function setHistoryVisible ({ commit }, historyVisible) {
+  commit('SET_HISTORYVISIBLE', historyVisible)
+}
+
+// Commit mutation to set history - Accessed in ScriptsPage.vue
+export async function setHistory ({ commit, state }, history) {
+  // const newHistory = state.history
+  // newHistory.unshift(history)
+  // if (newHistory.length > this.historyLength) {
+  //   newHistory.length = this.historyLength
+  // }
+  commit('SET_HISTORY', history)
+}

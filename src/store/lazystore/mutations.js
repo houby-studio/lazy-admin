@@ -54,3 +54,15 @@ export const SET_UPDATEPROGRESS = (state, value) => {
 export const SET_ALWAYSCONFIRM = (state, value) => {
   state.always_confirm = value
 }
+
+export const SET_HISTORYLENGTH = (state, value) => {
+  state.history_length = value
+}
+
+export const SET_HISTORYVISIBLE = (state, value) => {
+  state.history_visible = value
+}
+
+export const SET_HISTORY = (state, value) => {
+  state.history.unshift(value)
+}

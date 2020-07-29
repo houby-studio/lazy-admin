@@ -46,6 +46,18 @@ export function getAlwaysConfirm (state) {
   return state.always_confirm
 }
 
+export function getHistoryLength (state) {
+  return state.history_length
+}
+
+export function getHistoryVisible (state) {
+  return state.history_visible
+}
+
+export function getHistory (state) {
+  return state.history
+}
+
 // Dynamically build array of scripts to display in ScriptsPage.vue page
 export function getScriptsArray (state) {
   try {

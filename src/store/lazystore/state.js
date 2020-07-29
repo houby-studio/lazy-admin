@@ -13,6 +13,9 @@ export default function () {
     definitions_update_in_progress: false, // Are definitions update in progress?
     restart_required: false, // Is application restart required? (To install updates)
     update_progress: '', // Update Progress message
-    always_confirm: false // Should confirmation dialog be always displayed regardless script definition
+    always_confirm: false, // Should confirmation dialog be always displayed regardless script definition
+    history_length: 100, // How many commands should be saved
+    history_visible: false, // Is history dialog window visible?
+    history: [] // Array holding previous commands
   }
 }
