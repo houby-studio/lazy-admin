@@ -1,6 +1,5 @@
 <template>
   <q-layout view="hhh lpr lff">
-
     <q-header
       elevated
       reveal
@@ -81,6 +80,7 @@
 
           <div class="row items-center no-wrap">
             <q-btn
+              @click="historyVisible = !historyVisible"
               round
               dense
               flat
@@ -381,7 +381,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('lazystore', ['getLanguage', 'getMenuEntries', 'getSearch', 'getMasterDefinition', 'getDefinitions', 'getDefinitionsUpdateInProgress', 'getRestartRequired', 'getUpdateDate', 'getUpdateInProgress', 'getUpdateProgress']),
+    ...mapGetters('lazystore', ['getLanguage', 'getMenuEntries', 'getSearch', 'getMasterDefinition', 'getDefinitions', 'getDefinitionsUpdateInProgress', 'getRestartRequired', 'getUpdateDate', 'getUpdateInProgress', 'getUpdateProgress', 'getHistoryVisible']),
     animateToolBar: function () {
       // Toolbar starts as hidden (false state), on 'created', animation 'animateToolBar' starts transform and displays toolbar
       return this.loadToolBar ? 'animated slideInDown' : 'hidden'
@@ -454,6 +454,20 @@ export default {
       },
       set (val) {
         this.$store.dispatch('lazystore/setUpdateProgress', val)
+      }
+    },
+    historyVisible: {
+      get () {
+        return this.getHistoryVisible
+      },
+      set (val) {
+        // If currently not on /scripts page, navigate there and shortly after display history (to work around drawer hiding when changing route)
+        if (this.$route.path !== '/scripts') {
+          this.$router.push('/scripts')
+            .then(setTimeout(() => this.$store.dispatch('lazystore/setHistoryVisible', val), 100))
+        } else {
+          this.$store.dispatch('lazystore/setHistoryVisible', val)
+        }
       }
     }
   },
@@ -714,3 +728,10 @@ export default {
   }
 }
 </script>
+
+<style>
+/* Have to be one higher than q-drawer--right, which is history page, which occupies whole page and would hide menu */
+.q-drawer--left {
+  z-index: 3001;
+}
+</style>

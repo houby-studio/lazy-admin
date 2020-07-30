@@ -1,5 +1,83 @@
 <template>
   <q-page class="flex">
+    <!-- Right drawer displaying history table -->
+    <q-drawer
+      v-model="historyVisible"
+      :width="historyWidth"
+      side="right"
+      behavior="desktop"
+      overlay
+    >
+      <div class="row fit">
+        <div class="col">
+          <q-table
+            :data="history"
+            :columns="historyColumns"
+            :pagination.sync="scriptsPagination"
+            wrap-cells
+            row-key="index"
+            hide-bottom
+            hide-header
+          >
+            <!-- Template showing command date -->
+            <template v-slot:body-cell-date="props">
+              <q-td
+                :props="props"
+                auto-width
+                class="text-no-wrap"
+              >
+                {{ props.value}}
+              </q-td>
+            </template>
+            <!-- Template showing workflow steps -->
+            <template v-slot:body-cell-steps="props">
+              <q-td
+                :props="props"
+                auto-width
+                class="text-no-wrap"
+              >
+                {{ props.row.currentWorkflowIndex +1 }}/{{ props.row.currentCommandMaster.workflow ? props.row.currentCommandMaster.workflow.length + 1 : 1 }}
+              </q-td>
+            </template>
+            <!-- Template showing friendly command name and 'Cmdlet' which gets executed -->
+            <template v-slot:body-cell-commandName="props">
+              <q-td :props="props">
+                <div>
+                  {{ props.row.currentCommandMaster.friendlyName ? props.row.currentCommandMaster.friendlyName[language] ? props.row.currentCommandMaster.friendlyName[language] : props.row.currentCommandMaster.friendlyName.default : '' }}
+                </div>
+                <div>
+                  {{ props.row.currentCommandMaster.commandName }}
+                </div>
+              </q-td>
+            </template>
+            <!-- Template showing results button -->
+            <template v-slot:body-cell-results="props">
+              <q-td
+                :props="props"
+                auto-width
+              >
+                <q-btn
+                  flat
+                  @click="showCommandDiag(props.row)"
+                >{{ $t('launch') }}</q-btn>
+              </q-td>
+            </template>
+            <!-- Template showing execute button -->
+            <template v-slot:body-cell-execute="props">
+              <q-td
+                :props="props"
+                auto-width
+              >
+                <q-btn
+                  flat
+                  @click="showCommandDiag(props.row)"
+                >{{ $t('launch') }}</q-btn>
+              </q-td>
+            </template>
+          </q-table>
+        </div>
+      </div>
+    </q-drawer>
     <!-- Dialog window is shown when command is selected with 'Execute' button -->
     <q-dialog
       v-model="displayCommandDiag"
@@ -430,7 +508,7 @@
 </template>
 
 <script>
-import { exportFile } from 'quasar'
+import { exportFile, date } from 'quasar'
 import { mapGetters } from 'vuex'
 import { QMarkdown } from '@quasar/quasar-ui-qmarkdown'
 import Prism from 'vue-prismjs'
@@ -489,14 +567,22 @@ export default {
         'Switch': ['q-toggle', false]
       }, // Column definitions for scripts table
       scriptsColumns: [
-        { name: 'icon', align: 'center', label: 'Icon', field: row => row.icon, sortable: true, classes: 'gt-xs' },
-        { name: 'commandName', required: true, label: 'Command Name', align: 'left', field: row => row.commandName, format: val => `${val}`, sortable: true, classes: 'text-no-wrap' },
-        { name: 'friendlyName', label: 'Friendly Name', align: 'left', field: row => row.friendlyName ? row.friendlyName[(this.$i18n.locale)] ? row.friendlyName[(this.$i18n.locale)] : row.friendlyName['default'] : '', format: val => `${val}`, sortable: true, classes: 'hidden' },
-        { name: 'description', align: 'left', label: 'Description', field: row => row.description ? row.description[(this.$i18n.locale)] ? row.description[(this.$i18n.locale)] : row.description.default : '', sortable: true, classes: 'gt-sm' },
-        { name: 'spacer', align: 'center', label: 'Spacer', field: '', sortable: false },
-        { name: 'favorite', align: 'center', label: 'Icon', field: 'star', sortable: true, classes: 'gt-xs' },
-        { name: 'help', align: 'center', label: 'Icon', field: 'help', sortable: true, classes: 'gt-xs' },
-        { name: 'execute', label: 'Execute', field: 'Execute', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) }
+        { name: 'icon', label: 'Icon', classes: 'gt-xs' },
+        { name: 'commandName', label: 'Command Name', align: 'left', field: row => row.commandName, classes: 'text-no-wrap' },
+        { name: 'friendlyName', label: 'Friendly Name', field: row => row.friendlyName ? row.friendlyName[(this.$i18n.locale)] ? row.friendlyName[(this.$i18n.locale)] : row.friendlyName['default'] : '', classes: 'hidden' },
+        { name: 'description', label: 'Description', align: 'left', field: row => row.description ? row.description[(this.$i18n.locale)] ? row.description[(this.$i18n.locale)] : row.description.default : '', classes: 'gt-sm' },
+        { name: 'spacer', label: 'Spacer' },
+        { name: 'favorite', label: 'Icon', classes: 'gt-xs' },
+        { name: 'help', label: 'Icon', classes: 'gt-xs' },
+        { name: 'execute', label: 'Execute' }
+      ],
+      historyColumns: [
+        { name: 'date', label: 'Date', field: row => date.formatDate(row.date, 'YYYY-MM-DD HH:mm:ss'), classes: 'gt-xs' },
+        { name: 'steps', label: 'Steps' },
+        { name: 'commandName', label: 'Command Name', align: 'left', classes: 'text-no-wrap' },
+        { name: 'spacer', label: 'Spacer' },
+        { name: 'results', label: 'Results' },
+        { name: 'execute', label: 'Execute' }
       ],
       // table pagination options for scripts table
       scriptsPagination: { rowsPerPage: 0 },
@@ -505,7 +591,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('lazystore', ['getLanguage', 'getSearch', 'getScriptsArray', 'getDefinitions', 'getCommandMaximized', 'getAlwaysConfirm', 'getHistoryLength', 'getHistory']),
+    ...mapGetters('lazystore', ['getLanguage', 'getSearch', 'getScriptsArray', 'getDefinitions', 'getCommandMaximized', 'getAlwaysConfirm', 'getHistoryLength', 'getHistoryVisible', 'getHistory']),
     language: function () {
       return this.getLanguage
     },
@@ -532,6 +618,14 @@ export default {
     historyLength: function () {
       return this.getHistoryLength
     },
+    historyVisible: {
+      get () {
+        return this.getHistoryVisible
+      },
+      set (val) {
+        this.$store.dispatch('lazystore/setHistoryVisible', val)
+      }
+    },
     history: {
       get () {
         return this.getHistory
@@ -540,6 +634,9 @@ export default {
         let history = _.cloneDeep(val)
         this.$store.dispatch('lazystore/setHistory', history)
       }
+    },
+    historyWidth: function () {
+      return this.$q.screen.width
     },
     resultsColumns: {
       get () {
@@ -868,6 +965,7 @@ export default {
           }
           // Save to history
           this.history = {
+            date: new Date(),
             currentCommand: this.currentCommand,
             currentCommandMaster: this.currentCommandMaster,
             currentWorkflowIndex: this.currentWorkflowIndex,

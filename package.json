@@ -1,6 +1,6 @@
 {
   "name": "lazy-admin",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "description": "GUI for PowerShell scripts to simplify day to day IT tasks.",
   "productName": "Lazy Admin",
   "cordovaId": "eu.houby-studio.lazy-admin",
@@ -13,7 +13,7 @@
     "release": "quasar build --mode electron --publish onTagOrDraft"
   },
   "dependencies": {
-    "@quasar/extras": "^1.9.0",
+    "@quasar/extras": "^1.9.3",
     "axios": "^0.19.2",
     "electron-log": "^4.1.1",
     "electron-updater": "^4.3.1",
