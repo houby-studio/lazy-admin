@@ -28,9 +28,11 @@ export default {
   confirm: 'Confirm', // Used in: ScriptsPage.vue
   confirmMsg: 'Command requires confirmation. Do you want to continue?', // Used in: ScriptsPage.vue
   launch: 'Launch', // Used in: ScriptsPage.vue
+  results: 'Results', // Used in: ScriptsPage.vue
+  repeat: 'Repeat', // Used in: ScriptsPage.vue
   cancel: 'Cancel', // Used in: ScriptsPage.vue
   reset: 'Reset', // Used in: ScriptsPage.vue
-  results: `{commandName}: Results`, // Used in: ScriptsPage.vue
+  resultsTitle: `{commandName}: Results`, // Used in: ScriptsPage.vue
   powershellNoOutput: 'PowerShell did not return any value.', // Used in: ScriptsPage.vue
   exportCsv: 'Export to CSV', // Used in: ScriptsPage.vue
   copyClipboard: 'Copy to clipboard', // Used in: ScriptsPage.vue

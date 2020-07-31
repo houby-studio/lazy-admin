@@ -65,4 +65,5 @@ export const SET_HISTORYVISIBLE = (state, value) => {
 
 export const SET_HISTORY = (state, value) => {
   state.history.unshift(value)
+  // state.history.splice(state.history_length) // to trim array to max length
 }

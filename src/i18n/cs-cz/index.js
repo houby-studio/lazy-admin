@@ -28,9 +28,11 @@ export default {
   confirm: 'Potvrzení', // Used in: ScriptsPage.vue
   confirmMsg: 'Příkaz vyžaduje potvrzení. Skutečně chcete pokračovat?', // Used in: ScriptsPage.vue
   launch: 'Spustit', // Used in: ScriptsPage.vue
+  results: 'Výsledek', // Used in: ScriptsPage.vue
+  repeat: 'Opakovat', // Used in: ScriptsPage.vue
   cancel: 'Zrušit', // Used in: ScriptsPage.vue
   reset: 'Resetovat', // Used in: ScriptsPage.vue
-  results: `{commandName}: Výsledek`, // Used in: ScriptsPage.vue
+  resultsTitle: `{commandName}: Výsledek`, // Used in: ScriptsPage.vue
   powershellNoOutput: 'PowerShell nevrátil žádnou hodnotu.', // Used in: ScriptsPage.vue
   exportCsv: 'Exportovat do CSV', // Used in: ScriptsPage.vue
   copyClipboard: 'Zkopírovat do schránky', // Used in: ScriptsPage.vue

@@ -58,8 +58,8 @@
               >
                 <q-btn
                   flat
-                  @click="showCommandDiag(props.row)"
-                >{{ $t('launch') }}</q-btn>
+                  @click="historyShowResultsDiag(props.row)"
+                >{{ $t('results') }}</q-btn>
               </q-td>
             </template>
             <!-- Template showing execute button -->
@@ -70,8 +70,8 @@
               >
                 <q-btn
                   flat
-                  @click="showCommandDiag(props.row)"
-                >{{ $t('launch') }}</q-btn>
+                  @click="historyShowCommandDiag(props.row)"
+                >{{ $t('repeat') }}</q-btn>
               </q-td>
             </template>
           </q-table>
@@ -254,14 +254,14 @@
       <q-card class="full-width">
         <q-card-section>
           <div class="text-h6">
-            <q-icon :name="currentCommandMaster.icon ? currentCommandMaster.icon : 'mdi-powershell'"></q-icon> {{ $t('results', { commandName: currentCommandMaster.commandName }) }} {{ currentWorkflowIndex +1 }}/{{ currentCommandMaster.workflow ? currentCommandMaster.workflow.length + 1 : 1 }}
+            <q-icon :name="currentCommandMaster.icon ? currentCommandMaster.icon : 'mdi-powershell'"></q-icon> {{ $t('resultsTitle', { commandName: currentCommandMaster.commandName }) }} {{ currentWorkflowIndex +1 }}/{{ currentCommandMaster.workflow ? currentCommandMaster.workflow.length + 1 : 1 }}
           </div>
         </q-card-section>
         <q-card-section>
           <!-- Check which type of result was returned -->
-          <div v-if="results.returnType === 'object'">
+          <div v-if="results[currentWorkflowIndex] ? results[currentWorkflowIndex].returnType === 'object' : false">
             <q-table
-              :data="results.output"
+              :data="results[currentWorkflowIndex].output"
               :columns="resultsColumns"
               :pagination.sync="outputPagination"
               :selection="resultsTableSelection"
@@ -297,7 +297,8 @@
           <!-- Display RAW String value returned from PowerShell - this is displayed when cast to JSON object fails -->
           <div v-else>
             <q-input
-              :value="results.output"
+              v-if="results[currentWorkflowIndex]"
+              :value="results[currentWorkflowIndex].output"
               @keyup.enter.stop
               type="textarea"
               readonly
@@ -314,7 +315,7 @@
           <q-card-actions>
             <!-- Allow objects to be exported to CSV -->
             <q-btn
-              v-if="results.returnType === 'object'"
+              v-if="results[currentWorkflowIndex] ? results[currentWorkflowIndex].returnType === 'object' : false"
               @click="exportTable"
               icon="mdi-file-delimited"
               round
@@ -326,8 +327,8 @@
             </q-btn>
             <!-- Allow raw text to be copied to clipboard -->
             <q-btn
-              v-if="results.returnType === 'raw'"
-              v-clipboard:copy="results.output"
+              v-if="results[currentWorkflowIndex] ? results[currentWorkflowIndex].returnType === 'raw' : false"
+              v-clipboard:copy="results[currentWorkflowIndex].output"
               @click="notifyCopied"
               icon="mdi-content-copy"
               round
@@ -351,7 +352,7 @@
             <!-- Button to launch another workflow step -->
             <q-btn
               v-if="currentCommandMaster.workflow ? currentWorkflowIndex < currentCommandMaster.workflow.length : false"
-              :disable="resultsSelected[currentWorkflowIndex].length === 0 && results.returnType !== 'raw'"
+              :disable="resultsSelected[currentWorkflowIndex].length === 0 && results[currentWorkflowIndex] ? results[currentWorkflowIndex].returnType !== 'raw' : false"
               @click="nextWorkflowStep"
               icon="mdi-arrow-right-bold"
               size="lg"
@@ -581,7 +582,7 @@ export default {
         { name: 'steps', label: 'Steps' },
         { name: 'commandName', label: 'Command Name', align: 'left', classes: 'text-no-wrap' },
         { name: 'spacer', label: 'Spacer' },
-        { name: 'results', label: 'Results' },
+        { name: 'results', label: 'results' },
         { name: 'execute', label: 'Execute' }
       ],
       // table pagination options for scripts table
@@ -645,8 +646,8 @@ export default {
           { name: '__id', align: 'left', label: '__id', field: row => row.__id, classes: 'hidden', headerClasses: 'hidden' }
         ]
         // For every parameter received from command, generate column definition.
-        for (let i = 0; i < this.results.params.length; i++) {
-          let definition = { name: this.results.params[i], align: 'left', label: this.results.params[i], field: this.results.params[i], sortable: true }
+        for (let i = 0; i < this.results[this.currentWorkflowIndex].params.length; i++) {
+          let definition = { name: this.results[this.currentWorkflowIndex].params[i], align: 'left', label: this.results[this.currentWorkflowIndex].params[i], field: this.results[this.currentWorkflowIndex].params[i], sortable: true }
           columns.push(definition)
         }
         return columns
@@ -669,6 +670,15 @@ export default {
       this.currentCommandMaster = commandCtx
       this.displayCommandDiag = !this.displayCommandDiag
     },
+    historyShowCommandDiag (commandCtx) {
+      console.log(commandCtx)
+      // Mutates history object, need to create new instance
+      // this.currentCommand = commandCtx.currentCommand
+      // this.currentCommandMaster = commandCtx.currentCommandMaster
+      // this.currentWorkflowIndex = commandCtx.currentWorkflowIndex
+      // this.returnParams = commandCtx.returnParams
+      // this.displayCommandDiag = !this.displayCommandDiag
+    },
     showHelpDiag (helpCtx) {
       this.externalHelpFile = this.$t('loadingHelp')
       this.currentCommand = helpCtx
@@ -688,7 +698,16 @@ export default {
       }
     },
     showResultsDiag (resultspCtx) {
-      this.results = resultspCtx
+      this.results[this.currentWorkflowIndex] = resultspCtx
+      this.displayResultsDiag = !this.displayResultsDiag
+    },
+    historyShowResultsDiag (resultspCtx) {
+      // this.$set(this.currentWorkflowIndex, [this.currentWorkflowIndex], [])
+      // this.$set(this.results[this.currentWorkflowIndex], [this.currentWorkflowIndex], [])
+      // TODO: Won't this change values from history?
+      this.currentWorkflowIndex = resultspCtx.currentWorkflowIndex
+      this.results = resultspCtx.results
+
       this.displayResultsDiag = !this.displayResultsDiag
     },
     showPreExecuteCheck () {
@@ -707,7 +726,7 @@ export default {
       // https://quasar.dev/vue-components/table#Exporting-data
       // TODO: rework and add better, complex solution
       const content = [this.resultsColumns.map(col => wrapCsvValue(col.label))].concat(
-        this.results.output.map(row => this.resultsColumns.map(col => wrapCsvValue(
+        this.results[this.currentWorkflowIndex].output.map(row => this.resultsColumns.map(col => wrapCsvValue(
           typeof col.field === 'function'
             ? col.field(row)
             : row[col.field === void 0 ? col.name : col.field],
@@ -911,7 +930,7 @@ export default {
             }
           }
           // If user uses raw parameter, replace
-          tempResultCommand = tempResultCommand.replace(`{{__raw_argument}}`, `${this.results.output}`)
+          tempResultCommand = tempResultCommand.replace(`{{__raw_argument}}`, `${this.results[this.currentWorkflowIndex - 1].output}`)
         }
         this.resultCommand += tempResultCommand + ';'
         // TODO: Possibly allow multiline strings, instead of replacing them with ';'
@@ -946,7 +965,7 @@ export default {
               params = Object.keys(data) // Get param names from single object
               dataArray.push(data)
             }
-            this.results = {
+            this.results[this.currentWorkflowIndex] = {
               error: params.error,
               returnType: 'object',
               params: params,
@@ -957,7 +976,7 @@ export default {
               output = this.$t('powershellNoOutput')
             }
             // Result was not an array of objects or single object. Console returned error, additional text or that's how command was written.
-            this.results = {
+            this.results[this.currentWorkflowIndex] = {
               error: this.currentCommand.returns !== 'raw', // If command should return raw, it is not an error (or there is no way to tell)
               returnType: 'raw',
               output: output.trim()
@@ -979,7 +998,7 @@ export default {
         }).catch(error => {
           // If PowerShell itself runs into problem and throws, catch and display error as raw output.
           console.log(error)
-          this.results = {
+          this.results[this.currentWorkflowIndex] = {
             error: true,
             returnType: 'raw',
             // eslint-disable-next-line no-control-regex
