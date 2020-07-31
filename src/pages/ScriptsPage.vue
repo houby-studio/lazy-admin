@@ -98,7 +98,7 @@
             <div class="row">
               <div class="col">
                 <div class="text-h6 float-left">
-                  <q-icon :name="currentCommandMaster.icon ? currentCommandMaster.icon : 'mdi-powershell'"></q-icon> {{ currentCommandMaster.commandName }}
+                  <q-icon :name="currentCommandMaster.icon ? currentCommandMaster.icon : 'mdi-powershell'"></q-icon> {{ currentCommandMaster.commandName }} {{ currentWorkflowIndex +1 }}/{{ currentCommandMaster.workflow ? currentCommandMaster.workflow.length + 1 : 1 }}
                 </div>
               </div>
               <div class="col">
@@ -254,7 +254,7 @@
       <q-card class="full-width">
         <q-card-section>
           <div class="text-h6">
-            <q-icon :name="currentCommandMaster.icon ? currentCommandMaster.icon : 'mdi-powershell'"></q-icon> {{ $t('results', { commandName: currentCommandMaster.commandName }) }} {{ currentCommandMaster.workflow ? 'Workflow' : '' }}
+            <q-icon :name="currentCommandMaster.icon ? currentCommandMaster.icon : 'mdi-powershell'"></q-icon> {{ $t('results', { commandName: currentCommandMaster.commandName }) }} {{ currentWorkflowIndex +1 }}/{{ currentCommandMaster.workflow ? currentCommandMaster.workflow.length + 1 : 1 }}
           </div>
         </q-card-section>
         <q-card-section>
