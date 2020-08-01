@@ -669,6 +669,20 @@ export default {
     showCommandDiag (commandCtx) {
       this.currentCommand = commandCtx
       this.currentCommandMaster = commandCtx
+      // Loop through parameterSets and their parameters to set default values for each parameter
+      let parametersSetsNum = 1
+      if (this.resultsSelected[this.currentWorkflowIndex - 1]) {
+        if (this.resultsSelected[this.currentWorkflowIndex - 1].length > 1) {
+          parametersSetsNum = this.resultsSelected[this.currentWorkflowIndex - 1].length
+        }
+      }
+      for (let paramSetIndex = 1; paramSetIndex <= parametersSetsNum; paramSetIndex++) {
+        for (let i = 0; i < this.currentCommand.parameters.length; i++) {
+          let param = this.currentCommand.parameters[i]
+          this.$set(this.returnParams, [`${paramSetIndex}__${param.parameter}`], param.value)
+          // this.returnParams[`${paramSetIndex}__${param.parameter}`] = param.value
+        }
+      }
       this.displayCommandDiag = !this.displayCommandDiag
     },
     historyShowCommandDiag (commandCtx) {
@@ -862,6 +876,18 @@ export default {
           }
           // Set parameter to returnParams
           this.returnParams['1__' + this.currentCommandMaster.workflow[this.currentWorkflowIndex].passedParameters[passedParamsIndex].parameter] = parameterString
+        }
+      }
+      // Loop through parameterSets and their parameters to set default values for each parameter
+      let parametersSetsNum = 1
+      if (this.resultsSelected[this.currentWorkflowIndex].length > 1) {
+        parametersSetsNum = this.resultsSelected[this.currentWorkflowIndex].length
+      }
+      for (let paramSetIndex = 1; paramSetIndex <= parametersSetsNum; paramSetIndex++) {
+        for (let i = 0; i < this.currentCommand.parameters.length; i++) {
+          let param = this.currentCommand.parameters[i]
+          this.$set(this.returnParams, [`${paramSetIndex}__${param.parameter}`], param.value)
+          // this.returnParams[`${paramSetIndex}__${param.parameter}`] = param.value
         }
       }
       if (this.currentCommand.joinParamsAsString) { this.resultsSelected[this.currentWorkflowIndex] = [] } // clear resultsSelected to make command dialog behave in single input mode

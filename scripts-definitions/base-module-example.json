@@ -1,6 +1,6 @@
 {
   "base-module-example": {
-    "version": "0.1.4",
+    "version": "0.1.5",
     "icon": "mdi-powershell",
     "displayName": {
       "default": "Base commands",
@@ -402,7 +402,14 @@
                 "passedParamName": "Name"
               }
             ],
-            "parameters": [],
+            "parameters": [
+              {
+                "parameter": "Dummy",
+                "value": "For test purposes",
+                "required": false,
+                "type": "String"
+              }
+            ],
             "commandBlock": "Stop-Process {{Id}} -Force; if ($?) {Write-Output \"Process {{Name}} killed succesfully\"}"
           }
         ]
@@ -491,6 +498,7 @@
           {
             "parameter": "SampleString",
             "format": "-SampleString \"*{{SampleString}}*\"",
+            "value": "something",
             "required": false,
             "type": "String",
             "hint": {
@@ -502,6 +510,7 @@
           {
             "parameter": "SambleNumber",
             "format": "-SambleNumber \"*{{SambleNumber}}*\"",
+            "value": 666,
             "required": false,
             "type": "Number",
             "hint": {
@@ -524,6 +533,7 @@
           {
             "parameter": "SampleSwitch",
             "format": "-SampleSwitch",
+            "value": false,
             "required": false,
             "type": "Switch",
             "hint": {
@@ -557,6 +567,7 @@
               {
                 "parameter": "Name",
                 "format": "-Name \"*{{Name}}*\"",
+                "value": "notepad",
                 "required": true,
                 "type": "String",
                 "hint": {
@@ -588,8 +599,20 @@
                 "joinFormat": " and "
               }
             ],
-            "parameters": [],
-            "commandBlock": "Write-Output 'You have selected processes with Ids {{Id}} and names {{Name}}.'"
+            "parameters": [
+              {
+                "parameter": "Note",
+                "value": "Just for fun",
+                "required": true,
+                "type": "String",
+                "hint": {
+                  "default": "Supply note to command.",
+                  "en-us": "Supply note to command.",
+                  "cs-cz": "Zadejte poznámku k příkazu."
+                }
+              }
+            ],
+            "commandBlock": "Write-Output 'You have selected processes with Ids {{Id}} and names {{Name}}. You also noted: {{Note}}'"
           },
           {
             "acceptsParams": "single",

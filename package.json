@@ -1,6 +1,6 @@
 {
   "name": "lazy-admin",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "GUI for PowerShell scripts to simplify day to day IT tasks.",
   "productName": "Lazy Admin",
   "cordovaId": "eu.houby-studio.lazy-admin",
