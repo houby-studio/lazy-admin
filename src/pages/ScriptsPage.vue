@@ -4,6 +4,7 @@
     <q-drawer
       v-model="historyVisible"
       :width="historyWidth"
+      @hide="resetAllParams"
       side="right"
       behavior="desktop"
       overlay
@@ -509,7 +510,7 @@
 </template>
 
 <script>
-import { exportFile, date } from 'quasar'
+import { exportFile, date, extend } from 'quasar'
 import { mapGetters } from 'vuex'
 import { QMarkdown } from '@quasar/quasar-ui-qmarkdown'
 import Prism from 'vue-prismjs'
@@ -671,13 +672,14 @@ export default {
       this.displayCommandDiag = !this.displayCommandDiag
     },
     historyShowCommandDiag (commandCtx) {
-      console.log(commandCtx)
-      // Mutates history object, need to create new instance
-      // this.currentCommand = commandCtx.currentCommand
-      // this.currentCommandMaster = commandCtx.currentCommandMaster
-      // this.currentWorkflowIndex = commandCtx.currentWorkflowIndex
-      // this.returnParams = commandCtx.returnParams
-      // this.displayCommandDiag = !this.displayCommandDiag
+      // Restore required objects from history, so user can run command again
+      this.currentCommand = extend({}, commandCtx.currentCommand)
+      this.currentCommandMaster = extend({}, commandCtx.currentCommandMaster)
+      this.currentWorkflowIndex = commandCtx.currentWorkflowIndex
+      this.returnParams = extend({}, commandCtx.returnParams)
+      this.results = extend({}, commandCtx.results)
+      this.$set(this.resultsSelected, [this.currentWorkflowIndex], [])
+      this.displayCommandDiag = !this.displayCommandDiag
     },
     showHelpDiag (helpCtx) {
       this.externalHelpFile = this.$t('loadingHelp')
@@ -702,12 +704,11 @@ export default {
       this.displayResultsDiag = !this.displayResultsDiag
     },
     historyShowResultsDiag (resultspCtx) {
-      // this.$set(this.currentWorkflowIndex, [this.currentWorkflowIndex], [])
-      // this.$set(this.results[this.currentWorkflowIndex], [this.currentWorkflowIndex], [])
-      // TODO: Won't this change values from history?
+      this.currentCommand = extend({}, resultspCtx.currentCommand)
+      this.currentCommandMaster = extend({}, resultspCtx.currentCommandMaster)
       this.currentWorkflowIndex = resultspCtx.currentWorkflowIndex
-      this.results = resultspCtx.results
-
+      this.results = extend({}, resultspCtx.results)
+      this.$set(this.resultsSelected, [this.currentWorkflowIndex], [])
       this.displayResultsDiag = !this.displayResultsDiag
     },
     showPreExecuteCheck () {
@@ -829,6 +830,7 @@ export default {
     },
     // Processes selected results to parameters and pushes next workflow step to current command dialog
     nextWorkflowStep () {
+      this.displayCommandDiag = true
       this.displayResultsDiag = false
       this.currentCommand = this.currentCommandMaster.workflow[this.currentWorkflowIndex] // Set current workflow step as currentCommand
       // For each parameter expected in passedParameters, loop through all of them and then throigh all selections to either join them to single string or insert as numbered parameters separately to returnParams
