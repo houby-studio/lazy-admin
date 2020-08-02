@@ -164,6 +164,9 @@ This is only example, there are many possibilities how to write definitions.
             "parameters": [
               {
                 "parameter": "${parameterName}",
+                "format": "${format}",
+                "value": "${value}",
+                "options": "${options}",
                 "required": ${Boolean},
                 "type": "${inputType}",
                 "hint": "${hint}"

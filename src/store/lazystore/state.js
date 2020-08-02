@@ -1,7 +1,8 @@
 export default function () {
   return {
     language: 'en-us', // Handles application language - Changeable on logon screen
-    search: '', // Holds search string value
+    search_scripts: '', // Holds search string value
+    search_history: '', // Holds search string value
     scripts_filter: [], // Holds current filter for scripts table
     command_maximized: false, // Is command dialog window maximized?
     master_definition: {}, // Contains scripts definitions data, holding url to all modules
@@ -16,6 +17,8 @@ export default function () {
     always_confirm: false, // Should confirmation dialog be always displayed regardless script definition
     history_length: 100, // How many commands should be saved
     history_visible: false, // Is history dialog window visible?
-    history: [] // Array holding previous commands
+    history: [], // Array holding previous commands
+    dense_input: false, // Should input be dense or not
+    dense_table: true // Should tables be dense or not
   }
 }

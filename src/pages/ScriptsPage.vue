@@ -15,6 +15,8 @@
             :data="history"
             :columns="historyColumns"
             :pagination.sync="scriptsPagination"
+            :dense="denseTable"
+            :filter="searchHistory"
             wrap-cells
             row-key="index"
             hide-bottom
@@ -127,6 +129,7 @@
               :default-opened="resultsSelected[currentWorkflowIndex].length > 1"
               :caption="$t('workflowReadOnly')"
               :label="$t('workflowParameters')"
+              :dense="denseInput"
               expand-separator
               icon="mdi-cogs"
             >
@@ -135,6 +138,7 @@
                 v-model="returnParams[returnParamsPaginate + '__' + param.parameter]"
                 :label="param.parameter"
                 :key="param.parameter"
+                :dense="denseInput"
                 hide-bottom-space
                 standout
                 readonly
@@ -146,24 +150,65 @@
               spaced
             ></q-separator>
             <!-- Command parameters -->
-            <component
+            <div
               v-for="(param, index) in currentCommand.parameters"
-              v-model="returnParams[returnParamsPaginate + '__' + param.parameter]"
-              :tabindex="index + 1"
-              :is="paramType[param.type][0]"
-              :toggle-indeterminate="paramType[param.type][1]"
-              :false-value="paramType[param.type][1] ? 'false' : false"
-              :label="param.parameter"
-              :label-color="param.required ? 'primary' : ''"
               :key="param.parameter"
-              :rules="param.required ? [ val => val && val.length > 0 || $t('requiredField') ] : [] "
-              :hint="`${param.required ? $t('requiredParam') : $t('optionalParam') } | ${param.type} | ${param.hint ? param.hint[language] || param.hint['default'] : ''}`"
-              :type="paramType[param.type][1]"
-              @keydown.enter.prevent
-              filled
-              clearable
-              lazy-rules
-            ></component>
+              class="q-mb-sm"
+            >
+              <component
+                v-model="returnParams[returnParamsPaginate + '__' + param.parameter]"
+                :tabindex="index + 1"
+                :is="paramType[param.type][0]"
+                :toggle-indeterminate="paramType[param.type][1]"
+                :false-value="paramType[param.type][1] ? 'false' : false"
+                :label="param.parameter"
+                :label-color="param.required ? 'primary' : ''"
+                :rules="param.required ? [ val => val && val.length > 0 || $t('requiredField') ] : [] "
+                :type="paramType[param.type][1]"
+                :dense="denseInput"
+                :options="param.options"
+                :multiple="paramType[param.type][1]"
+                @keydown.enter.prevent
+                bottom-slots
+                filled
+                clearable
+                lazy-rules
+              >
+                <!-- Template showing parameter informatin button -->
+                <template v-slot:append>
+                  <q-btn
+                    @click.capture.stop="showParameterHelp(param)"
+                    padding="none"
+                    class="btn-param-info"
+                    icon="info"
+                    dense
+                    round
+                    flat
+                  ></q-btn>
+                </template>
+                <!-- Template showing parameter information button -->
+                <template v-slot:counter>
+                  <p>{{ param.required ? $t('requiredParam') : $t('optionalParam') }} | {{ param.type }}</p>
+                </template>
+              </component>
+              <!-- Hint for components which lack native hint slot -->
+              <span
+                v-if="param.type === 'Boolean' || param.type === 'Switch'"
+                class="hint-opacity text-caption float-right"
+              >
+                <q-btn
+                  @click="showParameterHelp(param)"
+                  padding="none"
+                  class="btn-param-info"
+                  size="sm"
+                  icon="info"
+                  dense
+                  round
+                  flat
+                ></q-btn>
+                {{ param.required ? $t('requiredParam') : $t('optionalParam') }} | {{ param.type }}
+              </span>
+            </div>
           </q-card-section>
           <!-- Actions for command dialog -->
           <q-card-actions
@@ -268,6 +313,7 @@
               :selection="resultsTableSelection"
               :selected.sync="resultsSelected[currentWorkflowIndex]"
               :filter="resultsFilter"
+              :dense="denseTable"
               row-key="__id"
             >
               <template v-slot:top-right>
@@ -378,8 +424,8 @@
     >
       <q-card class="full-width">
         <q-form
-          autofocus
           @submit="executeCommand"
+          autofocus
         >
           <q-card-section>
             <div class="text-h6">
@@ -397,8 +443,8 @@
           </q-card-section>
           <q-card-section>
             <prism
-              language="powershell"
               :code="resultCommand"
+              language="powershell"
             ></prism>
           </q-card-section>
           <q-card-actions
@@ -426,10 +472,11 @@
         <q-table
           :data="scriptsArray"
           :columns="scriptsColumns"
-          :filter="searchText"
+          :filter="searchScripts"
           :pagination.sync="scriptsPagination"
           :no-data-label="$t('noScriptsFound')"
           :no-results-label="$t('noScriptsFound')"
+          :dense="denseTable"
           wrap-cells
           row-key="parameter"
           hide-bottom
@@ -483,11 +530,11 @@
               auto-width
             >
               <q-btn
+                @click="showHelpDiag(props.row)"
                 dense
                 round
                 flat
                 icon="help"
-                @click="showHelpDiag(props.row)"
               />
             </q-td>
           </template>
@@ -498,8 +545,8 @@
               auto-width
             >
               <q-btn
-                flat
                 @click="showCommandDiag(props.row)"
+                flat
               >{{ $t('launch') }}</q-btn>
             </q-td>
           </template>
@@ -566,7 +613,9 @@ export default {
         'Number': ['q-input', 'number'],
         'ScriptBlock': ['q-input', 'textarea'],
         'Boolean': ['q-toggle', true],
-        'Switch': ['q-toggle', false]
+        'Switch': ['q-toggle', false],
+        'Select': ['q-select', false],
+        'MultiSelect': ['q-select', true]
       }, // Column definitions for scripts table
       scriptsColumns: [
         { name: 'icon', label: 'Icon', classes: 'gt-xs' },
@@ -580,8 +629,9 @@ export default {
       ],
       historyColumns: [
         { name: 'date', label: 'Date', field: row => date.formatDate(row.date, 'YYYY-MM-DD HH:mm:ss'), classes: 'gt-xs' },
-        { name: 'steps', label: 'Steps' },
-        { name: 'commandName', label: 'Command Name', align: 'left', classes: 'text-no-wrap' },
+        { name: 'steps', label: 'Steps', field: row => row.currentCommandMaster.workflow ? 'workflow' : 'basic' },
+        { name: 'commandName', label: 'Command Name', align: 'left', field: row => row.currentCommandMaster.commandName, classes: 'text-no-wrap' },
+        { name: 'friendlyName', label: 'Friendly Name', field: row => row.currentCommandMaster.friendlyName ? row.currentCommandMaster.friendlyName[(this.$i18n.locale)] ? row.currentCommandMaster.friendlyName[(this.$i18n.locale)] : row.currentCommandMaster.friendlyName['default'] : '', classes: 'hidden' },
         { name: 'spacer', label: 'Spacer' },
         { name: 'results', label: 'results' },
         { name: 'execute', label: 'Execute' }
@@ -593,12 +643,15 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('lazystore', ['getLanguage', 'getSearch', 'getScriptsArray', 'getDefinitions', 'getCommandMaximized', 'getAlwaysConfirm', 'getHistoryLength', 'getHistoryVisible', 'getHistory']),
+    ...mapGetters('lazystore', ['getLanguage', 'getSearchScripts', 'getSearchHistory', 'getScriptsArray', 'getDefinitions', 'getCommandMaximized', 'getAlwaysConfirm', 'getHistoryLength', 'getHistoryVisible', 'getHistory', 'getDenseInput', 'getDenseTable']),
     language: function () {
       return this.getLanguage
     },
-    searchText: function () {
-      return this.getSearch
+    searchScripts: function () {
+      return this.getSearchScripts
+    },
+    searchHistory: function () {
+      return this.getSearchHistory
     },
     scriptsArray: function () {
       return this.getScriptsArray
@@ -636,6 +689,12 @@ export default {
         let history = _.cloneDeep(val)
         this.$store.dispatch('lazystore/setHistory', history)
       }
+    },
+    denseInput: function () {
+      return this.getDenseInput
+    },
+    denseTable: function () {
+      return this.getDenseTable
     },
     historyWidth: function () {
       return this.$q.screen.width
@@ -680,7 +739,6 @@ export default {
         for (let i = 0; i < this.currentCommand.parameters.length; i++) {
           let param = this.currentCommand.parameters[i]
           this.$set(this.returnParams, [`${paramSetIndex}__${param.parameter}`], param.value)
-          // this.returnParams[`${paramSetIndex}__${param.parameter}`] = param.value
         }
       }
       this.displayCommandDiag = !this.displayCommandDiag
@@ -727,6 +785,20 @@ export default {
     },
     showPreExecuteCheck () {
       this.displayPreExecuteCheck = !this.displayPreExecuteCheck
+    },
+    showParameterHelp (param) {
+      this.$q.dialog({
+        title: param.parameter,
+        message: `
+        ${this.$t('requiredParam')}: ${param.required ? this.$t('yes') : this.$t('no')}<br>
+        ${this.$t('type')}: ${param.type}<br>
+        ${this.$t('help')}: ${param.hint ? param.hint[this.language] || param.hint['default'] : this.$t('none')}<br>
+        ${this.$t('format')}:<br>
+        <code class="text-no-wrap">${param.format ? param.format : this.$t('none')}</code>
+        `,
+        html: true,
+        color: 'primary'
+      })
     },
     notifyCopied () {
       this.$q.notify({
@@ -1044,5 +1116,13 @@ export default {
 <style>
 .q-markdown--link {
   color: aqua;
+}
+
+.btn-param-info {
+  opacity: 0.6;
+}
+
+.hint-opacity {
+  opacity: 0.7;
 }
 </style>

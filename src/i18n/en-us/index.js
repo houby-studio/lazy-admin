@@ -54,11 +54,18 @@ export default {
   noExternalHelp: 'There is no external help for this command.\r\nLocal help: {description}', // Used in: ScriptsPage.vue
   noDescription: 'Not available.', // Used in: ScriptsPage.vue
   csvExportError: 'Could not export results to CSV file.', // Used in: ScriptsPage.vue
+  yes: 'Yes', // Used in: ScriptsPage.vue
+  no: 'No', // Used in: ScriptsPage.vue
+  type: 'Type', // Used in: ScriptsPage.vue
+  none: 'None', // Used in: ScriptsPage.vue
+  format: 'Format', // Used in: ScriptsPage.vue
   updateFound: 'Downloading the latest version of Lazy Admin.', // Used in: FullLayout.vue
   updateError: 'Could not download update for Lazy Admin application.', // Used in: FullLayout.vue
   definitionsError: 'Definitions update error.', // Used in: AboutPage.vue
   downloadCompleted: 'Download completed, close the application to start the update.', // Used in: FullLayout.vue
   alwaysConfirm: 'Always require confirmation before script execution.', // Used in: SettingsPage.vue
+  inputDense: 'Display input parameters in dense layout.', // Used in: SettingsPage.vue
+  tableDense: 'Display tables in dense layout.', // Used in: SettingsPage.vue
   autoClipboard: 'Automatically store command results to clipboard.', // Used in: SettingsPage.vue
   masterDefinition: 'Master definition', // Used in: AboutPage.vue
   update: 'Update', // Used in: AboutPage.vue

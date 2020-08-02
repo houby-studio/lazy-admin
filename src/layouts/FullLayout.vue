@@ -1,9 +1,9 @@
 <template>
   <q-layout view="hhh lpr lff">
     <q-header
+      :reveal-offset="Infinity"
       elevated
       reveal
-      :reveal-offset="Infinity"
       class="window-color window-color-text"
     >
       <q-bar class="q-electron-drag q-pr-none">
@@ -13,24 +13,24 @@
         <q-space />
 
         <q-btn
+          @click="minimize"
           dense
           flat
           icon="minimize"
-          @click="minimize"
           style="height: 100%"
         />
         <q-btn
+          @click="maximize"
           dense
           flat
           icon="crop_square"
-          @click="maximize"
           style="height: 100%"
         />
         <q-btn
+          @click="closeApp"
           dense
           flat
           icon="close"
-          @click="closeApp"
           style="height: 100%"
         />
       </q-bar>
@@ -41,37 +41,37 @@
       >
         <q-toolbar>
           <q-btn
+            @click="left = !left"
             dense
             flat
             round
             icon="menu"
-            @click="left = !left"
           />
 
           <q-space />
 
           <q-input
+            v-model="search"
+            :placeholder="$t('search')"
+            :disable="$route.path !== '/scripts'"
             dense
             outlined
             color="white"
             label-color="white"
-            v-model="searchText"
-            :placeholder="$t('search')"
             style="width: 90%;"
-            dark
           >
             <template v-slot:prepend>
               <q-icon
-                v-if="searchText === ''"
+                v-if="search === ''"
                 name="search"
                 color="white"
               />
               <q-icon
                 v-else
+                @click="search = ''"
                 name="clear"
                 class="cursor-pointer"
                 color="white"
-                @click="searchText = ''"
               />
             </template>
           </q-input>
@@ -80,10 +80,11 @@
 
           <div class="row items-center no-wrap">
             <q-btn
+              :flat="!historyVisible"
               @click="historyVisible = !historyVisible"
+              push
               round
               dense
-              flat
               icon="history"
             >
               <q-tooltip>{{ $t('history') }}</q-tooltip>
@@ -104,10 +105,10 @@
       <q-list>
         <q-item-label header>{{ $t('visibleGroups') }}</q-item-label>
         <q-item
+          @click="showAll"
           clickable
           to="/scripts"
           active-class="text-white"
-          @click="showAll"
         >
           <q-item-section avatar>
             <q-icon name="all_inclusive" />
@@ -118,12 +119,12 @@
           </q-item-section>
         </q-item>
         <q-item
-          clickable
           v-for="menuEntry in menuEntries"
           :key="menuEntry.name"
+          @click="filterMenu(menuEntry.name)"
           to="/scripts"
           active-class="text-white"
-          @click="filterMenu(menuEntry.name)"
+          clickable
         >
           <q-item-section avatar>
             <q-icon :name="menuEntry.icon" />
@@ -163,8 +164,8 @@
         </q-item>
 
         <q-item
-          clickable
           @click="showDebugWindow"
+          clickable
           active-class="dark"
         >
           <q-item-section avatar>
@@ -202,44 +203,44 @@
             <div class="row text-center">
               <div class="col-xs-12 col-sm-6 col-md-3">
                 <q-btn
+                  @click="debugGetDefinitions"
                   color="primary"
                   label="Get Definitions"
                   style="width: 90%"
                   class="q-mb-sm"
                   no-wrap
-                  @click="debugGetDefinitions"
                 />
               </div>
               <div class="col-xs-12 col-sm-6 col-md-3">
                 <div class="text-h6">
                   <q-btn
+                    @click="debugClearDefinitions"
                     color="primary"
                     label="Clear Definitions"
                     style="width: 90%"
                     class="q-mb-sm"
                     no-wrap
-                    @click="debugClearDefinitions"
                   />
                 </div>
               </div>
               <div class="col-xs-12 col-sm-6 col-md-3">
                 <q-btn
+                  @click="debugGetMasterDefinitions"
                   color="primary"
                   label="Get Master Definition"
                   style="width: 90%"
                   class="q-mb-sm"
                   no-wrap
-                  @click="debugGetMasterDefinitions"
                 />
               </div>
               <div class="col-xs-12 col-sm-6 col-md-3">
                 <q-btn
+                  @click="debugClearMasterDefinition"
                   color="primary"
                   label="Clear Master Definition"
                   style="width: 90%"
                   class="q-mb-sm"
                   no-wrap
-                  @click="debugClearMasterDefinition"
                 />
               </div>
             </div>
@@ -250,34 +251,34 @@
             <div class="row text-center">
               <div class="col-xs-12 col-sm-6 col-md-3">
                 <q-btn
+                  @click="debugOpenAppDataPath"
                   color="primary"
                   label="Open AppData"
                   style="width: 90%"
                   class="q-mb-sm"
                   no-wrap
-                  @click="debugOpenAppDataPath"
                 />
               </div>
               <div class="col-xs-12 col-sm-6 col-md-3">
                 <div class="text-h6">
                   <q-btn
+                    @click="debugOpenLog"
                     color="primary"
                     label="Open Log"
                     style="width: 90%"
                     class="q-mb-sm"
                     no-wrap
-                    @click="debugOpenLog"
                   />
                 </div>
               </div>
               <div class="col-xs-12 col-sm-6 col-md-3">
                 <q-btn
+                  @click="debugOpenInstallPath"
                   color="primary"
                   label="Open Install Path"
                   style="width: 90%"
                   class="q-mb-sm"
                   no-wrap
-                  @click="debugOpenInstallPath"
                 />
               </div>
               <div class="col-xs-12 col-sm-6 col-md-3">
@@ -297,59 +298,59 @@
             <div class="row text-center">
               <div class="col-xs-12 col-sm-6 col-md-3">
                 <q-btn
+                  @click="debugUpdateDefinitions"
                   color="primary"
                   label="Update Definitions"
                   style="width: 90%"
                   class="q-mb-sm"
                   no-wrap
-                  @click="debugUpdateDefinitions"
                 />
               </div>
               <div class="col-xs-12 col-sm-6 col-md-3">
                 <div class="text-h6">
                   <q-btn
+                    @click="debugUpdateMasterDefinition"
                     color="primary"
                     label="Update Master Definition"
                     style="width: 90%"
                     class="q-mb-sm"
                     no-wrap
-                    @click="debugUpdateMasterDefinition"
                   />
                 </div>
               </div>
               <div class="col-xs-12 col-sm-6 col-md-3">
                 <q-btn
+                  @click="debugUpdateApplication"
                   color="primary"
                   label="Update Lazy Admin"
                   style="width: 90%"
                   class="q-mb-sm"
                   no-wrap
-                  @click="debugUpdateApplication"
                 />
               </div>
               <div class="col-xs-12 col-sm-6 col-md-3">
                 <q-btn
+                  @click="debugClearUpdateDate"
                   color="primary"
                   label="Clear Update Date"
                   style="width: 90%"
                   class="q-mb-sm"
                   no-wrap
-                  @click="debugClearUpdateDate"
                 />
               </div>
             </div>
           </q-card-section>
           <q-page-sticky
-            position="bottom"
             :offset="[0, 0]"
+            position="bottom"
           >
             <q-card-actions>
               <!-- Close Debug window dialog -->
               <q-btn
+                v-close-popup
                 icon="close"
                 round
                 color="primary"
-                v-close-popup
               >
               </q-btn>
             </q-card-actions>
@@ -381,17 +382,41 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('lazystore', ['getLanguage', 'getMenuEntries', 'getSearch', 'getMasterDefinition', 'getDefinitions', 'getDefinitionsUpdateInProgress', 'getRestartRequired', 'getUpdateDate', 'getUpdateInProgress', 'getUpdateProgress', 'getHistoryVisible']),
+    ...mapGetters('lazystore', ['getLanguage', 'getMenuEntries', 'getSearchScripts', 'getSearchHistory', 'getMasterDefinition', 'getDefinitions', 'getDefinitionsUpdateInProgress', 'getRestartRequired', 'getUpdateDate', 'getUpdateInProgress', 'getUpdateProgress', 'getHistoryVisible']),
     animateToolBar: function () {
       // Toolbar starts as hidden (false state), on 'created', animation 'animateToolBar' starts transform and displays toolbar
       return this.loadToolBar ? 'animated slideInDown' : 'hidden'
     },
-    searchText: {
+    search: {
       get () {
-        return this.getSearch
+        if (this.historyVisible) {
+          return this.searchHistory
+        } else {
+          return this.searchScripts
+        }
       },
       set (val) {
-        this.$store.dispatch('lazystore/setSearch', val)
+        if (this.historyVisible) {
+          this.searchHistory = val
+        } else {
+          this.searchScripts = val
+        }
+      }
+    },
+    searchScripts: {
+      get () {
+        return this.getSearchScripts
+      },
+      set (val) {
+        this.$store.dispatch('lazystore/setSearchScripts', val)
+      }
+    },
+    searchHistory: {
+      get () {
+        return this.getSearchHistory
+      },
+      set (val) {
+        this.$store.dispatch('lazystore/setSearchHistory', val)
       }
     },
     language: function () {
@@ -497,12 +522,20 @@ export default {
     },
 
     showAll () {
+      if (this.historyVisible) {
+        this.historyVisible = false
+      }
+      this.left = false
       // Gets all keys from definitions object and sets it as filter, displaying scripts from all modules
       this.$store.dispatch('lazystore/setScriptsFilter', Object.keys(this.definitions))
     },
 
     filterMenu (name) {
       // Sets selected module key as filter, displaying scripts from said module
+      if (this.historyVisible) {
+        this.historyVisible = false
+      }
+      this.left = false
       this.$store.dispatch('lazystore/setScriptsFilter', name)
     },
 

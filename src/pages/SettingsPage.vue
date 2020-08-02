@@ -19,13 +19,22 @@
                 :label="$t('alwaysConfirm')"
               />
             </div>
-            <!-- <div class="col-12">
+          </div>
+          <div class="row">
+            <div class="col-12">
               <q-checkbox
-                v-model="teal"
-                label="Teal"
+                v-model="denseInput"
+                :label="$t('inputDense')"
               />
-              <p>Always show confirmation dialog before executing</p>
-            </div> -->
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <q-checkbox
+                v-model="denseTable"
+                :label="$t('tableDense')"
+              />
+            </div>
           </div>
         </q-card-section>
       </q-card>
@@ -44,13 +53,29 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('lazystore', ['getAlwaysConfirm']),
+    ...mapGetters('lazystore', ['getAlwaysConfirm', 'getDenseInput', 'getDenseTable']),
     alwaysConfirm: {
       get () {
         return this.getAlwaysConfirm
       },
       set (val) {
         this.$store.dispatch('lazystore/setAlwaysConfirm', val)
+      }
+    },
+    denseInput: {
+      get () {
+        return this.getDenseInput
+      },
+      set (val) {
+        this.$store.dispatch('lazystore/setDenseInput', val)
+      }
+    },
+    denseTable: {
+      get () {
+        return this.getDenseTable
+      },
+      set (val) {
+        this.$store.dispatch('lazystore/setDenseTable', val)
       }
     }
   }

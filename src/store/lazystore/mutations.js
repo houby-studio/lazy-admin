@@ -2,8 +2,12 @@ export const SET_LANGUAGE = (state, value) => {
   state.language = value
 }
 
-export const SET_SEARCH = (state, value) => {
-  state.search = value
+export const SET_SEARCHSCRIPTS = (state, value) => {
+  state.search_scripts = value
+}
+
+export const SET_SEARCHHISTORY = (state, value) => {
+  state.search_history = value
 }
 
 export const SET_SCRIPTSFILTER = (state, value) => {
@@ -66,4 +70,12 @@ export const SET_HISTORYVISIBLE = (state, value) => {
 export const SET_HISTORY = (state, value) => {
   state.history.unshift(value)
   // state.history.splice(state.history_length) // to trim array to max length
+}
+
+export const SET_DENSEINPUT = (state, value) => {
+  state.dense_input = value
+}
+
+export const SET_DENSETABLE = (state, value) => {
+  state.dense_table = value
 }

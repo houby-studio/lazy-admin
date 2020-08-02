@@ -5,8 +5,13 @@ export async function setLanguage ({ commit }, language) {
 }
 
 // Commit mutation to update search field - Accessed in FullLayout.vue
-export async function setSearch ({ commit }, searchText) {
-  commit('SET_SEARCH', searchText)
+export async function setSearchScripts ({ commit }, searchText) {
+  commit('SET_SEARCHSCRIPTS', searchText)
+}
+
+// Commit mutation to update search field - Accessed in FullLayout.vue
+export async function setSearchHistory ({ commit }, searchText) {
+  commit('SET_SEARCHHISTORY', searchText)
 }
 
 // Commit mutation to set scripts filter - Accessed in FullLayout.vue
@@ -91,4 +96,14 @@ export async function setHistory ({ commit, state }, history) {
   //   newHistory.length = this.historyLength
   // }
   commit('SET_HISTORY', history)
+}
+
+// Commit mutation to set dialog input density - Accessed in SettingsPage.vue
+export async function setDenseInput ({ commit }, dense) {
+  commit('SET_DENSEINPUT', dense)
+}
+
+// Commit mutation to set dialog input density - Accessed in SettingsPage.vue
+export async function setDenseTable ({ commit }, dense) {
+  commit('SET_DENSETABLE', dense)
 }

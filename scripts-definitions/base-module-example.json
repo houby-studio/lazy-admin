@@ -1,6 +1,6 @@
 {
   "base-module-example": {
-    "version": "0.1.5",
+    "version": "0.1.6",
     "icon": "mdi-powershell",
     "displayName": {
       "default": "Base commands",
@@ -552,9 +552,46 @@
               "en-us": "Supply name of process, otherwise all processes are listed.",
               "cs-cz": "Zadejte název procesu, jinak se zobrazí seznam všech."
             }
+          },
+          {
+            "parameter": "SampleSelect",
+            "format": "-SampleSelect \"*{{SampleSelect}}*\"",
+            "options": [
+              "Option1",
+              "Option2",
+              "EmpireDidNothingWrong"
+            ],
+            "required": false,
+            "type": "Select",
+            "hint": {
+              "default": "Select one of the following options.",
+              "en-us": "Select one of the following options.",
+              "cs-cz": "Vyberte jednu z možností."
+            }
+          },
+          {
+            "parameter": "SampleMultiSelect",
+            "format": "-SampleMultiSelect {{SampleMultiSelect}}",
+            "value": [
+              "\"EmpireDidNothingWrong\""
+            ],
+            "options": [
+              "\"Option1\"",
+              "\"Option2\"",
+              "\"EmpireDidNothingWrong\"",
+              "\"AnotherOption\"",
+              "\"YetAnother\""
+            ],
+            "required": false,
+            "type": "MultiSelect",
+            "hint": {
+              "default": "Select one or more of the following options.",
+              "en-us": "Select one or more of the following options.",
+              "cs-cz": "Vyberte jednu nebo více možností."
+            }
           }
         ],
-        "commandBlock": "Write-Output '{{SampleString}} {{SambleNumber}} {{SampleScriptBlock}} {{SampleSwitch}} {{SampleBoolean}}'",
+        "commandBlock": "Write-Output '{{SampleString}} {{SambleNumber}} {{SampleScriptBlock}} {{SampleSwitch}} {{SampleBoolean}} {{SampleSelect}} {{SampleMultiSelect}}'",
         "workflow": [
           {
             "acceptsParams": "none",

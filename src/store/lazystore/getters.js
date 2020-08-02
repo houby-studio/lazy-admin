@@ -2,8 +2,12 @@ export function getLanguage (state) {
   return state.language
 }
 
-export function getSearch (state) {
-  return state.search
+export function getSearchScripts (state) {
+  return state.search_scripts
+}
+
+export function getSearchHistory (state) {
+  return state.search_history
 }
 
 export function getScriptsFilter (state) {
@@ -56,6 +60,14 @@ export function getHistoryVisible (state) {
 
 export function getHistory (state) {
   return state.history
+}
+
+export function getDenseInput (state) {
+  return state.dense_input
+}
+
+export function getDenseTable (state) {
+  return state.dense_table
 }
 
 // Dynamically build array of scripts to display in ScriptsPage.vue page

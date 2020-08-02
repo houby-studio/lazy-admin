@@ -54,12 +54,18 @@ export default {
   noExternalHelp: 'Pro tento příkaz neexistuje externí nápověda.\r\nMístní nápověda: {description}', // Used in: ScriptsPage.vue
   noDescription: 'Není vyplněna.', // Used in: ScriptsPage.vue
   csvExportError: 'Nepodařilo se uložit výsledky do CSV souboru.', // Used in: ScriptsPage.vue
+  yes: 'Ano', // Used in: ScriptsPage.vue
+  no: 'Ne', // Used in: ScriptsPage.vue
+  type: 'Typ', // Used in: ScriptsPage.vue
+  none: 'Není', // Used in: ScriptsPage.vue
+  format: 'Formát', // Used in: ScriptsPage.vue
   updateFound: 'Stahování nejnovější verze aplikace Lazy Admin.', // Used in: FullLayout.vue
   updateError: 'Nepodařilo se stáhnout aktualizaci aplikace Lazy Admin.', // Used in: FullLayout.vue
   definitionsError: 'Chyba aktualizace definic.', // Used in: AboutPage.vue
   downloadCompleted: 'Stahování dokončeno, zavřete aplikaci ke spuštění aktualizace.', // Used in: FullLayout.vue
   alwaysConfirm: 'Vždy požadovat potvrzení před spuštěním příkazu.', // Used in: SettingsPage.vue
-  autoClipboard: 'Automaticky vkládat výsledek příkazu do schránky.', // Used in: SettingsPage.vue
+  inputDense: 'Zobrazovat vstupní parametry v těsném rozložení.', // Used in: SettingsPage.vue
+  tableDense: 'Zobrazovat tabulky v těsném rozložení.', // Used in: SettingsPage.vue
   masterDefinition: 'Hlavní definice', // Used in: AboutPage.vue
   update: 'Aktualizovat', // Used in: AboutPage.vue
   restartRequired: 'Vyžadován restart.', // Used in: AboutPage.vue
