@@ -72,8 +72,9 @@
                 auto-width
               >
                 <q-btn
-                  flat
+                  :disable="loginSkipped && props.row.currentCommandMaster.usesLoginObjects"
                   @click="historyShowCommandDiag(props.row)"
+                  flat
                 >{{ $t('repeat') }}</q-btn>
               </q-td>
             </template>
@@ -399,7 +400,7 @@
             <!-- Button to launch another workflow step -->
             <q-btn
               v-if="currentCommandMaster.workflow ? currentWorkflowIndex < currentCommandMaster.workflow.length : false"
-              :disable="resultsSelected[currentWorkflowIndex].length === 0 && results[currentWorkflowIndex] ? results[currentWorkflowIndex].returnType !== 'raw' : false"
+              :disable="(resultsSelected[currentWorkflowIndex].length === 0 && results[currentWorkflowIndex] ? results[currentWorkflowIndex].returnType !== 'raw' : false) || (loginSkipped && currentCommandMaster.usesLoginObjects)"
               @click="nextWorkflowStep"
               icon="mdi-arrow-right-bold"
               size="lg"
@@ -545,6 +546,7 @@
               auto-width
             >
               <q-btn
+                :disable="loginSkipped && props.row.usesLoginObjects"
                 @click="showCommandDiag(props.row)"
                 flat
               >{{ $t('launch') }}</q-btn>
@@ -643,7 +645,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('lazystore', ['getLanguage', 'getSearchScripts', 'getSearchHistory', 'getScriptsArray', 'getDefinitions', 'getCommandMaximized', 'getAlwaysConfirm', 'getHistoryLength', 'getHistoryVisible', 'getHistory', 'getDenseInput', 'getDenseTable']),
+    ...mapGetters('lazystore', ['getLanguage', 'getSearchScripts', 'getSearchHistory', 'getScriptsArray', 'getDefinitions', 'getCommandMaximized', 'getAlwaysConfirm', 'getHistoryLength', 'getHistoryVisible', 'getHistory', 'getDenseInput', 'getDenseTable', 'getLoginSkipped', 'getCredentialsSaved']),
     language: function () {
       return this.getLanguage
     },
@@ -695,6 +697,12 @@ export default {
     },
     denseTable: function () {
       return this.getDenseTable
+    },
+    loginSkipped: function () {
+      return this.getLoginSkipped
+    },
+    credentialsSaved: function () {
+      return this.getCredentialsSaved
     },
     historyWidth: function () {
       return this.$q.screen.width
@@ -898,18 +906,36 @@ export default {
           }
           // Create new PowerShell instance
           this.$pwsh.createShell((done) => {
-            // Load New-PSSessionWithCredentials
-            this.$pwsh.loadCredFunction(() => {
-              this.$pwsh.shell.invoke().then(() => {
-                // Create Credential Object and PSSession
-                this.$pwsh.loadCredString(() => {
-                  this.$pwsh.shell.invoke().then(() => {
-                    // PowerShell restarted, hide loading
-                    this.toggleLoading()
+            if (!(this.credentialsSaved) && !(this.loginSkipped)) {
+              // User logged in, but did not save credentials, likely missing credentials module, redirect to login page.
+              this.toggleLoading()
+              this.$router.push({ path: '/' })
+            } else if (this.loginSkipped) {
+              // User skipped logging in, do not attempt to log in and just load plain PowerShell with empty Credential Object.
+              this.$pwsh.shell.addCommand(`$Global:CredentialObject = [System.Management.Automation.PSCredential]::Empty`)
+              this.$pwsh.shell.invoke().then(output => {
+                // PowerShell restarted, hide loading
+                this.toggleLoading()
+              }).catch(e => {
+                console.error(`Failed to create empty Credential Object. Error message: ${e}`)
+                this.toggleLoading()
+                this.$router.push({ path: '/' })
+              })
+            } else {
+              // User has saved credentials and did not skip log in. Load credentials from Credentials Manager and log in.
+              // Load New-PSSessionWithCredentials
+              this.$pwsh.loadCredFunction(() => {
+                this.$pwsh.shell.invoke().then(() => {
+                  // Create Credential Object and PSSession
+                  this.$pwsh.loadCredString(() => {
+                    this.$pwsh.shell.invoke().then(() => {
+                      // PowerShell restarted, hide loading
+                      this.toggleLoading()
+                    })
                   })
                 })
               })
-            })
+            }
           })
         })
       }
@@ -1040,7 +1066,7 @@ export default {
     executeCommand () {
       this.toggleLoading(true)
       this.$pwsh.shell.clear().then(() => {
-        if (this.currentCommand.insidePsSession) {
+        if (this.currentCommand.insidePsSession && !(this.loginSkipped)) {
           this.$pwsh.shell.addCommand(`Invoke-Command -Session $Global:LazyAdminPSSession -ScriptBlock {${this.resultCommand}}`)
         } else {
           this.$pwsh.shell.addCommand(this.resultCommand)

@@ -70,6 +70,14 @@ export function getDenseTable (state) {
   return state.dense_table
 }
 
+export function getLoginSkipped (state) {
+  return state.login_skipped
+}
+
+export function getCredentialsSaved (state) {
+  return state.credentials_saved
+}
+
 // Dynamically build array of scripts to display in ScriptsPage.vue page
 export function getScriptsArray (state) {
   try {

@@ -107,3 +107,13 @@ export async function setDenseInput ({ commit }, dense) {
 export async function setDenseTable ({ commit }, dense) {
   commit('SET_DENSETABLE', dense)
 }
+
+// Commit mutation to set whether login was skipped or not - Accessed in LoginPage.vue
+export async function setLoginSkipped ({ commit }, skipped) {
+  commit('SET_LOGINSKIPPED', skipped)
+}
+
+// Commit mutation to set whether login credentials are saved or not - Accessed in LoginPage.vue
+export async function setCredentialsSaved ({ commit }, saved) {
+  commit('SET_CREDENTIALSSAVED', saved)
+}

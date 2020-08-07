@@ -79,3 +79,11 @@ export const SET_DENSEINPUT = (state, value) => {
 export const SET_DENSETABLE = (state, value) => {
   state.dense_table = value
 }
+
+export const SET_LOGINSKIPPED = (state, value) => {
+  state.login_skipped = value
+}
+
+export const SET_CREDENTIALSSAVED = (state, value) => {
+  state.credentials_saved = value
+}

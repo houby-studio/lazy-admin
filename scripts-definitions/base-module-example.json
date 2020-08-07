@@ -479,7 +479,7 @@
         "icon": "mdi-powershell",
         "returns": "PSObject",
         "insidePsSession": false,
-        "usesLoginObjects": false,
+        "usesLoginObjects": true,
         "friendlyName": {
           "default": "Nothing really",
           "en-us": "Nothing really",

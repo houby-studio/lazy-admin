@@ -5,7 +5,8 @@ export default {
   usernameRequired: 'Zadejte přihlašovací jméno!', // Used in: LoginPage.vue
   password: 'Heslo', // Used in: LoginPage.vue
   passwordRequired: 'Zadejte přihlašovací heslo!', // Used in: LoginPage.vue
-  login: 'Vstoupit', // Used in: LoginPage.vue
+  login: 'Přihlásit', // Used in: LoginPage.vue
+  loginSkip: 'Přeskočit', // Used in: LoginPage.vue
   language: 'Jazyk', // Used in: LoginPage.vue
   changeUser: 'Jiný uživatel', // Used in: LoginPage.vue
   install: 'Instalovat', // Used in: LoginPage.vue, FullLayout.vue
@@ -14,6 +15,7 @@ export default {
   pwshMissing: 'Nelze nalézt PowerShell Core. Používá se záložní Windows PowerShell.', // Used in: LoginPage.vue
   wrongUsernameOrPassword: 'Špatné přihlašovací jméno nebo heslo.', // Used in: LoginPage.vue
   foundsavedCredential: 'Nalezeny přihlašovací údaje pro uživatele {usr}.', // Used in: LoginPage.vue
+  failedToLogin: 'Nepodařilo se přihlásení s neznámou chybou.', // Used in: LoginPage.vue
   search: 'Vyhledat', // Used in: FullLayout.vue
   history: 'Historie', // Used in: FullLayout.vue
   visibleGroups: 'Zobrazované příkazy', // Used in: FullLayout.vue

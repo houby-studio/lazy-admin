@@ -339,6 +339,51 @@
                 />
               </div>
             </div>
+            <!-- TOOLS RELATED TO APP NAVIGATION -->
+            <q-toolbar-title class="q-px-none">
+              <q-icon name="navigation" /> Control
+            </q-toolbar-title>
+            <div class="row text-center">
+              <div class="col-xs-12 col-sm-6 col-md-3">
+                <q-btn
+                  to="/"
+                  color="primary"
+                  label="Log out"
+                  style="width: 90%"
+                  class="q-mb-sm"
+                  no-wrap
+                />
+              </div>
+              <div class="col-xs-12 col-sm-6 col-md-3">
+                <div class="text-h6">
+                  <q-btn
+                    color="primary"
+                    label="-"
+                    style="width: 90%"
+                    class="q-mb-sm"
+                    no-wrap
+                  />
+                </div>
+              </div>
+              <div class="col-xs-12 col-sm-6 col-md-3">
+                <q-btn
+                  color="primary"
+                  label="-"
+                  style="width: 90%"
+                  class="q-mb-sm"
+                  no-wrap
+                />
+              </div>
+              <div class="col-xs-12 col-sm-6 col-md-3">
+                <q-btn
+                  color="primary"
+                  label="-"
+                  style="width: 90%"
+                  class="q-mb-sm"
+                  no-wrap
+                />
+              </div>
+            </div>
           </q-card-section>
           <q-page-sticky
             :offset="[0, 0]"

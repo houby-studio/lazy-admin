@@ -19,6 +19,8 @@ export default function () {
     history_visible: false, // Is history dialog window visible?
     history: [], // Array holding previous commands
     dense_input: false, // Should input be dense or not
-    dense_table: true // Should tables be dense or not
+    dense_table: true, // Should tables be dense or not
+    login_skipped: false, // Was login skipped or not
+    credentials_saved: false // Are Login credentials saved or not
   }
 }

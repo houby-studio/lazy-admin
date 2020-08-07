@@ -7,24 +7,24 @@
         class="q-pa-lg shadow-1"
       >
         <q-form
-          @submit="login"
+          @submit="showSkipLogin ? skipLogin() : login()"
           ref="loginform"
           class="q-gutter-md"
         >
           <q-card-section>
 
             <q-input
-              square
-              filled
               v-model="username"
-              type="text"
-              ref="username"
               :disable="credentialsSaved"
               :label="$t('username')"
               :class="shake"
+              :rules="showSkipLogin ? [ val => val.length >= 0 ] : [ val => val && val.length > 0 || $t('usernameRequired') ]"
+              type="text"
+              ref="username"
+              square
+              filled
               lazy-rules
               no-error-icon
-              :rules="[ val => val && val.length > 0 || $t('usernameRequired') ]"
             >
               <template v-slot:append>
                 <q-icon name="person" />
@@ -36,51 +36,55 @@
               mode="out-in"
             >
               <div
-                style="q-gutter-md"
                 v-if="credentialsSaved"
+                style="q-gutter-md"
               >
                 <q-btn
+                  :label="$t('changeUser')"
+                  @click="credentialsSaved = false"
                   unelevated
                   color="light"
                   size="lg"
                   class="full-width"
-                  :label="$t('changeUser')"
-                  @click="credentialsSaved = false"
                 />
               </div>
 
               <q-input
-                square
-                filled
-                v-model="password"
                 v-else
+                v-model="password"
                 :type="isPwd ? 'password' : 'text'"
                 :label="$t('password')"
+                :rules="showSkipLogin ? [ val => val.length >= 0 ] : [ val => val && val.length > 0 || $t('passwordRequired') ]"
+                square
+                filled
                 lazy-rules
                 no-error-icon
-                :rules="[ val => val && val.length > 0 || $t('passwordRequired') ]"
               >
                 <template v-slot:append>
                   <q-icon
                     :name="isPwd ? 'visibility_off' : 'visibility'"
-                    class="cursor-pointer"
                     @click="isPwd = !isPwd"
+                    class="cursor-pointer"
                   />
                 </template>
               </q-input>
             </transition>
           </q-card-section>
           <q-card-actions class="q-px-md">
-            <q-btn
-              autofocus
-              unelevated
+            <q-btn-dropdown
+              v-model="showSkipLogin"
+              :label="showSkipLogin ? $t('loginSkip') : $t('login')"
+              :disable="loginButtonDisabled"
+              @input="resetValidation"
+              dropdown-icon="mdi-skip-next"
               color="primary"
               size="lg"
               class="full-width"
               type="submit"
               ref="login"
-              :label="$t('login')"
-              :disable="loginButtonDisabled"
+              unelevated
+              persistent
+              split
             />
           </q-card-actions>
         </q-form>
@@ -111,8 +115,8 @@ export default {
       username: '',
       password: '',
       loginButtonDisabled: false,
+      showSkipLogin: false,
       shakeUsername: false,
-      credentialsSaved: false,
       isPwd: true,
       langOptions: [
         { value: 'en-us', label: 'English' },
@@ -121,7 +125,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('lazystore', ['getLanguage']),
+    ...mapGetters('lazystore', ['getLanguage', 'getLoginSkipped', 'getCredentialsSaved']),
     shake: {
       get () {
         // Add classes to trigger animations on username field when username is found in credential store
@@ -130,18 +134,66 @@ export default {
     },
     language: {
       get () {
-        // retrieve language settings from mapped getter
         return this.getLanguage
       },
       set (val) {
-        // set selected language to store
         this.$store.dispatch('lazystore/setLanguage', val)
+      }
+    },
+    loginSkipped: {
+      get () {
+        return this.getLoginSkipped
+      },
+      set (val) {
+        this.$store.dispatch('lazystore/setLoginSkipped', val)
+      }
+    },
+    credentialsSaved: {
+      get () {
+        return this.getCredentialsSaved
+      },
+      set (val) {
+        this.$store.dispatch('lazystore/setCredentialsSaved', val)
       }
     }
   },
   methods: {
+    resetForm (credentialsProvided) {
+      this.loginButtonDisabled = false
+      this.credentialsSaved = false
+      this.username = ''
+      this.password = ''
+      this.$refs.loginform.resetValidation()
+      this.$refs.username.focus()
+      this.$q.notify({
+        timeout: 5000,
+        multiLine: false,
+        type: 'negative',
+        icon: 'error',
+        message: credentialsProvided ? this.$t('wrongUsernameOrPassword') : this.$t('failedToLogin'),
+        actions: [
+          { label: this.$t('dismiss'), color: 'white' }
+        ]
+      })
+    },
+    resetValidation () {
+      this.$refs.loginform.resetValidation()
+    },
+    skipLogin () {
+      this.loginButtonDisabled = true
+      this.loginSkipped = true
+      console.log('Skipping login, certain commands may be unavailable.')
+      this.$pwsh.shell.addCommand(`$Global:CredentialObject = [System.Management.Automation.PSCredential]::Empty`)
+      this.$pwsh.shell.invoke().then(output => {
+        this.$router.push({ path: '/scripts' })
+      }).catch(e => {
+        console.error(`Failed to create empty Credential Object. Error message: ${e}`)
+        this.resetForm(false)
+      })
+    },
     login () {
       this.loginButtonDisabled = true // Disable button during login attempt
+      this.loginSkipped = false
       // Invoke function with either credential object or username and password
       if (this.credentialsSaved) {
         console.log(`Creating new PowerShell session with saved credentials for user "${this.username}".`)
@@ -159,28 +211,18 @@ export default {
         }
         if (data.error) {
           console.error(`Failed to create new PowerShell session with supplied credentials. Error message: ${output}`)
-          this.loginButtonDisabled = false
-          this.credentialsSaved = false
-          this.username = ''
-          this.password = ''
-          this.$refs.loginform.resetValidation()
-          this.$refs.username.focus()
-          this.$q.notify({
-            timeout: 5000,
-            multiLine: false,
-            type: 'negative',
-            icon: 'error',
-            message: this.$t('wrongUsernameOrPassword'),
-            actions: [
-              { label: this.$t('dismiss'), color: 'white' }
-            ]
-          })
+          this.resetForm(true)
         } else {
           console.log(data.output) // Should write 'New Powershell session created succesfully.' from PS Function output
           // Route to main screen
           if (!this.credentialsSaved) {
             this.$pwsh.shell.addCommand(`if (Get-Command New-StoredCredential -ErrorAction SilentlyContinue) {New-StoredCredential -Target 'Lazy Admin' -UserName '${this.username}' -Password '${this.password}' -Comment 'Administrator credentials for Lazy Admin Utility.' -Type Generic -Persist LocalMachine | Out-Null}`)
-            this.$pwsh.shell.invoke()
+            this.$pwsh.shell.invoke().then(o => {
+              console.log('Succesfully saved credentials to Credential Manager.')
+              this.credentialsSaved = true
+            }).catch(e => {
+              console.error(`Failed to save credentials to Credential Manager. Error message: ${e}`)
+            })
           }
           // Succesfully created session, push login and session commands to private pwsh variable
           if (this.credentialsSaved) {
@@ -190,6 +232,9 @@ export default {
           }
           this.$router.push({ path: '/scripts' })
         }
+      }).catch(e => {
+        console.error(`Failed to create new PowerShell session with supplied credentials. Error message: ${e}`)
+        this.resetForm(false)
       })
     },
     pwshFallbackNotify () {
@@ -218,6 +263,7 @@ export default {
     this.$q.loading.show()
     // Insert throttle to button functions
     this.login = throttle(this.login, 800)
+    this.skipLogin = throttle(this.skipLogin, 800)
     console.log(`Application started by user ${this.$q.electron.remote.process.env.USERDOMAIN}\\${this.$q.electron.remote.process.env.USERNAME} on computer ${this.$q.electron.remote.process.env.COMPUTERNAME}`)
     // Try to load saved credentials from Credential Manager
     this.$pwsh.shell.addCommand(GetSavedCredentials)

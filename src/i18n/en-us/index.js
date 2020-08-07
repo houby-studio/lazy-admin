@@ -6,6 +6,7 @@ export default {
   password: 'Password', // Used in: LoginPage.vue
   passwordRequired: 'Login password is required!', // Used in: LoginPage.vue
   login: 'Login', // Used in: LoginPage.vue
+  loginSkip: 'Skip', // Used in: LoginPage.vue
   language: 'Language', // Used in: LoginPage.vue
   changeUser: 'Change User', // Used in: LoginPage.vue
   install: 'Install', // Used in: LoginPage.vue, FullLayout.vue
@@ -14,6 +15,7 @@ export default {
   pwshMissing: 'Couldn\'t find PowerShell Core, default. Using fallback Windows PowerShell.', // Used in: LoginPage.vue
   wrongUsernameOrPassword: 'Wrong username or password.', // Used in: LoginPage.vue
   foundsavedCredential: 'Found stored credentials for user {usr}.', // Used in: LoginPage.vue
+  failedToLogin: 'Login failed with unknown error.', // Used in: LoginPage.vue
   search: 'Search', // Used in: FullLayout.vue
   history: 'History', // Used in: FullLayout.vue
   visibleGroups: 'Shown commands', // Used in: FullLayout.vue
