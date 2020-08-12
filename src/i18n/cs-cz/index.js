@@ -68,6 +68,7 @@ export default {
   alwaysConfirm: 'Vždy požadovat potvrzení před spuštěním příkazu.', // Used in: SettingsPage.vue
   inputDense: 'Zobrazovat vstupní parametry v těsném rozložení.', // Used in: SettingsPage.vue
   tableDense: 'Zobrazovat tabulky v těsném rozložení.', // Used in: SettingsPage.vue
+  displayProgress: 'Vždy zobrazovat průběh skriptu.', // Used in: SettingsPage.vue
   masterDefinition: 'Hlavní definice', // Used in: AboutPage.vue
   update: 'Aktualizovat', // Used in: AboutPage.vue
   restartRequired: 'Vyžadován restart.', // Used in: AboutPage.vue

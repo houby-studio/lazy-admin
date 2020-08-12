@@ -63,6 +63,7 @@ Possible values for definitions file:
     * commandName: Preferably name of the Cmdlet or function, which this definition uses, displayed to user to get the idea what the command might do
     * icon: name of icon, if omitted, powershell icon is used
     * returns: type of the result, which application should expect after command is executed ("raw", "PSObject")
+    * progress: does command output progress before emitting results (true, false)
     * insidePsSession: whether command should be run in Remote PSSession or locally (true, false)
     * usesLoginObjects: whether command utilizes $CredentialObject or $LazySession created upon logging in (true, false)
     * confirm: before executing the command, ask user for confirmation (true, false)
@@ -113,6 +114,7 @@ This is only example, there are many possibilities how to write definitions.
         "commandName": "${Verb-Noun}",
         "icon": "${icon-name}",
         "returns": "${returnType}",
+        "progress": "${Boolean}",
         "insidePsSession": ${Boolean},
         "usesLoginObjects": ${Boolean},
         "friendlyName": "${friendlyName}",
@@ -151,6 +153,7 @@ This is only example, there are many possibilities how to write definitions.
             "acceptsParams": ${Boolean},
             "joinParamsAsString": ${Boolean},
             "returns": "${returnType}",
+            "progress": "${Boolean}",
             "insidePsSession": ${Boolean},
             "confirm": ${Boolean},
             "passedParameters": [

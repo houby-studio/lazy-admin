@@ -68,6 +68,7 @@ export default {
   alwaysConfirm: 'Always require confirmation before script execution.', // Used in: SettingsPage.vue
   inputDense: 'Display input parameters in dense layout.', // Used in: SettingsPage.vue
   tableDense: 'Display tables in dense layout.', // Used in: SettingsPage.vue
+  displayProgress: 'Always display script progress.', // Used in: SettingsPage.vue
   autoClipboard: 'Automatically store command results to clipboard.', // Used in: SettingsPage.vue
   masterDefinition: 'Master definition', // Used in: AboutPage.vue
   update: 'Update', // Used in: AboutPage.vue

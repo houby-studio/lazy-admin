@@ -36,6 +36,14 @@
               />
             </div>
           </div>
+          <div class="row">
+            <div class="col-12">
+              <q-checkbox
+                v-model="displayProgress"
+                :label="$t('displayProgress')"
+              />
+            </div>
+          </div>
         </q-card-section>
       </q-card>
     </div>
@@ -53,7 +61,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('lazystore', ['getAlwaysConfirm', 'getDenseInput', 'getDenseTable']),
+    ...mapGetters('lazystore', ['getAlwaysConfirm', 'getDenseInput', 'getDenseTable', 'getDisplayProgress']),
     alwaysConfirm: {
       get () {
         return this.getAlwaysConfirm
@@ -76,6 +84,14 @@ export default {
       },
       set (val) {
         this.$store.dispatch('lazystore/setDenseTable', val)
+      }
+    },
+    displayProgress: {
+      get () {
+        return this.getDisplayProgress
+      },
+      set (val) {
+        this.$store.dispatch('lazystore/setDisplayProgress', val)
       }
     }
   }

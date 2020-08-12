@@ -87,3 +87,7 @@ export const SET_LOGINSKIPPED = (state, value) => {
 export const SET_CREDENTIALSSAVED = (state, value) => {
   state.credentials_saved = value
 }
+
+export const SET_DISPLAYPROGRESS = (state, value) => {
+  state.display_progress = value
+}

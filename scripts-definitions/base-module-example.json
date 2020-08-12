@@ -1,6 +1,6 @@
 {
   "base-module-example": {
-    "version": "0.1.6",
+    "version": "0.1.7",
     "icon": "mdi-powershell",
     "displayName": {
       "default": "Base commands",
@@ -15,7 +15,6 @@
     "definition": [
       {
         "commandName": "Get-Disk",
-        "type": "simple",
         "icon": "mdi-harddisk",
         "returns": "PSObject",
         "insidePsSession": false,
@@ -52,8 +51,8 @@
             "required": false,
             "type": "Number",
             "hint": {
-              "default": "Supply index number  of the disk",
-              "en-us": "Supply index number  of the disk",
+              "default": "Supply index number of the disk",
+              "en-us": "Supply index number of the disk",
               "cs-cz": "Zadejte indexové číslo disku"
             }
           }
@@ -62,7 +61,6 @@
       },
       {
         "commandName": "Get-Help",
-        "type": "simple",
         "returns": "raw",
         "insidePsSession": true,
         "friendlyName": {
@@ -119,7 +117,6 @@
       },
       {
         "commandName": "Invoke-Command",
-        "type": "simple",
         "icon": "mdi-powershell",
         "returns": "raw",
         "insidePsSession": false,
@@ -154,7 +151,6 @@
       },
       {
         "commandName": "Start-PowerShell",
-        "type": "simple",
         "icon": "mdi-powershell",
         "returns": "raw",
         "insidePsSession": false,
@@ -177,7 +173,6 @@
       },
       {
         "commandName": "Test-Connection",
-        "type": "simple",
         "icon": "mdi-powershell",
         "returns": "raw",
         "insidePsSession": false,
@@ -223,7 +218,6 @@
       },
       {
         "commandName": "Test-Parameters",
-        "type": "simple",
         "icon": "mdi-powershell",
         "returns": "raw",
         "insidePsSession": false,
@@ -674,6 +668,53 @@
             "commandBlock": "if ({{Repeat}}) {Write-Output '{{__raw_argument}}'}"
           }
         ]
+      },
+      {
+        "commandName": "Test-Progress",
+        "icon": "mdi-progress-clock",
+        "returns": "PSObject",
+        "insidePsSession": false,
+        "usesLoginObjects": false,
+        "progress": true,
+        "friendlyName": {
+          "default": "Test progress output",
+          "en-us": "Test progress output",
+          "cs-cz": "Test výstupu průběhu"
+        },
+        "description": {
+          "default": "Outputs message to console every couple seconds.",
+          "en-us": "Outputs message to console every couple seconds.",
+          "cs-cz": "Vypíše zprávu do konzole každých pár vteřin."
+        },
+        "help": {
+          "default": "https://raw.githubusercontent.com/wiki/houby-studio/lazy-admin/Test-Progress.md",
+          "en-us": "https://raw.githubusercontent.com/wiki/houby-studio/lazy-admin/Test-Progress.md"
+        },
+        "parameters": [
+          {
+            "parameter": "Message",
+            "value": "This is default progress message",
+            "required": true,
+            "type": "String",
+            "hint": {
+              "default": "Supply message to be written to console",
+              "en-us": "Supply message to be written to console",
+              "cs-cz": "Zadejte zprávu, která se vypíše do konzole"
+            }
+          },
+          {
+            "parameter": "Number",
+            "value": "5",
+            "required": false,
+            "type": "Number",
+            "hint": {
+              "default": "Supply number of times message should be written to console",
+              "en-us": "Supply number of times message should be written to console",
+              "cs-cz": "Zadejte číslo, kolikrát se vypíše zpráva do konzole"
+            }
+          }
+        ],
+        "commandBlock": "for (($i=0); $i -lt {{Number}}; $i++) {Write-Output \"{{Message}} $i\"; Start-Sleep -Seconds 1};\"EOIP\"; Get-Partition | Select Type | ConvertTo-Json -Compress"
       }
     ]
   }

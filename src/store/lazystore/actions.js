@@ -117,3 +117,8 @@ export async function setLoginSkipped ({ commit }, skipped) {
 export async function setCredentialsSaved ({ commit }, saved) {
   commit('SET_CREDENTIALSSAVED', saved)
 }
+
+// Commit mutation to set whether script progress dialog is shown or not - Accessed in SettingsPage.vue
+export async function setDisplayProgress ({ commit }, showProgress) {
+  commit('SET_DISPLAYPROGRESS', showProgress)
+}

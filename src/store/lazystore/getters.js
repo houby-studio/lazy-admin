@@ -78,6 +78,10 @@ export function getCredentialsSaved (state) {
   return state.credentials_saved
 }
 
+export function getDisplayProgress (state) {
+  return state.display_progress
+}
+
 // Dynamically build array of scripts to display in ScriptsPage.vue page
 export function getScriptsArray (state) {
   try {

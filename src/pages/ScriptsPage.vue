@@ -289,6 +289,26 @@
         </q-page-sticky>
       </q-card>
     </q-dialog>
+    <!-- Dialog to show progress window -->
+    <q-dialog
+      v-model="displayProgressDiag"
+      transition-show="slide-up"
+      transition-hide="slide-down"
+      position="bottom"
+      full-width
+    >
+      <q-card
+        class="full-width"
+        ref="progressCard"
+      >
+        <q-card-section>
+          <q-markdown
+            :src="scriptProgress"
+            ref="progressCode"
+          />
+        </q-card-section>
+      </q-card>
+    </q-dialog>
     <!-- Dialog to show results window -->
     <q-dialog
       v-model="displayResultsDiag"
@@ -605,11 +625,13 @@ export default {
       results: {}, // Command result object displayed in Results Dialog
       resultsSelected: [[]], // Array of selected objects from Results Dialog
       resultsFilter: '', // Filter for results table
+      scriptProgress: '', // Display current script execution progress
       externalHelpFile: '', // Holds Help text loaded from external source
       displayCommandDiag: false, // Visibility state for command dialog
       displayHelpDiag: false, // Visibility state for help dialog
       displayResultsDiag: false, // Visibility state for results dialog
       displayPreExecuteCheck: false, // Visibility state for preexecute dialog
+      displayProgressDiag: false, // Visibility state for progress dialog
       paramType: { // Table translating PowerShell variable types to Quasar components names and options
         'String': ['q-input', 'text'],
         'Number': ['q-input', 'number'],
@@ -645,7 +667,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('lazystore', ['getLanguage', 'getSearchScripts', 'getSearchHistory', 'getScriptsArray', 'getDefinitions', 'getCommandMaximized', 'getAlwaysConfirm', 'getHistoryLength', 'getHistoryVisible', 'getHistory', 'getDenseInput', 'getDenseTable', 'getLoginSkipped', 'getCredentialsSaved']),
+    ...mapGetters('lazystore', ['getLanguage', 'getSearchScripts', 'getSearchHistory', 'getScriptsArray', 'getDefinitions', 'getCommandMaximized', 'getAlwaysConfirm', 'getHistoryLength', 'getHistoryVisible', 'getHistory', 'getDenseInput', 'getDenseTable', 'getLoginSkipped', 'getCredentialsSaved', 'getDisplayProgress']),
     language: function () {
       return this.getLanguage
     },
@@ -697,6 +719,9 @@ export default {
     },
     denseTable: function () {
       return this.getDenseTable
+    },
+    displayProgress: function () {
+      return this.getDisplayProgress
     },
     loginSkipped: function () {
       return this.getLoginSkipped
@@ -899,6 +924,8 @@ export default {
         this.$q.loading.show({
           message: '<h6>' + this.$t('cancelling') + '</h6><p>' + this.$t('pleaseWait') + '</p>'
         })
+        // Stop listening to output, hide progress dialog and reset dialog
+        this.stopProgress()
         // Kill current powershell proccess
         childProcess.exec(`taskkill /f /pid ${this.$pwsh.shell.pid}`, (error, stdout, stderr) => {
           if (error) {
@@ -1027,12 +1054,9 @@ export default {
           //   @"
           //   `
           // }
-          // console.log('Checking input: ', input)
           if (input) {
-            // console.log('input is here!')
             // If parameter has additional text format, insert it
             if (param.format) {
-              // console.log('format is here!')
               tempResultCommand = tempResultCommand.replace(`{{${param.parameter}}}`, `${param.format}`)
             }
             // If parameter was supplied, insert param in place of template variable
@@ -1063,6 +1087,27 @@ export default {
         this.resultCommand = this.resultCommand.replace(/(\r\n|\n|\r)/gm, ';')
       }
     },
+    async executionProgress (data) {
+      // Do not display ending string, which starts with EOI hash or progress delimiter, which is EOIP
+      if (!data.startsWith('EOI')) {
+        this.scriptProgress += data
+      }
+      // Try to scroll if output is too long
+      setTimeout(() => {
+        try {
+          this.$refs.progressCard.$el.scrollTo(0, this.$refs.progressCode.$el.clientHeight)
+        } catch { }
+      }, 100)
+    },
+    async stopProgress () {
+      if (this.displayProgress || this.currentCommand.progress) {
+        this.$pwsh.shell.streams.stdout.removeListener('data', this.executionProgress)
+        setTimeout(() => {
+          this.displayProgressDiag = false
+          this.scriptProgress = ''
+        }, 1000)
+      }
+    },
     executeCommand () {
       this.toggleLoading(true)
       this.$pwsh.shell.clear().then(() => {
@@ -1071,8 +1116,24 @@ export default {
         } else {
           this.$pwsh.shell.addCommand(this.resultCommand)
         }
+        // Write output to progress window if it is still running after one second to prevent useless progress window flash for fast commands
+        if (this.displayProgress || this.currentCommand.progress) {
+          this.$pwsh.shell.streams.stdout.on('data', this.executionProgress)
+          setTimeout(() => {
+            if (this.$pwsh.shell.invocationStateInfo === 'Running') {
+              this.displayProgressDiag = true
+            }
+          }, 1000)
+        }
         this.$pwsh.shell.invoke().then(output => {
           //  Code block to handle PowerShell return data
+          // Stop listening to output, hide progress dialog and reset dialog
+          this.stopProgress()
+          // If command emits progress end, split progress from results
+          if (this.currentCommand.progress || this.currentCommand.progress) {
+            let splitOutput = output.split('EOIP', 2)
+            output = splitOutput[splitOutput.length - 1]
+          }
           let data
           let params
           let dataArray = []
@@ -1123,7 +1184,9 @@ export default {
           this.toggleLoading()
         }).catch(error => {
           // If PowerShell itself runs into problem and throws, catch and display error as raw output.
-          console.log(error)
+          console.error(error)
+          // Stop listening to output, hide progress dialog and reset dialog
+          this.stopProgress()
           this.results[this.currentWorkflowIndex] = {
             error: true,
             returnType: 'raw',
