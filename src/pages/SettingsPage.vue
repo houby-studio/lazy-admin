@@ -12,38 +12,12 @@
           </q-toolbar-title>
         </q-card-section>
         <q-card-section>
-          <div class="row">
-            <div class="col-12">
-              <q-checkbox
-                v-model="alwaysConfirm"
-                :label="$t('alwaysConfirm')"
-              />
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-12">
-              <q-checkbox
-                v-model="denseInput"
-                :label="$t('inputDense')"
-              />
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-12">
-              <q-checkbox
-                v-model="denseTable"
-                :label="$t('tableDense')"
-              />
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-12">
-              <q-checkbox
-                v-model="displayProgress"
-                :label="$t('displayProgress')"
-              />
-            </div>
-          </div>
+          <settings-items
+            v-for="(settings, index) in settingsItems"
+            v-model="settingsHelper[settings]"
+            :key="index"
+            :label="$t(settings)"
+          ></settings-items>
         </q-card-section>
       </q-card>
     </div>
@@ -57,11 +31,19 @@ export default {
   name: 'SettingsPage',
   data () {
     return {
-      test: ''
+      settingsItems: [
+        'alwaysConfirm',
+        'denseInput',
+        'denseTable',
+        'displayProgress'
+      ]
     }
   },
   computed: {
     ...mapGetters('lazystore', ['getAlwaysConfirm', 'getDenseInput', 'getDenseTable', 'getDisplayProgress']),
+    settingsHelper: function () {
+      return this
+    },
     alwaysConfirm: {
       get () {
         return this.getAlwaysConfirm

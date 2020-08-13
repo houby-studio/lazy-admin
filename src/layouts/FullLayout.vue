@@ -6,34 +6,11 @@
       reveal
       class="window-color window-color-text"
     >
-      <q-bar class="q-electron-drag q-pr-none">
-        <q-icon name="navigate_next" />
-        <div class="text-no-wrap hide-title">Lazy Admin</div>
-
-        <q-space />
-
-        <q-btn
-          @click="minimize"
-          dense
-          flat
-          icon="minimize"
-          style="height: 100%"
-        />
-        <q-btn
-          @click="maximize"
-          dense
-          flat
-          icon="crop_square"
-          style="height: 100%"
-        />
-        <q-btn
-          @click="closeApp"
-          dense
-          flat
-          icon="close"
-          style="height: 100%"
-        />
-      </q-bar>
+      <window-titlebar
+        @minimize="minimize"
+        @maximize="maximize"
+        @close-app="closeApp"
+      ></window-titlebar>
 
       <transition
         appear

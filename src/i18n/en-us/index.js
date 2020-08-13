@@ -66,8 +66,8 @@ export default {
   definitionsError: 'Definitions update error.', // Used in: AboutPage.vue
   downloadCompleted: 'Download completed, close the application to start the update.', // Used in: FullLayout.vue
   alwaysConfirm: 'Always require confirmation before script execution.', // Used in: SettingsPage.vue
-  inputDense: 'Display input parameters in dense layout.', // Used in: SettingsPage.vue
-  tableDense: 'Display tables in dense layout.', // Used in: SettingsPage.vue
+  denseInput: 'Display input parameters in dense layout.', // Used in: SettingsPage.vue
+  denseTable: 'Display tables in dense layout.', // Used in: SettingsPage.vue
   displayProgress: 'Always display script progress.', // Used in: SettingsPage.vue
   autoClipboard: 'Automatically store command results to clipboard.', // Used in: SettingsPage.vue
   masterDefinition: 'Master definition', // Used in: AboutPage.vue

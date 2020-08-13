@@ -66,8 +66,8 @@ export default {
   definitionsError: 'Chyba aktualizace definic.', // Used in: AboutPage.vue
   downloadCompleted: 'Stahování dokončeno, zavřete aplikaci ke spuštění aktualizace.', // Used in: FullLayout.vue
   alwaysConfirm: 'Vždy požadovat potvrzení před spuštěním příkazu.', // Used in: SettingsPage.vue
-  inputDense: 'Zobrazovat vstupní parametry v těsném rozložení.', // Used in: SettingsPage.vue
-  tableDense: 'Zobrazovat tabulky v těsném rozložení.', // Used in: SettingsPage.vue
+  denseInput: 'Zobrazovat vstupní parametry v těsném rozložení.', // Used in: SettingsPage.vue
+  denseTable: 'Zobrazovat tabulky v těsném rozložení.', // Used in: SettingsPage.vue
   displayProgress: 'Vždy zobrazovat průběh skriptu.', // Used in: SettingsPage.vue
   masterDefinition: 'Hlavní definice', // Used in: AboutPage.vue
   update: 'Aktualizovat', // Used in: AboutPage.vue

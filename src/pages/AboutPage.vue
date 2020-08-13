@@ -10,109 +10,20 @@
           <div class="text-h2 text-center"> {{ $t('about') }} </div>
         </q-card-section>
         <q-card-section>
-          <q-list>
-            <q-item>
-              <q-item-section avatar>
-                <q-icon name="mdi-sleep" />
-              </q-item-section>
-
-              <q-item-section>
-                <q-item-label>Lazy Admin</q-item-label>
-                <q-item-label caption>{{ lazyVersion }}</q-item-label>
-                <q-item-label caption>{{ updateProgress }}</q-item-label>
-              </q-item-section>
-
-              <q-item-section avatar>
-                <q-icon
-                  v-if="appVersionStatus === 'uptodate'"
-                  name="check"
-                  color="white"
-                  size="1.1rem"
-                />
-                <q-icon
-                  v-if="appVersionStatus === 'error'"
-                  name="error"
-                  color="primary"
-                  size="1.1rem"
-                />
-                <q-spinner
-                  v-else-if="appVersionStatus === 'checking'"
-                  color="primary"
-                  size="1.1rem"
-                />
-                <q-icon
-                  v-else
-                  name="warning"
-                  color="yellow"
-                  size="1.1rem"
-                  v-show="appVersionStatus === 'restart'"
-                />
-              </q-item-section>
-            </q-item>
-            <q-item>
-              <q-item-section avatar>
-                <q-icon name="mdi-json" />
-              </q-item-section>
-
-              <q-item-section>
-                <q-item-label>{{ $t('masterDefinition') }}</q-item-label>
-                <q-item-label caption>{{ masterDefinitionVersion }}</q-item-label>
-              </q-item-section>
-
-              <q-item-section avatar>
-                <q-spinner
-                  v-if="masterDefinitionUpdateStatus === 'checking'"
-                  color="primary"
-                  size="1.1rem"
-                />
-                <q-icon
-                  v-else-if="masterDefinitionUpdateStatus === 'error'"
-                  name="error"
-                  color="primary"
-                  size="1.1rem"
-                />
-                <q-icon
-                  v-else
-                  name="check"
-                  color="white"
-                  size="1.1rem"
-                  v-show="masterDefinitionUpdateStatus === 'uptodate'"
-                />
-              </q-item-section>
-            </q-item>
-          </q-list>
+          <version-list
+            :lazy-version="lazyVersion"
+            :update-progress="updateProgress"
+            :app-version-status="appVersionStatus"
+            :master-definition-version="masterDefinitionVersion"
+            :master-definition-update-status="masterDefinitionUpdateStatus"
+          ></version-list>
         </q-card-section>
         <q-separator />
         <q-card-section>
-          <q-list>
-            <q-item
-              dense
-              v-if="definitionsUpdateStatus === 'error'"
-            >
-              <q-item-section avatar>
-                <q-icon
-                  name="error"
-                  color="primary"
-                />
-              </q-item-section>
-              <q-item-label caption>{{ $t('definitionsError') }}</q-item-label>
-              <q-item-section>
-              </q-item-section>
-            </q-item>
-            <q-item
-              v-for="info in menuEntries"
-              :key="info.name"
-            >
-              <q-item-section avatar>
-                <q-icon :name="info.icon" />
-              </q-item-section>
-
-              <q-item-section>
-                <q-item-label>{{ info.displayName }}</q-item-label>
-                <q-item-label caption>{{ info.version }}</q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
+          <modules-list
+            v-model="menuEntries"
+            :definitions-update-status="definitionsUpdateStatus"
+          ></modules-list>
         </q-card-section>
         <q-card-actions class="q-px-md">
           <q-btn

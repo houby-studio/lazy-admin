@@ -95,7 +95,7 @@ export function getScriptsArray (state) {
   }
 }
 
-// Dynamically menu entries array of modules to display in FullLayout.vue and AboutPage.vue
+// Dynamically build menu entries array of modules to display in FullLayout.vue and AboutPage.vue
 export function getMenuEntries (state) {
   try {
     return Object.entries(state.definitions)
