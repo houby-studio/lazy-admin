@@ -11,19 +11,28 @@
         </q-card-section>
         <q-card-section>
           <version-list
-            :lazy-version="lazyVersion"
-            :update-progress="updateProgress"
-            :app-version-status="appVersionStatus"
-            :master-definition-version="masterDefinitionVersion"
-            :master-definition-update-status="masterDefinitionUpdateStatus"
+            :value="[{
+              displayName: 'Lazy Admin',
+              version: lazyVersion,
+              icon: 'mdi-sleep',
+              updateProgress: updateProgress,
+              updateStatus: appVersionUpdateStatus
+            },
+            {
+              displayName: $t('masterDefinition'),
+              version: masterDefinitionVersion,
+              icon: 'mdi-json',
+              updateStatus: masterDefinitionUpdateStatus
+            }]"
+            :definitions-update-status="definitionsUpdateStatus"
           ></version-list>
         </q-card-section>
         <q-separator />
         <q-card-section>
-          <modules-list
+          <version-list
             v-model="menuEntries"
             :definitions-update-status="definitionsUpdateStatus"
-          ></modules-list>
+          ></version-list>
         </q-card-section>
         <q-card-actions class="q-px-md">
           <q-btn
@@ -52,7 +61,7 @@ export default {
   data () {
     return {
       updateButtonDisabled: false, // Handles Update/Restart button availability
-      appVersionStatus: '', // possible values: '', 'checking', 'restart', 'uptodate', 'error'
+      appVersionUpdateStatus: '', // possible values: '', 'checking', 'restart', 'uptodate', 'error'
       masterDefinitionUpdateStatus: '', // possible values: '', 'checking', 'uptodate'
       definitionsUpdateStatus: '' // possible values: '', 'error'
     }
@@ -108,7 +117,7 @@ export default {
         // Allow only one press of the button
         this.updateButtonDisabled = true
         // Checking creates spinner next to version
-        this.appVersionStatus = 'checking'
+        this.appVersionUpdateStatus = 'checking'
         this.$autoUpdater.checkForUpdatesAndNotify()
         // Definitions
         this.masterDefinitionUpdateStatus = 'checking'
@@ -126,9 +135,9 @@ export default {
     // Check if update is in progress (most likely from automatic event after login) and customize variables to reflect that
     if (this.updateInProgress) {
       this.updateButtonDisabled = true
-      this.appVersionStatus = 'checking'
+      this.appVersionUpdateStatus = 'checking'
     } else if (this.restartRequired) {
-      this.appVersionStatus = 'restart'
+      this.appVersionUpdateStatus = 'restart'
       this.updateProgress = `${this.$t('restartRequired')}`
     }
     if (this.definitionsUpdateInProgress) {
@@ -138,7 +147,7 @@ export default {
     // LazyAdminApp: Register event listener to ask for restart when update is downloaded
     this.$autoUpdater.on('update-downloaded', () => {
       // Change icon to warning and progress text to 'Restart required'
-      this.appVersionStatus = 'restart'
+      this.appVersionUpdateStatus = 'restart'
       this.updateProgress = `${this.$t('restartRequired')}`
       this.updateButtonDisabled = false
     })
@@ -146,7 +155,7 @@ export default {
     // LazyAdminApp: Register event listener to show 'check' icon when update is not found
     this.$autoUpdater.on('update-not-available', () => {
       // Change spinner to 'check' button
-      this.appVersionStatus = 'uptodate'
+      this.appVersionUpdateStatus = 'uptodate'
       // Update not found, enable 'Update' button again
       this.updateButtonDisabled = false
     })
@@ -154,7 +163,7 @@ export default {
     // LazyAdminApp: Register event listener to show error when error occurs
     this.$autoUpdater.on('error', () => {
       // Change spinner to 'check' button
-      this.appVersionStatus = 'error'
+      this.appVersionUpdateStatus = 'error'
       this.updateButtonDisabled = false
     })
 

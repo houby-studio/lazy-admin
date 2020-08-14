@@ -1,87 +1,52 @@
 <template>
   <q-list>
-    <q-item>
-      <q-item-section avatar>
-        <q-icon name="mdi-sleep" />
-      </q-item-section>
-
-      <q-item-section>
-        <q-item-label>Lazy Admin</q-item-label>
-        <q-item-label caption>{{ lazyVersion }}</q-item-label>
-        <q-item-label caption>{{ updateProgress }}</q-item-label>
-      </q-item-section>
-
+    <q-item
+      v-if="definitionsUpdateStatus === 'error'"
+      dense
+    >
       <q-item-section avatar>
         <q-icon
-          v-if="appVersionStatus === 'uptodate'"
-          name="check"
-          color="white"
-          size="1.1rem"
-        />
-        <q-icon
-          v-if="appVersionStatus === 'error'"
           name="error"
           color="primary"
-          size="1.1rem"
         />
-        <q-spinner
-          v-else-if="appVersionStatus === 'checking'"
-          color="primary"
-          size="1.1rem"
-        />
-        <q-icon
-          v-else
-          name="warning"
-          color="yellow"
-          size="1.1rem"
-          v-show="appVersionStatus === 'restart'"
-        />
+      </q-item-section>
+      <q-item-label caption>{{ $t('definitionsError') }}</q-item-label>
+      <q-item-section>
       </q-item-section>
     </q-item>
-    <q-item>
+    <q-item
+      v-for="(item, index) in value"
+      :key="index"
+    >
       <q-item-section avatar>
-        <q-icon name="mdi-json" />
+        <q-icon :name="item.icon" />
       </q-item-section>
 
       <q-item-section>
-        <q-item-label>{{ $t('masterDefinition') }}</q-item-label>
-        <q-item-label caption>{{ masterDefinitionVersion }}</q-item-label>
+        <q-item-label>{{ item.displayName }}</q-item-label>
+        <q-item-label caption>{{ item.version }}</q-item-label>
+        <q-item-label caption>{{ item.updateProgress }}</q-item-label>
       </q-item-section>
-
-      <q-item-section avatar>
-        <q-spinner
-          v-if="masterDefinitionUpdateStatus === 'checking'"
-          color="primary"
-          size="1.1rem"
-        />
-        <q-icon
-          v-else-if="masterDefinitionUpdateStatus === 'error'"
-          name="error"
-          color="primary"
-          size="1.1rem"
-        />
-        <q-icon
-          v-else
-          name="check"
-          color="white"
-          size="1.1rem"
-          v-show="masterDefinitionUpdateStatus === 'uptodate'"
-        />
+      <q-item-section
+        v-if="item.updateStatus"
+        avatar
+      >
+        <update-status-icon v-model="item.updateStatus"></update-status-icon>
       </q-item-section>
     </q-item>
   </q-list>
 </template>
 
 <script>
-// https://simonkollross.de/posts/vuejs-using-v-model-with-objects-for-custom-components
+import UpdateStatusIcon from 'components/partials/UpdateStatusIcon.vue'
 
 export default {
+  components: { 'update-status-icon': UpdateStatusIcon },
   props: {
-    lazyVersion: { required: true, type: String },
-    updateProgress: { required: true, type: String },
-    appVersionStatus: { required: true, type: String },
-    masterDefinitionVersion: { required: true, type: String },
-    masterDefinitionUpdateStatus: { required: true, type: String }
+    value: { required: true, type: Array },
+    updateProgress: { required: false, type: String },
+    updateStatus: { required: false, type: String },
+    definitionsUpdateStatus: { required: false, type: String }
   }
 }
 </script>

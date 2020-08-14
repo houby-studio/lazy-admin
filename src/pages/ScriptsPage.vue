@@ -1,96 +1,21 @@
 <template>
   <q-page class="flex">
     <!-- Right drawer displaying history table -->
-    <q-drawer
+    <history-drawer
       v-model="historyVisible"
-      :width="historyWidth"
-      @hide="resetAllParams"
-      side="right"
-      behavior="desktop"
-      overlay
-    >
-      <div class="row fit">
-        <div class="col">
-          <q-table
-            :data="history"
-            :columns="historyColumns"
-            :pagination.sync="scriptsPagination"
-            :dense="denseTable"
-            :filter="searchHistory"
-            wrap-cells
-            row-key="index"
-            hide-bottom
-            hide-header
-          >
-            <!-- Template showing command date -->
-            <template v-slot:body-cell-date="props">
-              <q-td
-                :props="props"
-                auto-width
-                class="text-no-wrap"
-              >
-                {{ props.value}}
-              </q-td>
-            </template>
-            <!-- Template showing workflow steps -->
-            <template v-slot:body-cell-steps="props">
-              <q-td
-                :props="props"
-                auto-width
-                class="text-no-wrap"
-              >
-                {{ props.row.currentWorkflowIndex +1 }}/{{ props.row.currentCommandMaster.workflow ? props.row.currentCommandMaster.workflow.length + 1 : 1 }}
-              </q-td>
-            </template>
-            <!-- Template showing friendly command name and 'Cmdlet' which gets executed -->
-            <template v-slot:body-cell-commandName="props">
-              <q-td :props="props">
-                <div>
-                  {{ props.row.currentCommandMaster.friendlyName ? props.row.currentCommandMaster.friendlyName[language] ? props.row.currentCommandMaster.friendlyName[language] : props.row.currentCommandMaster.friendlyName.default : '' }}
-                </div>
-                <div>
-                  {{ props.row.currentCommandMaster.commandName }}
-                </div>
-              </q-td>
-            </template>
-            <!-- Template showing results button -->
-            <template v-slot:body-cell-results="props">
-              <q-td
-                :props="props"
-                auto-width
-              >
-                <q-btn
-                  flat
-                  @click="historyShowResultsDiag(props.row)"
-                >{{ $t('results') }}</q-btn>
-              </q-td>
-            </template>
-            <!-- Template showing execute button -->
-            <template v-slot:body-cell-execute="props">
-              <q-td
-                :props="props"
-                auto-width
-              >
-                <q-btn
-                  :disable="loginSkipped && props.row.currentCommandMaster.usesLoginObjects"
-                  @click="historyShowCommandDiag(props.row)"
-                  flat
-                >{{ $t('repeat') }}</q-btn>
-              </q-td>
-            </template>
-          </q-table>
-        </div>
-      </div>
-    </q-drawer>
+      @hide-drawer="resetAllParams"
+      @show-results-dialog="historyShowResultsDiag"
+      @show-command-dialog="historyShowCommandDiag"
+    ></history-drawer>
     <!-- Dialog window is shown when command is selected with 'Execute' button -->
     <q-dialog
       v-model="displayCommandDiag"
       :full-width="commandDialogMaximized"
       :full-height="commandDialogMaximized"
       @hide="resetAllParams"
-      no-backdrop-dismiss
       transition-show="scale"
       transition-hide="scale"
+      no-backdrop-dismiss
     >
       <q-card class="full-width">
         <q-form
@@ -115,8 +40,8 @@
                     :ripple="false"
                     :icon="commandDialogMaximized ? 'fas fa-compress-alt' : 'fas fa-expand-alt'"
                     @click="commandDialogMaximized = !commandDialogMaximized"
-                    flat
                     tabindex="-1"
+                    flat
                   />
                 </q-card-actions>
               </div>
@@ -131,8 +56,8 @@
               :caption="$t('workflowReadOnly')"
               :label="$t('workflowParameters')"
               :dense="denseInput"
-              expand-separator
               icon="mdi-cogs"
+              expand-separator
             >
               <q-input
                 v-for="param in currentCommand.passedParameters"
@@ -140,10 +65,10 @@
                 :label="param.parameter"
                 :key="param.parameter"
                 :dense="denseInput"
+                type="text"
                 hide-bottom-space
                 standout
                 readonly
-                type="text"
               ></q-input>
             </q-expansion-item>
             <q-separator
@@ -227,214 +152,45 @@
             <q-btn
               v-close-popup
               :label="$t('cancel')"
-              flat
               tabindex="1000"
+              flat
             />
             <q-btn
               :label="$t('reset')"
-              flat
               type="reset"
               tabindex="999"
+              flat
             />
             <q-btn
               :label="$t('launch')"
-              flat
               type="submit"
               tabindex="998"
+              flat
             />
           </q-card-actions>
         </q-form>
       </q-card>
     </q-dialog>
     <!-- Dialog to show help window -->
-    <q-dialog
+    <help-dialog
       v-model="displayHelpDiag"
-      transition-show="scale"
-      transition-hide="scale"
-      full-width
-      full-height
-    >
-      <q-card class="full-width">
-        <q-card-section>
-          <div class="text-h6">
-            <q-icon :name="currentCommand.icon ? currentCommand.icon : 'mdi-powershell'"></q-icon> {{ currentCommand.commandName }} - {{ $t('help') }}
-          </div>
-        </q-card-section>
-        <q-card-section>
-          <div>
-            <q-markdown
-              no-line-numbers
-              :src="externalHelpFile"
-            />
-          </div>
-        </q-card-section>
-        <!-- Always display buttons on the center bottom of the main window -->
-        <q-page-sticky
-          :offset="[0, 0]"
-          position="bottom"
-        >
-          <q-card-actions>
-            <!-- Button to close help -->
-            <q-btn
-              v-close-popup
-              icon="close"
-              round
-              color="primary"
-            >
-              <q-tooltip>
-                {{ $t('close') }}
-              </q-tooltip>
-            </q-btn>
-          </q-card-actions>
-        </q-page-sticky>
-      </q-card>
-    </q-dialog>
+      :current-command="currentCommand"
+    />
     <!-- Dialog to show progress window -->
-    <q-dialog
+    <progress-dialog
       v-model="displayProgressDiag"
-      transition-show="slide-up"
-      transition-hide="slide-down"
-      position="bottom"
-      full-width
-    >
-      <q-card
-        class="full-width"
-        ref="progressCard"
-      >
-        <q-card-section>
-          <q-markdown
-            :src="scriptProgress"
-            ref="progressCode"
-          />
-        </q-card-section>
-      </q-card>
-    </q-dialog>
+      :progress="scriptProgress"
+      ref="progressDialog"
+    />
     <!-- Dialog to show results window -->
-    <q-dialog
+    <results-dialog
       v-model="displayResultsDiag"
-      transition-show="scale"
-      transition-hide="scale"
-      full-width
-      full-height
-      no-backdrop-dismiss
-    >
-      <q-card class="full-width">
-        <q-card-section>
-          <div class="text-h6">
-            <q-icon :name="currentCommandMaster.icon ? currentCommandMaster.icon : 'mdi-powershell'"></q-icon> {{ $t('resultsTitle', { commandName: currentCommandMaster.commandName }) }} {{ currentWorkflowIndex +1 }}/{{ currentCommandMaster.workflow ? currentCommandMaster.workflow.length + 1 : 1 }}
-          </div>
-        </q-card-section>
-        <q-card-section>
-          <!-- Check which type of result was returned -->
-          <div v-if="results[currentWorkflowIndex] ? results[currentWorkflowIndex].returnType === 'object' : false">
-            <q-table
-              :data="results[currentWorkflowIndex].output"
-              :columns="resultsColumns"
-              :pagination.sync="outputPagination"
-              :selection="resultsTableSelection"
-              :selected.sync="resultsSelected[currentWorkflowIndex]"
-              :filter="resultsFilter"
-              :dense="denseTable"
-              row-key="__id"
-            >
-              <template v-slot:top-right>
-                <q-input
-                  v-model="resultsFilter"
-                  :placeholder="$t('search')"
-                  borderless
-                  dense
-                >
-                  <template v-slot:append>
-                    <q-icon
-                      v-if="resultsFilter === ''"
-                      name="search"
-                      color="white"
-                    />
-                    <q-icon
-                      v-else
-                      @click="resultsFilter = ''"
-                      name="clear"
-                      class="cursor-pointer"
-                      color="white"
-                    />
-                  </template>
-                </q-input>
-              </template>
-            </q-table>
-          </div>
-          <!-- Display RAW String value returned from PowerShell - this is displayed when cast to JSON object fails -->
-          <div v-else>
-            <q-input
-              v-if="results[currentWorkflowIndex]"
-              :value="results[currentWorkflowIndex].output"
-              @keyup.enter.stop
-              type="textarea"
-              readonly
-              autogrow
-              borderless
-            />
-          </div>
-        </q-card-section>
-        <!-- Always display buttons on the center bottom of the main window -->
-        <q-page-sticky
-          :offset="[0, 0]"
-          position="bottom"
-        >
-          <q-card-actions>
-            <!-- Allow objects to be exported to CSV -->
-            <q-btn
-              v-if="results[currentWorkflowIndex] ? results[currentWorkflowIndex].returnType === 'object' : false"
-              @click="exportTable"
-              icon="mdi-file-delimited"
-              round
-              color="primary"
-            >
-              <q-tooltip>
-                {{ $t('exportCsv') }}
-              </q-tooltip>
-            </q-btn>
-            <!-- Allow raw text to be copied to clipboard -->
-            <q-btn
-              v-if="results[currentWorkflowIndex] ? results[currentWorkflowIndex].returnType === 'raw' : false"
-              v-clipboard:copy="results[currentWorkflowIndex].output"
-              @click="notifyCopied"
-              icon="mdi-content-copy"
-              round
-              color="primary"
-            >
-              <q-tooltip>
-                {{ $t('copyClipboard') }}
-              </q-tooltip>
-            </q-btn>
-            <!-- Button to close results -->
-            <q-btn
-              v-close-popup
-              icon="close"
-              round
-              color="primary"
-            >
-              <q-tooltip>
-                {{ $t('close') }}
-              </q-tooltip>
-            </q-btn>
-            <!-- Button to launch another workflow step -->
-            <q-btn
-              v-if="currentCommandMaster.workflow ? currentWorkflowIndex < currentCommandMaster.workflow.length : false"
-              :disable="(resultsSelected[currentWorkflowIndex].length === 0 && results[currentWorkflowIndex] ? results[currentWorkflowIndex].returnType !== 'raw' : false) || (loginSkipped && currentCommandMaster.usesLoginObjects)"
-              @click="nextWorkflowStep"
-              icon="mdi-arrow-right-bold"
-              size="lg"
-              round
-              color="primary"
-            >
-              <q-tooltip>
-                {{ $t('workflowContinue') }}
-              </q-tooltip>
-            </q-btn>
-          </q-card-actions>
-        </q-page-sticky>
-      </q-card>
-    </q-dialog>
+      :currentCommandMaster="currentCommandMaster"
+      :currentWorkflowIndex="currentWorkflowIndex"
+      :results="results"
+      :resultsSelected="resultsSelected"
+      @workflow-button="nextWorkflowStep"
+    />
     <!-- Dialog to show preexecute window -->
     <q-dialog
       v-model="displayPreExecuteCheck"
@@ -480,8 +236,8 @@
             <q-btn
               v-close-popup
               :label="$t('launch')"
-              flat
               type="submit"
+              flat
             />
           </q-card-actions>
         </q-form>
@@ -498,8 +254,8 @@
           :no-data-label="$t('noScriptsFound')"
           :no-results-label="$t('noScriptsFound')"
           :dense="denseTable"
-          wrap-cells
           row-key="parameter"
+          wrap-cells
           hide-bottom
           hide-header
         >
@@ -529,21 +285,6 @@
               </div>
             </q-td>
           </template>
-          <!-- Template showing favorite icon -->
-          <template v-slot:body-cell-favorite="props">
-            <q-td
-              :props="props"
-              auto-width
-            >
-              <q-btn
-                @click="showHelpDiag(props.row)"
-                dense
-                round
-                flat
-                icon="star_outline"
-              />
-            </q-td>
-          </template>
           <!-- Template showing help icon -->
           <template v-slot:body-cell-help="props">
             <q-td
@@ -552,10 +293,10 @@
             >
               <q-btn
                 @click="showHelpDiag(props.row)"
+                icon="help"
                 dense
                 round
                 flat
-                icon="help"
               />
             </q-td>
           </template>
@@ -579,34 +320,13 @@
 </template>
 
 <script>
-import { exportFile, date, extend } from 'quasar'
+import { extend } from 'quasar'
 import { mapGetters } from 'vuex'
 import { QMarkdown } from '@quasar/quasar-ui-qmarkdown'
 import Prism from 'vue-prismjs'
 import _ from 'lodash'
 import 'src/assets/prism_tomorrowlight.css'
 const childProcess = require('child_process')
-
-//  Helper function which wraps table values for CSV export - https://quasar.dev/vue-components/table#Exporting-data
-function wrapCsvValue (val, formatFn) {
-  let formatted = formatFn !== void 0
-    ? formatFn(val)
-    : val
-
-  formatted = formatted === void 0 || formatted === null
-    ? ''
-    : String(formatted)
-
-  formatted = formatted.split('"').join('""')
-    /**
-     * Excel accepts \n and \r in strings, but some other CSV parsers do not
-     * Uncomment the next two lines to escape new lines
-     */
-    .split('\n').join('\\n')
-    .split('\r').join('\\r')
-
-  return `"${formatted}"`
-}
 
 export default {
   name: 'ScriptsPage',
@@ -624,9 +344,7 @@ export default {
       resultCommand: '', // Command ready to be executed, that is variables replaced for user set parameters
       results: {}, // Command result object displayed in Results Dialog
       resultsSelected: [[]], // Array of selected objects from Results Dialog
-      resultsFilter: '', // Filter for results table
       scriptProgress: '', // Display current script execution progress
-      externalHelpFile: '', // Holds Help text loaded from external source
       displayCommandDiag: false, // Visibility state for command dialog
       displayHelpDiag: false, // Visibility state for help dialog
       displayResultsDiag: false, // Visibility state for results dialog
@@ -647,41 +365,23 @@ export default {
         { name: 'friendlyName', label: 'Friendly Name', field: row => row.friendlyName ? row.friendlyName[(this.$i18n.locale)] ? row.friendlyName[(this.$i18n.locale)] : row.friendlyName['default'] : '', classes: 'hidden' },
         { name: 'description', label: 'Description', align: 'left', field: row => row.description ? row.description[(this.$i18n.locale)] ? row.description[(this.$i18n.locale)] : row.description.default : '', classes: 'gt-sm' },
         { name: 'spacer', label: 'Spacer' },
-        { name: 'favorite', label: 'Icon', classes: 'gt-xs' },
         { name: 'help', label: 'Icon', classes: 'gt-xs' },
         { name: 'execute', label: 'Execute' }
       ],
-      historyColumns: [
-        { name: 'date', label: 'Date', field: row => date.formatDate(row.date, 'YYYY-MM-DD HH:mm:ss'), classes: 'gt-xs' },
-        { name: 'steps', label: 'Steps', field: row => row.currentCommandMaster.workflow ? 'workflow' : 'basic' },
-        { name: 'commandName', label: 'Command Name', align: 'left', field: row => row.currentCommandMaster.commandName, classes: 'text-no-wrap' },
-        { name: 'friendlyName', label: 'Friendly Name', field: row => row.currentCommandMaster.friendlyName ? row.currentCommandMaster.friendlyName[(this.$i18n.locale)] ? row.currentCommandMaster.friendlyName[(this.$i18n.locale)] : row.currentCommandMaster.friendlyName['default'] : '', classes: 'hidden' },
-        { name: 'spacer', label: 'Spacer' },
-        { name: 'results', label: 'results' },
-        { name: 'execute', label: 'Execute' }
-      ],
       // table pagination options for scripts table
-      scriptsPagination: { rowsPerPage: 0 },
-      // table pagination options for scripts table, user may change this value in GUI
-      outputPagination: { rowsPerPage: 0 }
+      scriptsPagination: { rowsPerPage: 0 }
     }
   },
   computed: {
-    ...mapGetters('lazystore', ['getLanguage', 'getSearchScripts', 'getSearchHistory', 'getScriptsArray', 'getDefinitions', 'getCommandMaximized', 'getAlwaysConfirm', 'getHistoryLength', 'getHistoryVisible', 'getHistory', 'getDenseInput', 'getDenseTable', 'getLoginSkipped', 'getCredentialsSaved', 'getDisplayProgress']),
+    ...mapGetters('lazystore', ['getLanguage', 'getSearchScripts', 'getScriptsArray', 'getCommandMaximized', 'getAlwaysConfirm', 'getHistoryLength', 'getHistoryVisible', 'getHistory', 'getDenseInput', 'getDenseTable', 'getLoginSkipped', 'getCredentialsSaved', 'getDisplayProgress']),
     language: function () {
       return this.getLanguage
     },
     searchScripts: function () {
       return this.getSearchScripts
     },
-    searchHistory: function () {
-      return this.getSearchHistory
-    },
     scriptsArray: function () {
       return this.getScriptsArray
-    },
-    definitions: function () {
-      return this.getDefinitions
     },
     commandDialogMaximized: {
       get () {
@@ -728,33 +428,6 @@ export default {
     },
     credentialsSaved: function () {
       return this.getCredentialsSaved
-    },
-    historyWidth: function () {
-      return this.$q.screen.width
-    },
-    resultsColumns: {
-      get () {
-        let columns = [
-          // Auto generated __id column for workflow commands
-          { name: '__id', align: 'left', label: '__id', field: row => row.__id, classes: 'hidden', headerClasses: 'hidden' }
-        ]
-        // For every parameter received from command, generate column definition.
-        for (let i = 0; i < this.results[this.currentWorkflowIndex].params.length; i++) {
-          let definition = { name: this.results[this.currentWorkflowIndex].params[i], align: 'left', label: this.results[this.currentWorkflowIndex].params[i], field: this.results[this.currentWorkflowIndex].params[i], sortable: true }
-          columns.push(definition)
-        }
-        return columns
-      }
-    },
-    resultsTableSelection: {
-      // Table selection can be either single, multiple or none. If command is not part of workflow or acceptsParams is not defined in JSON, or there is no next workflow step, defaults to none.
-      get () {
-        try {
-          return this.currentCommandMaster.workflow[this.currentWorkflowIndex].acceptsParams
-        } catch {
-          return 'none'
-        }
-      }
     }
   },
   methods: {
@@ -787,22 +460,8 @@ export default {
       this.displayCommandDiag = !this.displayCommandDiag
     },
     showHelpDiag (helpCtx) {
-      this.externalHelpFile = this.$t('loadingHelp')
       this.currentCommand = helpCtx
       this.displayHelpDiag = !this.displayHelpDiag
-      if (this.currentCommand.help) {
-        let helpUrl = this.currentCommand.help[this.language] ? this.currentCommand.help[this.language] : this.currentCommand.help.default
-        this.$utils.downloadDefinitions(helpUrl, (err, result) => {
-          if (err) {
-            this.externalHelpFile = this.$t('externalHelpNotFound', { helpUrl: helpUrl })
-            return
-          }
-          this.externalHelpFile = result.data
-        })
-      } else {
-        let description = this.currentCommand.description ? this.currentCommand.description[this.language] ? this.currentCommand.description[this.language] : this.currentCommand.description.default : this.$t('noDescription')
-        this.externalHelpFile = this.$t('noExternalHelp', { description: description })
-      }
     },
     showResultsDiag (resultspCtx) {
       this.results[this.currentWorkflowIndex] = resultspCtx
@@ -832,51 +491,6 @@ export default {
         html: true,
         color: 'primary'
       })
-    },
-    notifyCopied () {
-      this.$q.notify({
-        icon: 'check',
-        color: 'positive',
-        position: 'bottom-left',
-        timeout: 1500,
-        message: this.$t('copied')
-      })
-    },
-    exportTable () {
-      // https://quasar.dev/vue-components/table#Exporting-data
-      // TODO: rework and add better, complex solution
-      const content = [this.resultsColumns.map(col => wrapCsvValue(col.label))].concat(
-        this.results[this.currentWorkflowIndex].output.map(row => this.resultsColumns.map(col => wrapCsvValue(
-          typeof col.field === 'function'
-            ? col.field(row)
-            : row[col.field === void 0 ? col.name : col.field],
-          col.format
-        )).join(';'))
-      ).join('\r\n')
-
-      const status = exportFile(
-        `${this.currentCommand.commandName}.csv`,
-        content,
-        'text/csv'
-      )
-
-      if (status !== true) {
-        this.$q.notify({
-          icon: 'warning',
-          color: 'negative',
-          position: 'bottom-left',
-          timeout: 1500,
-          message: this.$t('csvExportError')
-        })
-      } else {
-        this.$q.notify({
-          icon: 'check',
-          color: 'positive',
-          position: 'bottom-left',
-          timeout: 1500,
-          message: this.$t('exported')
-        })
-      }
     },
     toggleLoading (state) {
       if (state) {
@@ -914,7 +528,7 @@ export default {
       this.returnParamsPaginate = 1 // In multiple selection workflows allows parameters for each selection
       this.results = {} // Command result object displayed in Results Dialog
       this.resultsSelected = [[]] // Array of selected objects from Results Dialog
-      this.resultsFilter = '' // Filter for results table
+      // this.resultsFilter = '' // Filter for results table
     },
     // If user needs to stop PowerShell execution for whatever reason, he can smash Esc to kill process and launch new one.
     // This requires user to have credential saved in Credential Manager, otherwise CredentialObject and Session cannot be created.
@@ -1023,7 +637,6 @@ export default {
     // If command or user requires confirmation before executing, display this dialog.
     preExecuteCheck () {
       this.prepareCommand()
-      // TODO: Add settings allowing user to display confirmation before each command, regardless of command preferences
       if (this.currentCommand.confirm || this.alwaysConfirm) {
         this.showPreExecuteCheck()
       } else {
@@ -1093,11 +706,7 @@ export default {
         this.scriptProgress += data
       }
       // Try to scroll if output is too long
-      setTimeout(() => {
-        try {
-          this.$refs.progressCard.$el.scrollTo(0, this.$refs.progressCode.$el.clientHeight)
-        } catch { }
-      }, 100)
+      this.$refs.progressDialog.scrollDown()
     },
     async stopProgress () {
       if (this.displayProgress || this.currentCommand.progress) {

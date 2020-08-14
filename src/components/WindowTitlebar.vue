@@ -7,30 +7,28 @@
 
     <q-btn
       @click="$emit('minimize')"
-      dense
-      flat
       icon="minimize"
       style="height: 100%"
+      dense
+      flat
     />
     <q-btn
       @click="$emit('maximize')"
-      dense
-      flat
       icon="crop_square"
       style="height: 100%"
+      dense
+      flat
     />
     <q-btn
       @click="$emit('close-app')"
-      dense
-      flat
       icon="close"
       style="height: 100%"
+      dense
+      flat
     />
   </q-bar>
 </template>
 
 <script>
-// https://simonkollross.de/posts/vuejs-using-v-model-with-objects-for-custom-components
-
 export default {}
 </script>
