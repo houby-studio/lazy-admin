@@ -16,7 +16,7 @@
             v-for="(settings, index) in settingsItems"
             v-model="settingsHelper[settings]"
             :key="index"
-            :label="$t(settings)"
+            :label="settings"
           ></settings-items>
         </q-card-section>
       </q-card>

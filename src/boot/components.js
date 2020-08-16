@@ -6,6 +6,9 @@ import HistoryDrawer from 'components/HistoryDrawer.vue'
 import HelpDialog from 'components/HelpDialog.vue'
 import ProgressDialog from 'components/ProgressDialog.vue'
 import ResultsDialog from 'components/ResultsDialog.vue'
+import ExecuteDialog from 'components/ExecuteDialog.vue'
+import CommandDialog from 'components/CommandDialog.vue'
+import ScriptsTable from 'components/ScriptsTable.vue'
 
 // add components to Vue
 export default async ({ Vue }) => {
@@ -16,4 +19,7 @@ export default async ({ Vue }) => {
   Vue.component('HelpDialog', HelpDialog)
   Vue.component('ProgressDialog', ProgressDialog)
   Vue.component('ResultsDialog', ResultsDialog)
+  Vue.component('ExecuteDialog', ExecuteDialog)
+  Vue.component('CommandDialog', CommandDialog)
+  Vue.component('ScriptsTable', ScriptsTable)
 }

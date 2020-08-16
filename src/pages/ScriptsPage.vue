@@ -7,174 +7,23 @@
       @show-results-dialog="historyShowResultsDiag"
       @show-command-dialog="historyShowCommandDiag"
     ></history-drawer>
-    <!-- Dialog window is shown when command is selected with 'Execute' button -->
-    <q-dialog
+    <!-- Dialog to show command's parameters -->
+    <command-dialog
       v-model="displayCommandDiag"
-      :full-width="commandDialogMaximized"
-      :full-height="commandDialogMaximized"
+      :current-command-master="currentCommandMaster"
+      :current-command="currentCommand"
+      :current-workflow-index="currentWorkflowIndex"
+      :results-selected="resultsSelected"
+      :return-params="returnParams"
+      @submit="preExecuteCheck"
       @hide="resetAllParams"
-      transition-show="scale"
-      transition-hide="scale"
-      no-backdrop-dismiss
-    >
-      <q-card class="full-width">
-        <q-form
-          @submit="preExecuteCheck"
-          @reset="resetForm"
-          autofocus
-        >
-          <q-card-section>
-            <div class="row">
-              <div class="col">
-                <div class="text-h6 float-left">
-                  <q-icon :name="currentCommandMaster.icon ? currentCommandMaster.icon : 'mdi-powershell'"></q-icon> {{ currentCommandMaster.commandName }} {{ currentWorkflowIndex +1 }}/{{ currentCommandMaster.workflow ? currentCommandMaster.workflow.length + 1 : 1 }}
-                </div>
-              </div>
-              <div class="col">
-                <q-card-actions
-                  align="right"
-                  class="text-primary q-pa-none"
-                >
-
-                  <q-btn
-                    :ripple="false"
-                    :icon="commandDialogMaximized ? 'fas fa-compress-alt' : 'fas fa-expand-alt'"
-                    @click="commandDialogMaximized = !commandDialogMaximized"
-                    tabindex="-1"
-                    flat
-                  />
-                </q-card-actions>
-              </div>
-            </div>
-
-          </q-card-section>
-          <q-card-section class="q-pt-none">
-            <!-- Workflows only - Previous command parameters -->
-            <q-expansion-item
-              v-if="currentCommand.passedParameters ? currentCommand.passedParameters.length > 0 : false"
-              :default-opened="resultsSelected[currentWorkflowIndex].length > 1"
-              :caption="$t('workflowReadOnly')"
-              :label="$t('workflowParameters')"
-              :dense="denseInput"
-              icon="mdi-cogs"
-              expand-separator
-            >
-              <q-input
-                v-for="param in currentCommand.passedParameters"
-                v-model="returnParams[returnParamsPaginate + '__' + param.parameter]"
-                :label="param.parameter"
-                :key="param.parameter"
-                :dense="denseInput"
-                type="text"
-                hide-bottom-space
-                standout
-                readonly
-              ></q-input>
-            </q-expansion-item>
-            <q-separator
-              v-if="currentCommand.passedParameters ? currentCommand.passedParameters.length > 0 : false"
-              spaced
-            ></q-separator>
-            <!-- Command parameters -->
-            <div
-              v-for="(param, index) in currentCommand.parameters"
-              :key="param.parameter"
-              class="q-mb-sm"
-            >
-              <component
-                v-model="returnParams[returnParamsPaginate + '__' + param.parameter]"
-                :tabindex="index + 1"
-                :is="paramType[param.type][0]"
-                :toggle-indeterminate="paramType[param.type][1]"
-                :false-value="paramType[param.type][1] ? 'false' : false"
-                :label="param.parameter"
-                :label-color="param.required ? 'primary' : ''"
-                :rules="param.required ? [ val => val && val.length > 0 || $t('requiredField') ] : [] "
-                :type="paramType[param.type][1]"
-                :dense="denseInput"
-                :options="param.options"
-                :multiple="paramType[param.type][1]"
-                @keydown.enter.prevent
-                bottom-slots
-                filled
-                clearable
-                lazy-rules
-              >
-                <!-- Template showing parameter informatin button -->
-                <template v-slot:append>
-                  <q-btn
-                    @click.capture.stop="showParameterHelp(param)"
-                    padding="none"
-                    class="btn-param-info"
-                    icon="info"
-                    dense
-                    round
-                    flat
-                  ></q-btn>
-                </template>
-                <!-- Template showing parameter information button -->
-                <template v-slot:counter>
-                  <p>{{ param.required ? $t('requiredParam') : $t('optionalParam') }} | {{ param.type }}</p>
-                </template>
-              </component>
-              <!-- Hint for components which lack native hint slot -->
-              <span
-                v-if="param.type === 'Boolean' || param.type === 'Switch'"
-                class="hint-opacity text-caption float-right"
-              >
-                <q-btn
-                  @click="showParameterHelp(param)"
-                  padding="none"
-                  class="btn-param-info"
-                  size="sm"
-                  icon="info"
-                  dense
-                  round
-                  flat
-                ></q-btn>
-                {{ param.required ? $t('requiredParam') : $t('optionalParam') }} | {{ param.type }}
-              </span>
-            </div>
-          </q-card-section>
-          <!-- Actions for command dialog -->
-          <q-card-actions
-            align="right"
-            class="text-primary"
-          >
-            <!-- Show pagination if there is more than one selected result from previous command -->
-            <q-pagination
-              v-if="resultsSelected[currentWorkflowIndex -1 ] ? resultsSelected[currentWorkflowIndex-1].length > 1 : false"
-              v-model="returnParamsPaginate"
-              :max="resultsSelected[currentWorkflowIndex-1].length"
-              :input="true"
-            >
-            </q-pagination>
-            <q-btn
-              v-close-popup
-              :label="$t('cancel')"
-              tabindex="1000"
-              flat
-            />
-            <q-btn
-              :label="$t('reset')"
-              type="reset"
-              tabindex="999"
-              flat
-            />
-            <q-btn
-              :label="$t('launch')"
-              type="submit"
-              tabindex="998"
-              flat
-            />
-          </q-card-actions>
-        </q-form>
-      </q-card>
-    </q-dialog>
-    <!-- Dialog to show help window -->
+    ></command-dialog>
+    <!-- Dialog to show online help window -->
     <help-dialog
       v-model="displayHelpDiag"
       :current-command="currentCommand"
+      @hide="resetAllParams"
+      @submit="preExecuteCheck"
     />
     <!-- Dialog to show progress window -->
     <progress-dialog
@@ -192,155 +41,34 @@
       @workflow-button="nextWorkflowStep"
     />
     <!-- Dialog to show preexecute window -->
-    <q-dialog
+    <execute-dialog
       v-model="displayPreExecuteCheck"
-      transition-show="scale"
-      transition-hide="scale"
-      full-width
-      no-backdrop-dismiss
-    >
-      <q-card class="full-width">
-        <q-form
-          @submit="executeCommand"
-          autofocus
-        >
-          <q-card-section>
-            <div class="text-h6">
-              <q-icon
-                name="mdi-help-circle"
-                size="md"
-              ></q-icon> {{ $t('confirm') }}
-            </div>
-          </q-card-section>
-          <q-card-section> {{ $t('confirmMsg') }} </q-card-section>
-          <q-card-section>
-            <div class="text-h6">
-              {{ $t('commandToBeExecuted') }}
-            </div>
-          </q-card-section>
-          <q-card-section>
-            <prism
-              :code="resultCommand"
-              language="powershell"
-            ></prism>
-          </q-card-section>
-          <q-card-actions
-            align="right"
-            class="text-primary"
-          >
-            <q-btn
-              v-close-popup
-              :label="$t('cancel')"
-              flat
-            />
-            <q-btn
-              v-close-popup
-              :label="$t('launch')"
-              type="submit"
-              flat
-            />
-          </q-card-actions>
-        </q-form>
-      </q-card>
-    </q-dialog>
+      :result-command="resultCommand"
+      @execute-command="executeCommand"
+    ></execute-dialog>
     <!-- Datatable showing all commands in main window -->
-    <div class="row fit">
-      <div class="col">
-        <q-table
-          :data="scriptsArray"
-          :columns="scriptsColumns"
-          :filter="searchScripts"
-          :pagination.sync="scriptsPagination"
-          :no-data-label="$t('noScriptsFound')"
-          :no-results-label="$t('noScriptsFound')"
-          :dense="denseTable"
-          row-key="parameter"
-          wrap-cells
-          hide-bottom
-          hide-header
-        >
-          <!-- Template showing command icon. When command has no icon, defaults to mdi-powershell icon -->
-          <template v-slot:body-cell-icon="props">
-            <q-td
-              :props="props"
-              auto-width
-            >
-              <q-icon
-                :name="props.row.icon ? props.row.icon : 'mdi-powershell'"
-                size="md"
-              ></q-icon>
-            </q-td>
-          </template>
-          <!-- Template showing friendly command name and 'Cmdlet' which gets executed -->
-          <template v-slot:body-cell-commandName="props">
-            <q-td
-              :props="props"
-              auto-width
-            >
-              <div>
-                {{ props.row.friendlyName ? props.row.friendlyName[language] ? props.row.friendlyName[language] : props.row.friendlyName.default : '' }}
-              </div>
-              <div>
-                {{ props.row.commandName }}
-              </div>
-            </q-td>
-          </template>
-          <!-- Template showing help icon -->
-          <template v-slot:body-cell-help="props">
-            <q-td
-              :props="props"
-              auto-width
-            >
-              <q-btn
-                @click="showHelpDiag(props.row)"
-                icon="help"
-                dense
-                round
-                flat
-              />
-            </q-td>
-          </template>
-          <!-- Template showing button which launches window prompting for parameters-->
-          <template v-slot:body-cell-execute="props">
-            <q-td
-              :props="props"
-              auto-width
-            >
-              <q-btn
-                :disable="loginSkipped && props.row.usesLoginObjects"
-                @click="showCommandDiag(props.row)"
-                flat
-              >{{ $t('launch') }}</q-btn>
-            </q-td>
-          </template>
-        </q-table>
-      </div>
-    </div>
+    <scripts-table
+      @show-help="showHelpDiag"
+      @show-command="showCommandDiag"
+    ></scripts-table>
   </q-page>
 </template>
 
 <script>
 import { extend } from 'quasar'
 import { mapGetters } from 'vuex'
-import { QMarkdown } from '@quasar/quasar-ui-qmarkdown'
-import Prism from 'vue-prismjs'
 import _ from 'lodash'
 import 'src/assets/prism_tomorrowlight.css'
 const childProcess = require('child_process')
 
 export default {
   name: 'ScriptsPage',
-  components: {
-    Prism,
-    QMarkdown
-  },
   data () {
     return {
       currentCommand: {}, // User click "Execute" on datatable, chosen command is set to this object, which gets rendered with dialog
       currentCommandMaster: {}, // User click "Execute" on datatable, chosen command is set to this object, which is held as reference for workflows
       currentWorkflowIndex: 0, // Index of currently workflow step to run
       returnParams: {}, // User defined parameters from Command Dialog
-      returnParamsPaginate: 1, // In multiple selection workflows allows parameters for each selection
       resultCommand: '', // Command ready to be executed, that is variables replaced for user set parameters
       results: {}, // Command result object displayed in Results Dialog
       resultsSelected: [[]], // Array of selected objects from Results Dialog
@@ -349,47 +77,13 @@ export default {
       displayHelpDiag: false, // Visibility state for help dialog
       displayResultsDiag: false, // Visibility state for results dialog
       displayPreExecuteCheck: false, // Visibility state for preexecute dialog
-      displayProgressDiag: false, // Visibility state for progress dialog
-      paramType: { // Table translating PowerShell variable types to Quasar components names and options
-        'String': ['q-input', 'text'],
-        'Number': ['q-input', 'number'],
-        'ScriptBlock': ['q-input', 'textarea'],
-        'Boolean': ['q-toggle', true],
-        'Switch': ['q-toggle', false],
-        'Select': ['q-select', false],
-        'MultiSelect': ['q-select', true]
-      }, // Column definitions for scripts table
-      scriptsColumns: [
-        { name: 'icon', label: 'Icon', classes: 'gt-xs' },
-        { name: 'commandName', label: 'Command Name', align: 'left', field: row => row.commandName, classes: 'text-no-wrap' },
-        { name: 'friendlyName', label: 'Friendly Name', field: row => row.friendlyName ? row.friendlyName[(this.$i18n.locale)] ? row.friendlyName[(this.$i18n.locale)] : row.friendlyName['default'] : '', classes: 'hidden' },
-        { name: 'description', label: 'Description', align: 'left', field: row => row.description ? row.description[(this.$i18n.locale)] ? row.description[(this.$i18n.locale)] : row.description.default : '', classes: 'gt-sm' },
-        { name: 'spacer', label: 'Spacer' },
-        { name: 'help', label: 'Icon', classes: 'gt-xs' },
-        { name: 'execute', label: 'Execute' }
-      ],
-      // table pagination options for scripts table
-      scriptsPagination: { rowsPerPage: 0 }
+      displayProgressDiag: false // Visibility state for progress dialog
     }
   },
   computed: {
-    ...mapGetters('lazystore', ['getLanguage', 'getSearchScripts', 'getScriptsArray', 'getCommandMaximized', 'getAlwaysConfirm', 'getHistoryLength', 'getHistoryVisible', 'getHistory', 'getDenseInput', 'getDenseTable', 'getLoginSkipped', 'getCredentialsSaved', 'getDisplayProgress']),
+    ...mapGetters('lazystore', ['getLanguage', 'getAlwaysConfirm', 'getHistoryLength', 'getHistoryVisible', 'getHistory', 'getLoginSkipped', 'getCredentialsSaved', 'getDisplayProgress']),
     language: function () {
       return this.getLanguage
-    },
-    searchScripts: function () {
-      return this.getSearchScripts
-    },
-    scriptsArray: function () {
-      return this.getScriptsArray
-    },
-    commandDialogMaximized: {
-      get () {
-        return this.getCommandMaximized
-      },
-      set (val) {
-        this.$store.dispatch('lazystore/setCommandMaximized', val)
-      }
     },
     alwaysConfirm: function () {
       return this.getAlwaysConfirm
@@ -413,12 +107,6 @@ export default {
         let history = _.cloneDeep(val)
         this.$store.dispatch('lazystore/setHistory', history)
       }
-    },
-    denseInput: function () {
-      return this.getDenseInput
-    },
-    denseTable: function () {
-      return this.getDenseTable
     },
     displayProgress: function () {
       return this.getDisplayProgress
@@ -478,20 +166,6 @@ export default {
     showPreExecuteCheck () {
       this.displayPreExecuteCheck = !this.displayPreExecuteCheck
     },
-    showParameterHelp (param) {
-      this.$q.dialog({
-        title: param.parameter,
-        message: `
-        ${this.$t('requiredParam')}: ${param.required ? this.$t('yes') : this.$t('no')}<br>
-        ${this.$t('type')}: ${param.type}<br>
-        ${this.$t('help')}: ${param.hint ? param.hint[this.language] || param.hint['default'] : this.$t('none')}<br>
-        ${this.$t('format')}:<br>
-        <code class="text-no-wrap">${param.format ? param.format : this.$t('none')}</code>
-        `,
-        html: true,
-        color: 'primary'
-      })
-    },
     toggleLoading (state) {
       if (state) {
         this.$q.loading.show({
@@ -503,19 +177,6 @@ export default {
         window.removeEventListener('keyup', this.cancelCommand, true)
       }
     },
-    resetForm () {
-      // Always assume one set of parameters passed, unless there is more than one resultsSelected
-      let parametersSetsNum = 1
-      if (this.resultsSelected[this.currentWorkflowIndex].length > 1) {
-        parametersSetsNum = this.resultsSelected[this.currentWorkflowIndex].length
-      }
-      // Loop through parameterSets and get parameters for each one to resultsCommand
-      for (let paramSetIndex = 1; paramSetIndex <= parametersSetsNum; paramSetIndex++) {
-        for (let i = 0; i < this.currentCommand.parameters.length; i++) {
-          this.returnParams[paramSetIndex + '__' + this.currentCommand.parameters[i].parameter] = ''
-        }
-      }
-    },
     resetAllParams () {
       this.displayCommandDiag = false
       this.displayResultsDiag = false
@@ -525,10 +186,8 @@ export default {
       this.currentWorkflowIndex = 0 // Index of currently workflow step to run
       this.resultCommand = '' // Command ready to be executed, that is variables replaced for user set parameters
       this.returnParams = {} // User defined parameters from Command Dialog
-      this.returnParamsPaginate = 1 // In multiple selection workflows allows parameters for each selection
       this.results = {} // Command result object displayed in Results Dialog
       this.resultsSelected = [[]] // Array of selected objects from Results Dialog
-      // this.resultsFilter = '' // Filter for results table
     },
     // If user needs to stop PowerShell execution for whatever reason, he can smash Esc to kill process and launch new one.
     // This requires user to have credential saved in Credential Manager, otherwise CredentialObject and Session cannot be created.
@@ -700,10 +359,17 @@ export default {
         this.resultCommand = this.resultCommand.replace(/(\r\n|\n|\r)/gm, ';')
       }
     },
+    shellSafeWrite (stdin, data) {
+      stdin.write(data)
+    },
     async executionProgress (data) {
       // Do not display ending string, which starts with EOI hash or progress delimiter, which is EOIP
       if (!data.startsWith('EOI')) {
         this.scriptProgress += data
+        // If script execution did not stop when required, STOP IT!
+        // if (!data.startsWith('EOI_')) {
+        //   this.shellSafeWrite(this.$pwsh.shell.streams.stdin, data)
+        // }
       }
       // Try to scroll if output is too long
       this.$refs.progressDialog.scrollDown()
@@ -734,6 +400,7 @@ export default {
             }
           }, 1000)
         }
+        console.log('executing')
         this.$pwsh.shell.invoke().then(output => {
           //  Code block to handle PowerShell return data
           // Stop listening to output, hide progress dialog and reset dialog
@@ -761,22 +428,22 @@ export default {
               params = Object.keys(data) // Get param names from single object
               dataArray.push(data)
             }
-            this.results[this.currentWorkflowIndex] = {
+            this.$set(this.results, [this.currentWorkflowIndex], {
               error: params.error,
               returnType: 'object',
               params: params,
               output: dataArray
-            }
+            })
           } catch (error) {
             if (output.trim() === '') {
               output = this.$t('powershellNoOutput')
             }
             // Result was not an array of objects or single object. Console returned error, additional text or that's how command was written.
-            this.results[this.currentWorkflowIndex] = {
+            this.$set(this.results, [this.currentWorkflowIndex], {
               error: this.currentCommand.returns !== 'raw', // If command should return raw, it is not an error (or there is no way to tell)
               returnType: 'raw',
               output: output.trim()
-            }
+            })
           }
           // Save to history
           this.history = {
@@ -786,7 +453,6 @@ export default {
             currentWorkflowIndex: this.currentWorkflowIndex,
             resultCommand: this.resultCommand,
             returnParams: this.returnParams,
-            returnParamsPaginate: this.returnParamsPaginate,
             results: this.results
           }
           this.displayResultsDiag = true
@@ -796,12 +462,12 @@ export default {
           console.error(error)
           // Stop listening to output, hide progress dialog and reset dialog
           this.stopProgress()
-          this.results[this.currentWorkflowIndex] = {
+          this.$set(this.results, [this.currentWorkflowIndex], {
             error: true,
             returnType: 'raw',
             // eslint-disable-next-line no-control-regex
             output: (error.toString().replace(/\x1b\[[0-9;]*m/g, ''))
-          }
+          })
           this.displayResultsDiag = true
           this.toggleLoading()
         })
