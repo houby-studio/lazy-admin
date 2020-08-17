@@ -2,9 +2,10 @@
   <q-layout view="hhh lpr lff">
     <q-header
       :reveal-offset="Infinity"
+      @focusin="$event"
+      class="window-color window-color-text"
       elevated
       reveal
-      class="window-color window-color-text"
     >
       <window-titlebar
         @minimize="minimize"

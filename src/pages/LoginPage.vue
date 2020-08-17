@@ -216,10 +216,12 @@ export default {
           console.log(data.output) // Should write 'New Powershell session created succesfully.' from PS Function output
           // Route to main screen
           if (!this.credentialsSaved) {
-            this.$pwsh.shell.addCommand(`if (Get-Command New-StoredCredential -ErrorAction SilentlyContinue) {New-StoredCredential -Target 'Lazy Admin' -UserName '${this.username}' -Password '${this.password}' -Comment 'Administrator credentials for Lazy Admin Utility.' -Type Generic -Persist LocalMachine | Out-Null}`)
+            this.$pwsh.shell.addCommand(`if (Get-Command New-StoredCredential -ErrorAction SilentlyContinue) {New-StoredCredential -Target 'Lazy Admin' -UserName '${this.username}' -Password '${this.password}' -Comment 'Administrator credentials for Lazy Admin Utility.' -Type Generic -Persist LocalMachine | Out-Null} else {"failed"}`)
             this.$pwsh.shell.invoke().then(o => {
-              console.log('Succesfully saved credentials to Credential Manager.')
-              this.credentialsSaved = true
+              if (!o.startsWith('failed')) {
+                console.log('Succesfully saved credentials to Credential Manager.')
+                this.credentialsSaved = true
+              }
             }).catch(e => {
               console.error(`Failed to save credentials to Credential Manager. Error message: ${e}`)
             })
@@ -281,6 +283,7 @@ export default {
         }
         // If module did not load, warn user that he might be missing module
         if (jsonOutput.error) {
+          this.credentialsSaved = false
           console.warn('Could not load "CredentialManager" module. It may be missing in the computer.')
           this.$q.notify({
             timeout: 5000,
@@ -311,6 +314,7 @@ export default {
             this.$refs.login.$el.focus()
           } else {
             console.log(`Could not find any saved credentials.`)
+            this.credentialsSaved = false
           }
         }
         this.pwshFallbackNotify()

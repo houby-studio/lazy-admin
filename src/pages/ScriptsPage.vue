@@ -206,11 +206,7 @@ export default {
           }
           // Create new PowerShell instance
           this.$pwsh.createShell((done) => {
-            if (!(this.credentialsSaved) && !(this.loginSkipped)) {
-              // User logged in, but did not save credentials, likely missing credentials module, redirect to login page.
-              this.toggleLoading()
-              this.$router.push({ path: '/' })
-            } else if (this.loginSkipped) {
+            if (this.loginSkipped) {
               // User skipped logging in, do not attempt to log in and just load plain PowerShell with empty Credential Object.
               this.$pwsh.shell.addCommand(`$Global:CredentialObject = [System.Management.Automation.PSCredential]::Empty`)
               this.$pwsh.shell.invoke().then(output => {
@@ -400,7 +396,6 @@ export default {
             }
           }, 1000)
         }
-        console.log('executing')
         this.$pwsh.shell.invoke().then(output => {
           //  Code block to handle PowerShell return data
           // Stop listening to output, hide progress dialog and reset dialog

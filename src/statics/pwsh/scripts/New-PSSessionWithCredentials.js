@@ -35,6 +35,7 @@ function New-PSSessionWithCredentials {
     [string]$Password
   )
 
+  Import-Module -Name "CredentialManager" -UseWindowsPowerShell -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
   Import-Module -Name "CredentialManager" -ErrorAction SilentlyContinue
 
   # If credential object should be used, attempt to retrieve it.

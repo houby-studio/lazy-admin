@@ -2,8 +2,8 @@
   <q-layout view="hHh lpR fFf">
 
     <q-header
-      elevated
       class="window-color text-white"
+      elevated
     >
       <window-titlebar
         @minimize="minimize"
