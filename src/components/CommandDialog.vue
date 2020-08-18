@@ -154,6 +154,7 @@
           />
           <q-btn
             :label="$t('launch')"
+            :autofocus="currentCommand.parameters ? currentCommand.parameters.length === 0 : false"
             type="submit"
             tabindex="998"
             flat

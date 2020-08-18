@@ -44,6 +44,7 @@
             v-close-popup
             :label="$t('launch')"
             type="submit"
+            autofocus
             flat
           />
         </q-card-actions>

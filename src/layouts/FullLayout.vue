@@ -2,7 +2,6 @@
   <q-layout view="hhh lpr lff">
     <q-header
       :reveal-offset="Infinity"
-      @focusin="$event"
       class="window-color window-color-text"
       elevated
       reveal
@@ -20,10 +19,10 @@
         <q-toolbar>
           <q-btn
             @click="left = !left"
+            icon="menu"
             dense
             flat
             round
-            icon="menu"
           />
 
           <q-space />
@@ -32,11 +31,11 @@
             v-model="search"
             :placeholder="$t('search')"
             :disable="$route.path !== '/scripts'"
-            dense
-            outlined
             color="white"
             label-color="white"
             style="width: 90%;"
+            dense
+            outlined
           >
             <template v-slot:prepend>
               <q-icon
@@ -60,10 +59,10 @@
             <q-btn
               :flat="!historyVisible"
               @click="historyVisible = !historyVisible"
+              icon="history"
               push
               round
               dense
-              icon="history"
             >
               <q-tooltip>{{ $t('history') }}</q-tooltip>
             </q-btn>
@@ -84,9 +83,9 @@
         <q-item-label header>{{ $t('visibleGroups') }}</q-item-label>
         <q-item
           @click="showAll"
-          clickable
           to="/scripts"
           active-class="text-white"
+          clickable
         >
           <q-item-section avatar>
             <q-icon name="all_inclusive" />
@@ -116,9 +115,10 @@
         <q-separator />
 
         <q-item
-          clickable
           to="/settings"
           active-class="dark"
+          ref="submit"
+          clickable
         >
           <q-item-section avatar>
             <q-icon name="settings" />
@@ -129,9 +129,9 @@
         </q-item>
 
         <q-item
-          clickable
           to="/about"
           active-class="dark"
+          clickable
         >
           <q-item-section avatar>
             <q-icon name="help" />
@@ -143,8 +143,8 @@
 
         <q-item
           @click="showDebugWindow"
-          clickable
           active-class="dark"
+          clickable
         >
           <q-item-section avatar>
             <q-icon name="mdi-bug" />
@@ -372,8 +372,8 @@
               <q-btn
                 v-close-popup
                 icon="close"
-                round
                 color="primary"
+                round
               >
               </q-btn>
             </q-card-actions>
@@ -761,14 +761,21 @@ export default {
       this.definitionsUpdateInProgress = false
     })
 
+    // Definitions: Register event listener when master definition errors
+    this.$utils.on('master-check-error', (newMasterDefinition) => {
+      this.definitionsUpdateInProgress = false
+    })
+
     // Register always listening function for Shift+F11 shortcut to display debug window
     globalShortcut.register('Shift+F11', () => {
       this.showDebugWindow()
     })
 
     // Start application update check
-    this.updateInProgress = true
-    this.$autoUpdater.checkForUpdatesAndNotify()
+    if (process.env.PROD) {
+      this.updateInProgress = true
+      this.$autoUpdater.checkForUpdates()
+    }
     // Check if update was done today and if not, start definitions update check
     if (this.$utils.getDate() === this.updateDate) {
       console.log('Definitions were already updated today, automatic update skipped.')
