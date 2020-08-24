@@ -26,7 +26,6 @@
                 align="right"
                 class="text-primary q-pa-none"
               >
-
                 <q-btn
                   :ripple="false"
                   :icon="commandDialogMaximized ? 'fas fa-compress-alt' : 'fas fa-expand-alt'"
@@ -40,6 +39,22 @@
 
         </q-card-section>
         <q-card-section class="q-pt-none">
+          <!-- Login buttons -->
+          <div
+            v-if="currentCommandMaster.login"
+            class="q-mb-sm"
+          >
+            <q-btn
+              v-for="object in currentCommandMaster.login"
+              :key="object.name"
+              :label="object.name"
+              :icon="onlineCredentials.name ? 'mdi-account-check' : 'mdi-login-variant'"
+              :color="onlineCredentials.name ? 'green' : 'red'"
+              @click="showLoginCommand(object)"
+              no-wrap
+              no-caps
+            ></q-btn>
+          </div>
           <!-- Workflows only - Previous command parameters -->
           <q-expansion-item
             v-if="currentCommand.passedParameters ? currentCommand.passedParameters.length > 0 : false"
@@ -178,6 +193,7 @@ export default {
   },
   data () {
     return {
+      onlineCredentials: {},
       returnParamsPaginate: 1, // In multiple selection workflows allows parameters for each selection
       paramType: { // Table translating PowerShell variable types to Quasar components names and options
         'String': ['q-input', 'text'],
@@ -225,6 +241,17 @@ export default {
           this.returnParams[paramSetIndex + '__' + this.currentCommand.parameters[i].parameter] = ''
         }
       }
+    },
+    showLoginCommand (object) {
+      // TODO: Finish login command dialog
+      this.$q.dialog({
+        title: object.name,
+        message: `
+        ${object.description}
+        `,
+        html: true,
+        color: 'primary'
+      })
     },
     showParameterHelp (param) {
       this.$q.dialog({

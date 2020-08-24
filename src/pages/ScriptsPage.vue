@@ -396,6 +396,7 @@ export default {
             }
           }, 1000)
         }
+        console.log('Executing command')
         this.$pwsh.shell.invoke().then(output => {
           //  Code block to handle PowerShell return data
           // Stop listening to output, hide progress dialog and reset dialog

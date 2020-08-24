@@ -1,6 +1,6 @@
 {
   "base-module-example": {
-    "version": "0.1.7",
+    "version": "0.1.8",
     "icon": "mdi-powershell",
     "displayName": {
       "default": "Base commands",
@@ -488,6 +488,18 @@
           "default": "https://raw.githubusercontent.com/wiki/houby-studio/lazy-admin/Get-Definition.md",
           "en-us": "https://raw.githubusercontent.com/wiki/houby-studio/lazy-admin/Get-Definition.md"
         },
+        "login": [
+          {
+            "name": "Az",
+            "description": "Azure PowerShell Module",
+            "commandBlock": "Connect-AzAccount"
+          },
+          {
+            "name": "Test",
+            "description": "Test PowerShell Module",
+            "commandBlock": "Connect-AzAccount"
+          }
+        ],
         "parameters": [
           {
             "parameter": "SampleString",
