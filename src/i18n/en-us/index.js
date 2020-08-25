@@ -5,7 +5,7 @@ export default {
   usernameRequired: 'Login username is required!', // Used in: LoginPage.vue
   password: 'Password', // Used in: LoginPage.vue
   passwordRequired: 'Login password is required!', // Used in: LoginPage.vue
-  login: 'Login', // Used in: LoginPage.vue
+  login: 'Login', // Used in: LoginPage.vue, ScriptsPage.vue
   loginSkip: 'Skip', // Used in: LoginPage.vue
   language: 'Language', // Used in: LoginPage.vue
   changeUser: 'Change User', // Used in: LoginPage.vue
@@ -15,7 +15,7 @@ export default {
   pwshMissing: 'Couldn\'t find PowerShell Core, default. Using fallback Windows PowerShell.', // Used in: LoginPage.vue
   wrongUsernameOrPassword: 'Wrong username or password.', // Used in: LoginPage.vue
   foundsavedCredential: 'Found stored credentials for user {usr}.', // Used in: LoginPage.vue
-  failedToLogin: 'Login failed with unknown error.', // Used in: LoginPage.vue
+  failedToLogin: 'Login failed.', // Used in: LoginPage.vue, ScriptsPage.vue
   search: 'Search', // Used in: FullLayout.vue
   history: 'History', // Used in: FullLayout.vue
   visibleGroups: 'Shown commands', // Used in: FullLayout.vue
@@ -61,6 +61,9 @@ export default {
   type: 'Type', // Used in: ScriptsPage.vue
   none: 'None', // Used in: ScriptsPage.vue
   format: 'Format', // Used in: ScriptsPage.vue
+  loginRequired: 'Login to: {name}', // Used in: ScriptsPage.vue
+  loginDone: 'Login again to: {name}', // Used in: ScriptsPage.vue
+  loginSuccesful: 'Login command executed successfully.', // Used in: ScriptsPage.vue
   updateFound: 'Downloading the latest version of Lazy Admin.', // Used in: FullLayout.vue
   updateError: 'Could not download update for Lazy Admin application.', // Used in: FullLayout.vue
   definitionsError: 'Definitions update error.', // Used in: AboutPage.vue

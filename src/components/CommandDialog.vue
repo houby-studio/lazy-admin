@@ -47,13 +47,14 @@
             <q-btn
               v-for="object in currentCommandMaster.login"
               :key="object.name"
-              :label="object.name"
+              :label="$t(onlineCredentials.name ? 'loginDone' : 'loginRequired', { name: object.name })"
               :icon="onlineCredentials.name ? 'mdi-account-check' : 'mdi-login-variant'"
               :color="onlineCredentials.name ? 'green' : 'red'"
               @click="showLoginCommand(object)"
+              class="full-width q-my-sm"
               no-wrap
               no-caps
-            ></q-btn>
+            />
           </div>
           <!-- Workflows only - Previous command parameters -->
           <q-expansion-item
@@ -243,14 +244,39 @@ export default {
       }
     },
     showLoginCommand (object) {
-      // TODO: Finish login command dialog
       this.$q.dialog({
         title: object.name,
-        message: `
-        ${object.description}
-        `,
-        html: true,
-        color: 'primary'
+        message: object.description,
+        color: 'primary',
+        ok: this.$t('login'),
+        cancel: true
+      }).onOk(() => {
+        // Should open external window with login object
+        this.$pwsh.shell.addCommand(object.commandBlock)
+        this.$pwsh.shell.invoke().then(o => {
+          console.log(`Login command for ${object.name} executed succesfully.`)
+          this.$q.notify({
+            timeout: 2000,
+            icon: 'info',
+            multiLine: false,
+            message: this.$t('loginSuccesful'),
+            actions: [
+              { label: this.$t('dismiss'), color: 'primary' }
+            ]
+          })
+        }).catch(e => {
+          console.error(`Attempt to login to ${object.name} failed with error: ${e}`)
+          this.$q.notify({
+            timeout: 5000,
+            multiLine: false,
+            type: 'negative',
+            icon: 'error',
+            message: this.$t('failedToLogin'),
+            actions: [
+              { label: this.$t('dismiss'), color: 'white' }
+            ]
+          })
+        })
       })
     },
     showParameterHelp (param) {

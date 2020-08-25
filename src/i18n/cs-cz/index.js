@@ -5,7 +5,7 @@ export default {
   usernameRequired: 'Zadejte přihlašovací jméno!', // Used in: LoginPage.vue
   password: 'Heslo', // Used in: LoginPage.vue
   passwordRequired: 'Zadejte přihlašovací heslo!', // Used in: LoginPage.vue
-  login: 'Přihlásit', // Used in: LoginPage.vue
+  login: 'Přihlásit', // Used in: LoginPage.vue, ScriptsPage.vue
   loginSkip: 'Přeskočit', // Used in: LoginPage.vue
   language: 'Jazyk', // Used in: LoginPage.vue
   changeUser: 'Jiný uživatel', // Used in: LoginPage.vue
@@ -15,7 +15,7 @@ export default {
   pwshMissing: 'Nelze nalézt PowerShell Core. Používá se záložní Windows PowerShell.', // Used in: LoginPage.vue
   wrongUsernameOrPassword: 'Špatné přihlašovací jméno nebo heslo.', // Used in: LoginPage.vue
   foundsavedCredential: 'Nalezeny přihlašovací údaje pro uživatele {usr}.', // Used in: LoginPage.vue
-  failedToLogin: 'Nepodařilo se přihlásení s neznámou chybou.', // Used in: LoginPage.vue
+  failedToLogin: 'Nepodařilo se přihlášení.', // Used in: LoginPage.vue, ScriptsPage.vue
   search: 'Vyhledat', // Used in: FullLayout.vue
   history: 'Historie', // Used in: FullLayout.vue
   visibleGroups: 'Zobrazované příkazy', // Used in: FullLayout.vue
@@ -61,6 +61,9 @@ export default {
   type: 'Typ', // Used in: ScriptsPage.vue
   none: 'Není', // Used in: ScriptsPage.vue
   format: 'Formát', // Used in: ScriptsPage.vue
+  loginRequired: 'Přihlásit se k: {name}', // Used in: ScriptsPage.vue
+  loginDone: 'Znovu se přihlásit k: {name}', // Used in: ScriptsPage.vue
+  loginSuccesful: 'Příkaz přihlášení úspěšně dokončen.', // Used in: ScriptsPage.vue
   updateFound: 'Stahování nejnovější verze aplikace Lazy Admin.', // Used in: FullLayout.vue
   updateError: 'Nepodařilo se stáhnout aktualizaci aplikace Lazy Admin.', // Used in: FullLayout.vue
   definitionsError: 'Chyba aktualizace definic.', // Used in: AboutPage.vue
