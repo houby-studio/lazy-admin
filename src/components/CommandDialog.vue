@@ -47,9 +47,9 @@
             <q-btn
               v-for="object in currentCommandMaster.login"
               :key="object.name"
-              :label="$t(onlineCredentials.name ? 'loginDone' : 'loginRequired', { name: object.name })"
-              :icon="onlineCredentials.name ? 'mdi-account-check' : 'mdi-login-variant'"
-              :color="onlineCredentials.name ? 'green' : 'red'"
+              :label="$t(loggedInServices[object.name] ? 'loginDone' : 'loginRequired', { name: object.name })"
+              :icon="loggedInServices[object.name] ? 'mdi-account-check' : 'mdi-login-variant'"
+              :color="loggedInServices[object.name] ? 'green' : 'red'"
               @click="showLoginCommand(object)"
               class="full-width q-my-sm"
               no-wrap
@@ -194,7 +194,6 @@ export default {
   },
   data () {
     return {
-      onlineCredentials: {},
       returnParamsPaginate: 1, // In multiple selection workflows allows parameters for each selection
       paramType: { // Table translating PowerShell variable types to Quasar components names and options
         'String': ['q-input', 'text'],
@@ -208,7 +207,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('lazystore', ['getCommandMaximized', 'getDenseInput']),
+    ...mapGetters('lazystore', ['getCommandMaximized', 'getDenseInput', 'getLoggedinServices']),
     commandDialogMaximized: {
       get () {
         return this.getCommandMaximized
@@ -219,6 +218,14 @@ export default {
     },
     denseInput: function () {
       return this.getDenseInput
+    },
+    loggedInServices: {
+      get () {
+        return this.getLoggedinServices
+      },
+      set (val) {
+        this.$store.dispatch('lazystore/setLoggedinServices', val)
+      }
     },
     localValue: {
       get () {
@@ -254,6 +261,11 @@ export default {
         // Should open external window with login object
         this.$pwsh.shell.addCommand(object.commandBlock)
         this.$pwsh.shell.invoke().then(o => {
+          // Set service as logged in
+          // TODO: Move logic to vuex, actions, add clear on powershell restart and application restart
+          let temp = {}
+          temp[object.name] = true
+          this.loggedInServices = Object.assign({}, this.loggedInServices, temp)
           console.log(`Login command for ${object.name} executed succesfully.`)
           this.$q.notify({
             timeout: 2000,

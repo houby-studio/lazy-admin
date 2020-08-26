@@ -122,3 +122,8 @@ export async function setCredentialsSaved ({ commit }, saved) {
 export async function setDisplayProgress ({ commit }, showProgress) {
   commit('SET_DISPLAYPROGRESS', showProgress)
 }
+
+// Commit mutation to set object of logged in services - Accessed in ScriptsPage.vue
+export async function setLoggedinServices ({ commit }, loggedInServices) {
+  commit('SET_LOGGEDINSERVICES', loggedInServices)
+}

@@ -91,3 +91,7 @@ export const SET_CREDENTIALSSAVED = (state, value) => {
 export const SET_DISPLAYPROGRESS = (state, value) => {
   state.display_progress = value
 }
+
+export const SET_LOGGEDINSERVICES = (state, value) => {
+  state.loggedin_services = value
+}

@@ -1,6 +1,6 @@
 {
   "base-module-example": {
-    "version": "0.1.8",
+    "version": "0.1.9",
     "icon": "mdi-powershell",
     "displayName": {
       "default": "Base commands",
@@ -497,7 +497,7 @@
           {
             "name": "Test",
             "description": "Test PowerShell Module",
-            "commandBlock": "Connect-AzAccount"
+            "commandBlock": "Get-Location"
           }
         ],
         "parameters": [

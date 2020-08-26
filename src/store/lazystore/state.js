@@ -22,6 +22,7 @@ export default function () {
     dense_table: true, // Should tables be dense or not
     login_skipped: false, // Was login skipped or not
     credentials_saved: false, // Are Login credentials saved or not
-    display_progress: false // Is progress dialog displayed or not
+    display_progress: false, // Is progress dialog displayed or not
+    loggedin_services: {} // Holds names of logged in services for current PowerShell session
   }
 }

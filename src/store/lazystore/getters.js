@@ -82,6 +82,10 @@ export function getDisplayProgress (state) {
   return state.display_progress
 }
 
+export function getLoggedinServices (state) {
+  return state.loggedin_services
+}
+
 // Dynamically build array of scripts to display in ScriptsPage.vue page
 export function getScriptsArray (state) {
   try {
