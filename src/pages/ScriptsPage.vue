@@ -199,6 +199,8 @@ export default {
         })
         // Stop listening to output, hide progress dialog and reset dialog
         this.stopProgress()
+        // Delete logged in services
+        this.$store.dispatch('lazystore/clearLoggedinServices')
         // Kill current powershell proccess
         childProcess.exec(`taskkill /f /pid ${this.$pwsh.shell.pid}`, (error, stdout, stderr) => {
           if (error) {

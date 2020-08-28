@@ -92,6 +92,10 @@ export const SET_DISPLAYPROGRESS = (state, value) => {
   state.display_progress = value
 }
 
-export const SET_LOGGEDINSERVICES = (state, value) => {
+export const ADD_LOGGEDINSERVICES = (state, value) => {
+  state.loggedin_services = Object.assign({}, state.loggedin_services, value)
+}
+
+export const CLEAR_LOGGEDINSERVICES = (state, value) => {
   state.loggedin_services = value
 }

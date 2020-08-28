@@ -224,7 +224,7 @@ export default {
         return this.getLoggedinServices
       },
       set (val) {
-        this.$store.dispatch('lazystore/setLoggedinServices', val)
+        this.$store.dispatch('lazystore/addLoggedinServices', val)
       }
     },
     localValue: {

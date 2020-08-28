@@ -267,6 +267,8 @@ export default {
     this.login = throttle(this.login, 800)
     this.skipLogin = throttle(this.skipLogin, 800)
     console.log(`Application started by user ${this.$q.electron.remote.process.env.USERDOMAIN}\\${this.$q.electron.remote.process.env.USERNAME} on computer ${this.$q.electron.remote.process.env.COMPUTERNAME}`)
+    // Delete logged in services
+    this.$store.dispatch('lazystore/clearLoggedinServices')
     // Try to load saved credentials from Credential Manager
     this.$pwsh.shell.addCommand(GetSavedCredentials)
     setTimeout(() => {
