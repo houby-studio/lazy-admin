@@ -70,6 +70,10 @@ Possible values for definitions file:
     * friendlyName: provided in languages you want to support, this is displayed to user to get better idea what the command might do
     * description: provided in languages you want to support, this is displayed to user to best describe what the command might do
     * help: provided in languages you want to support, this is displayed to user when clicked on help icon. (url to http)
+    * login: array of online services, which are required for current command
+      * name: Preferably name of the Module or service, which is called with this command
+      * description: provided in languages you want to support, this is what user sees on side panel below displayName when filtering commands based on definitions/modules
+      * commandBlock: String containing Cmdlet or function
     * parameters: array of parameters, which user is supposed to fill
     * commandBlock: String containing Cmdlet or function and parameters enclosed in {{double curly braces}}
     * workflow: array of commands, when you need to run multiple commands sequentially, passing results from previous ones or asking for another user input in between

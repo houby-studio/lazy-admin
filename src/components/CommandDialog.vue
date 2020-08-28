@@ -263,6 +263,7 @@ export default {
         this.$pwsh.shell.invoke().then(o => {
           // Set service as logged in
           // TODO: Move logic to vuex, actions, add clear on powershell restart and application restart
+          // TODO: Add languages to description for login command
           let temp = {}
           temp[object.name] = true
           this.loggedInServices = Object.assign({}, this.loggedInServices, temp)
