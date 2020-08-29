@@ -18,4 +18,4 @@ Alternatively if installing on local computer copy to C:\Windows\PolicyDefinitio
 Yes, we are lazy admins too, so we store command to migrate ADM to ADMX in git repo to save time.  
 It may be useful to you if you need to modify our policies.
 
-`"%PROGRAMFILES(x86)%\FullArmor\ADMX Migrator\faAdmxConv.exe" "C:\git\lazy-admin\admx\adm\LazyAdmin.adm" "C:\git\lazy-admin\admx"`
+`"%PROGRAMFILES(x86)%\FullArmor\ADMX Migrator\faAdmxConv.exe" "C:\git\lazy-admin\policies\adm\LazyAdmin.adm" "C:\git\lazy-admin\policies\admx"`

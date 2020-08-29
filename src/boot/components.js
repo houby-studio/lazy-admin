@@ -9,6 +9,7 @@ import ResultsDialog from 'components/ResultsDialog.vue'
 import ExecuteDialog from 'components/ExecuteDialog.vue'
 import CommandDialog from 'components/CommandDialog.vue'
 import ScriptsTable from 'components/ScriptsTable.vue'
+import LanguagePicker from 'components/LanguagePicker.vue'
 
 // add components to Vue
 export default async ({ Vue }) => {
@@ -22,4 +23,5 @@ export default async ({ Vue }) => {
   Vue.component('ExecuteDialog', ExecuteDialog)
   Vue.component('CommandDialog', CommandDialog)
   Vue.component('ScriptsTable', ScriptsTable)
+  Vue.component('LanguagePicker', LanguagePicker)
 }

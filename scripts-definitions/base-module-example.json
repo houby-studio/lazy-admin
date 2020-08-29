@@ -1,16 +1,18 @@
 {
   "base-module-example": {
-    "version": "0.1.9",
+    "version": "0.2.0",
     "icon": "mdi-powershell",
     "displayName": {
       "default": "Base commands",
       "en-us": "Base commands",
-      "cs-cz": "Základní příkazy"
+      "cs-cz": "Základní příkazy",
+      "de-de": "Basisbefehle"
     },
     "description": {
       "default": "General purpose commands",
       "en-us": "General purpose commands",
-      "cs-cz": "Příkazy pro obecné použití"
+      "cs-cz": "Příkazy pro obecné použití",
+      "de-de": "Allzweckbefehle"
     },
     "definition": [
       {
@@ -491,12 +493,20 @@
         "login": [
           {
             "name": "Az",
-            "description": "Azure PowerShell Module",
+            "description": {
+              "default": "Azure PowerShell module",
+              "en-us": "Azure PowerShell module",
+              "cs-cz": "Azure PowerShell modul"
+            },
             "commandBlock": "Connect-AzAccount"
           },
           {
             "name": "Test",
-            "description": "Test PowerShell Module",
+            "description": {
+              "default": "Test login, doesn't really log to any service.",
+              "en-us": "Test login, doesn't really log to any service.",
+              "cs-cz": "Testovací přihlášení, nikam se nepřihlašuje."
+            },
             "commandBlock": "Get-Location"
           }
         ],

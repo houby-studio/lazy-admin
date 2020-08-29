@@ -2,6 +2,10 @@ export const SET_LANGUAGE = (state, value) => {
   state.language = value
 }
 
+export const SET_CUSTOMLANGUAGE = (state, value) => {
+  state.custom_language = value
+}
+
 export const SET_SEARCHSCRIPTS = (state, value) => {
   state.search_scripts = value
 }
@@ -69,7 +73,7 @@ export const SET_HISTORYVISIBLE = (state, value) => {
 
 export const SET_HISTORY = (state, value) => {
   state.history.unshift(value)
-  // state.history.splice(state.history_length) // to trim array to max length
+  state.history.splice(state.history_length)
 }
 
 export const SET_DENSEINPUT = (state, value) => {
@@ -98,4 +102,12 @@ export const ADD_LOGGEDINSERVICES = (state, value) => {
 
 export const CLEAR_LOGGEDINSERVICES = (state, value) => {
   state.loggedin_services = value
+}
+
+export const SET_LOGCOMMAND = (state, value) => {
+  state.log_command = value
+}
+
+export const SET_LOGRESULT = (state, value) => {
+  state.log_result = value
 }

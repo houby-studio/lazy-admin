@@ -1,0 +1,12 @@
+{
+  "de-de": {
+    "languageName": "Deutsch",
+    "username": "Nutzername",
+    "usernameRequired": "Login Benutzername ist erforderlich!",
+    "password": "Passwort",
+    "passwordRequired": "Login Passwort ist erforderlich!",
+    "login": "Login",
+    "loginSkip": "Überspringen",
+    "language": "Sprache"
+  }
+}

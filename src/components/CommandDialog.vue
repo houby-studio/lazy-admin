@@ -253,20 +253,18 @@ export default {
     showLoginCommand (object) {
       this.$q.dialog({
         title: object.name,
-        message: object.description,
+        message: object.description ? object.description[this.language] || object.description['default'] : this.$t('noDescription'),
         color: 'primary',
         ok: this.$t('login'),
-        cancel: true
+        cancel: this.$t('cancel')
       }).onOk(() => {
         // Should open external window with login object
         this.$pwsh.shell.addCommand(object.commandBlock)
         this.$pwsh.shell.invoke().then(o => {
           // Set service as logged in
-          // TODO: Move logic to vuex, actions, add clear on powershell restart and application restart
-          // TODO: Add languages to description for login command
           let temp = {}
           temp[object.name] = true
-          this.loggedInServices = Object.assign({}, this.loggedInServices, temp)
+          this.loggedInServices = temp
           console.log(`Login command for ${object.name} executed succesfully.`)
           this.$q.notify({
             timeout: 2000,

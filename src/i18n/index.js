@@ -1,7 +1,9 @@
 import enUS from './en-us'
 import csCZ from './cs-cz'
 
-export default {
+let languages = {
   'en-us': enUS,
   'cs-cz': csCZ
 }
+
+export default languages

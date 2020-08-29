@@ -142,6 +142,7 @@
         </q-item>
 
         <q-item
+          v-if="prod !== 'production'"
           @click="showDebugWindow"
           active-class="dark"
           clickable
@@ -317,6 +318,45 @@
                 />
               </div>
             </div>
+            <div class="row text-center">
+              <div class="col-xs-12 col-sm-6 col-md-3">
+                <q-btn
+                  @click="debugUpdateCustomLanguage"
+                  color="primary"
+                  label="Update custom language"
+                  style="width: 90%"
+                  class="q-mb-sm"
+                  no-wrap
+                />
+              </div>
+              <div class="col-xs-12 col-sm-6 col-md-3">
+                <q-btn
+                  color="primary"
+                  label="-"
+                  style="width: 90%"
+                  class="q-mb-sm"
+                  no-wrap
+                />
+              </div>
+              <div class="col-xs-12 col-sm-6 col-md-3">
+                <q-btn
+                  color="primary"
+                  label="-"
+                  style="width: 90%"
+                  class="q-mb-sm"
+                  no-wrap
+                />
+              </div>
+              <div class="col-xs-12 col-sm-6 col-md-3">
+                <q-btn
+                  color="primary"
+                  label="-"
+                  style="width: 90%"
+                  class="q-mb-sm"
+                  no-wrap
+                />
+              </div>
+            </div>
             <!-- TOOLS RELATED TO APP NAVIGATION -->
             <q-toolbar-title class="q-px-none">
               <q-icon name="navigation" /> Control
@@ -401,11 +441,12 @@ export default {
     return {
       left: false, // Controls visibility of side menu
       loadToolBar: false, // Toolbar starts as hidden (false state), on 'created', animation 'animateToolBar' starts transform and displays toolbar
-      displayDebugWindow: false // Controls visibility of debug window
+      displayDebugWindow: false, // Controls visibility of debug window
+      prod: process.env.NODE_ENV // Show debug button only in non production build
     }
   },
   computed: {
-    ...mapGetters('lazystore', ['getLanguage', 'getMenuEntries', 'getSearchScripts', 'getSearchHistory', 'getMasterDefinition', 'getDefinitions', 'getDefinitionsUpdateInProgress', 'getRestartRequired', 'getUpdateDate', 'getUpdateInProgress', 'getUpdateProgress', 'getHistoryVisible']),
+    ...mapGetters('lazystore', ['getLanguage', 'getMenuEntries', 'getSearchScripts', 'getSearchHistory', 'getMasterDefinition', 'getDefinitions', 'getDefinitionsUpdateInProgress', 'getRestartRequired', 'getUpdateDate', 'getUpdateInProgress', 'getUpdateProgress', 'getCustomLanguage', 'getHistoryVisible']),
     animateToolBar: function () {
       // Toolbar starts as hidden (false state), on 'created', animation 'animateToolBar' starts transform and displays toolbar
       return this.loadToolBar ? 'animated slideInDown' : 'hidden'
@@ -504,6 +545,14 @@ export default {
         this.$store.dispatch('lazystore/setUpdateProgress', val)
       }
     },
+    customLanguage: {
+      get () {
+        return this.getCustomLanguage
+      },
+      set (val) {
+        this.$store.dispatch('lazystore/setCustomLanguage', val)
+      }
+    },
     historyVisible: {
       get () {
         return this.getHistoryVisible
@@ -577,7 +626,7 @@ export default {
         }
         console.debug('Found master definition URL: ', masterDefinitionUrl)
         // Download JSON definition from URL
-        this.$utils.downloadDefinitions(masterDefinitionUrl, (error, masterDefinitionResponse) => {
+        this.$utils.downloadUrl(masterDefinitionUrl, (error, masterDefinitionResponse) => {
           if (error) {
             console.error(error)
             this.$utils.emit('master-check-error')
@@ -613,7 +662,7 @@ export default {
       console.debug('Update of scripts definitions started.')
       for (let updateUrl of this.masterDefinition.definitionsUrl) {
         console.debug(`Downloading definitions from URL: ${updateUrl}`)
-        this.$utils.downloadDefinitions(updateUrl, (error, definitionsResponse) => {
+        this.$utils.downloadUrl(updateUrl, (error, definitionsResponse) => {
           if (error) {
             console.error(error)
             this.$utils.emit('definitions-check-error')
@@ -687,6 +736,18 @@ export default {
     debugClearUpdateDate () {
       console.log('DEBUG function: Clearing last update date.')
       this.updateDate = ''
+    },
+
+    debugUpdateCustomLanguage () {
+      console.log('DEBUG function: Updating custom language.')
+      this.$utils.getRegLanguage((e, result) => {
+        this.$utils.downloadUrl(result, (e, definition) => {
+          // Save downloaded language to vuex, so it is accessible even when update fails
+          this.customLanguage = definition.data
+          let language = Object.keys(this.customLanguage)[0]
+          this.$i18n.setLocaleMessage(language, this.customLanguage[language])
+        })
+      })
     }
   },
   created: function () {

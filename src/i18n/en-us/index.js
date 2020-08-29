@@ -1,6 +1,7 @@
 // English language
 
 export default {
+  languageName: 'English', // Used in: LoginPage.vue
   username: 'Username', // Used in: LoginPage.vue
   usernameRequired: 'Login username is required!', // Used in: LoginPage.vue
   password: 'Password', // Used in: LoginPage.vue
@@ -34,7 +35,7 @@ export default {
   repeat: 'Repeat', // Used in: ScriptsPage.vue
   cancel: 'Cancel', // Used in: ScriptsPage.vue
   reset: 'Reset', // Used in: ScriptsPage.vue
-  resultsTitle: `{commandName}: Results`, // Used in: ScriptsPage.vue
+  resultsTitle: '{commandName}: Results', // Used in: ScriptsPage.vue
   powershellNoOutput: 'PowerShell did not return any value.', // Used in: ScriptsPage.vue
   exportCsv: 'Export to CSV', // Used in: ScriptsPage.vue
   copyClipboard: 'Copy to clipboard', // Used in: ScriptsPage.vue
@@ -72,6 +73,9 @@ export default {
   denseInput: 'Display input parameters in dense layout.', // Used in: SettingsPage.vue
   denseTable: 'Display tables in dense layout.', // Used in: SettingsPage.vue
   displayProgress: 'Always display script progress.', // Used in: SettingsPage.vue
+  historyLength: 'Number of commands in history', // Used in: SettingsPage.vue
+  logCommand: 'Log executed commands', // Used in: SettingsPage.vue
+  logResult: 'Log command results', // Used in: SettingsPage.vue
   autoClipboard: 'Automatically store command results to clipboard.', // Used in: SettingsPage.vue
   masterDefinition: 'Master definition', // Used in: AboutPage.vue
   update: 'Update', // Used in: AboutPage.vue

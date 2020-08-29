@@ -46,7 +46,25 @@ const utils = {
       }
     })
   },
-  downloadDefinitions (downloadUrl, done) {
+  getRegLanguage (done) {
+    // Attempt to retrieve registry value containing custom language url
+    regedit.list('HKLM\\SOFTWARE\\LazyAdmin', function (err, result) {
+      if (err) {
+        return done(Error('Custom language fetch failed. Could not locate LazyAdmin registry hive.'))
+      }
+      try {
+        let langUrl = result['HKLM\\SOFTWARE\\LazyAdmin'].values['CustomLanguageUrl'].value
+        if (langUrl) {
+          return done(null, langUrl)
+        } else {
+          return done(Error('Custom language fetch failed. CustomLanguageUrl registry key has no value.'))
+        }
+      } catch {
+        return done(Error('Custom language update failed. Could not read CustomLanguageUrl registry key value.'))
+      }
+    })
+  },
+  downloadUrl (downloadUrl, done) {
     if (fs.existsSync(downloadUrl)) {
       fs.readFile(downloadUrl, { encoding: 'utf-8' }, function (e, data) {
         if (e) {

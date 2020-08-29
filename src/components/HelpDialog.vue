@@ -56,7 +56,7 @@ export default {
       this.externalHelpFile = this.$t('loadingHelp')
       if (this.currentCommand.help) {
         let helpUrl = this.currentCommand.help[this.language] ? this.currentCommand.help[this.language] : this.currentCommand.help.default
-        this.$utils.downloadDefinitions(helpUrl, (err, result) => {
+        this.$utils.downloadUrl(helpUrl, (err, result) => {
           if (err) {
             this.externalHelpFile = this.$t('externalHelpNotFound', { helpUrl: helpUrl })
             return

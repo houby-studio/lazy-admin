@@ -1,6 +1,7 @@
 // Czech language
 
 export default {
+  languageName: 'Česky', // Used in: LoginPage.vue
   username: 'Uživatel', // Used in: LoginPage.vue
   usernameRequired: 'Zadejte přihlašovací jméno!', // Used in: LoginPage.vue
   password: 'Heslo', // Used in: LoginPage.vue
@@ -15,7 +16,7 @@ export default {
   pwshMissing: 'Nelze nalézt PowerShell Core. Používá se záložní Windows PowerShell.', // Used in: LoginPage.vue
   wrongUsernameOrPassword: 'Špatné přihlašovací jméno nebo heslo.', // Used in: LoginPage.vue
   foundsavedCredential: 'Nalezeny přihlašovací údaje pro uživatele {usr}.', // Used in: LoginPage.vue
-  failedToLogin: 'Nepodařilo se přihlášení.', // Used in: LoginPage.vue, ScriptsPage.vue
+  failedToLogin: 'Přihlášení se nezdařilo.', // Used in: LoginPage.vue, ScriptsPage.vue
   search: 'Vyhledat', // Used in: FullLayout.vue
   history: 'Historie', // Used in: FullLayout.vue
   visibleGroups: 'Zobrazované příkazy', // Used in: FullLayout.vue
@@ -34,7 +35,7 @@ export default {
   repeat: 'Opakovat', // Used in: ScriptsPage.vue
   cancel: 'Zrušit', // Used in: ScriptsPage.vue
   reset: 'Resetovat', // Used in: ScriptsPage.vue
-  resultsTitle: `{commandName}: Výsledek`, // Used in: ScriptsPage.vue
+  resultsTitle: '{commandName}: Výsledek', // Used in: ScriptsPage.vue
   powershellNoOutput: 'PowerShell nevrátil žádnou hodnotu.', // Used in: ScriptsPage.vue
   exportCsv: 'Exportovat do CSV', // Used in: ScriptsPage.vue
   copyClipboard: 'Zkopírovat do schránky', // Used in: ScriptsPage.vue
@@ -54,7 +55,7 @@ export default {
   loadingHelp: 'Načítání nápovědy, prosím vyčkejte...', // Used in: ScriptsPage.vue
   externalHelpNotFound: 'Nápovědu se nepodařilo načíst.\r\nURL nápovědy: {helpUrl}', // Used in: ScriptsPage.vue
   noExternalHelp: 'Pro tento příkaz neexistuje externí nápověda.\r\nMístní nápověda: {description}', // Used in: ScriptsPage.vue
-  noDescription: 'Není vyplněna.', // Used in: ScriptsPage.vue
+  noDescription: 'Není vyplněno.', // Used in: ScriptsPage.vue
   csvExportError: 'Nepodařilo se uložit výsledky do CSV souboru.', // Used in: ScriptsPage.vue
   yes: 'Ano', // Used in: ScriptsPage.vue
   no: 'Ne', // Used in: ScriptsPage.vue
@@ -72,6 +73,9 @@ export default {
   denseInput: 'Zobrazovat vstupní parametry v těsném rozložení.', // Used in: SettingsPage.vue
   denseTable: 'Zobrazovat tabulky v těsném rozložení.', // Used in: SettingsPage.vue
   displayProgress: 'Vždy zobrazovat průběh skriptu.', // Used in: SettingsPage.vue
+  historyLength: 'Počet příkazů v historii', // Used in: SettingsPage.vue
+  logCommand: 'Logovat spouštěné příkazy', // Used in: SettingsPage.vue
+  logResult: 'Logovat výsledky příkazů', // Used in: SettingsPage.vue
   masterDefinition: 'Hlavní definice', // Used in: AboutPage.vue
   update: 'Aktualizovat', // Used in: AboutPage.vue
   restartRequired: 'Vyžadován restart.', // Used in: AboutPage.vue

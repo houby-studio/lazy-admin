@@ -89,15 +89,7 @@
           </q-card-actions>
         </q-form>
       </q-card>
-      <q-select
-        v-model="language"
-        :options="langOptions"
-        :label="$t('language')"
-        borderless
-        emit-value
-        map-options
-        style="min-width: 150px"
-      />
+      <language-picker />
     </div>
   </q-page>
 </template>
@@ -117,27 +109,15 @@ export default {
       loginButtonDisabled: false,
       showSkipLogin: false,
       shakeUsername: false,
-      isPwd: true,
-      langOptions: [
-        { value: 'en-us', label: 'English' },
-        { value: 'cs-cz', label: 'Česky' }
-      ]
+      isPwd: true
     }
   },
   computed: {
-    ...mapGetters('lazystore', ['getLanguage', 'getLoginSkipped', 'getCredentialsSaved']),
+    ...mapGetters('lazystore', ['getLoginSkipped', 'getCredentialsSaved']),
     shake: {
       get () {
         // Add classes to trigger animations on username field when username is found in credential store
         return this.shakeUsername ? 'animated pulse delay-fix' : ''
-      }
-    },
-    language: {
-      get () {
-        return this.getLanguage
-      },
-      set (val) {
-        this.$store.dispatch('lazystore/setLanguage', val)
       }
     },
     loginSkipped: {
@@ -255,12 +235,6 @@ export default {
       }
     }
   },
-  watch: {
-    language (language) {
-      // When language is changed in store, update locale
-      this.$i18n.locale = language
-    }
-  },
   created: function () {
     this.$q.loading.show()
     // Insert throttle to button functions
@@ -333,14 +307,6 @@ export default {
 </script>
 
 <style>
-/* How to set custom transition */
-/* .fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s;
-}
-.fade-enter, .fade-leave-to {
-  opacity: 0;
-} */
 .delay-fix {
   /* If we want to make animation longer, add class to  enter/leave-active-class */
   animation-duration: 1s !important;

@@ -1,0 +1,40 @@
+;Configure Lazy Admin application
+;Created by Houby-Studio
+;Last Update 2020-08-29
+;ADMX Migrator: https://www.microsoft.com/en-us/download/details.aspx?id=15058
+;After making changes, run command 
+;"%PROGRAMFILES(x86)%\FullArmor\ADMX Migrator\faAdmxConv.exe" "{pathToAdm}\LazyAdmin.adm" "{pathToAdmx}"
+CLASS MACHINE
+
+CATEGORY "Lazy Admin"
+    POLICY !!MasterDefinitionUrlPolicy
+        KEYNAME "Software\LazyAdmin"
+        SUPPORTED !!MasterDefinitionUrlSupported
+            EXPLAIN !!MasterDefinitionUrlExplain
+            PART !!MasterDefinitionUrlPathText TEXT
+            END PART
+            PART "Url:" EDITTEXT REQUIRED
+            VALUENAME "MasterDefinitionUrl"
+            END PART
+    END POLICY
+    POLICY !!CustomLanguageUrlPolicy
+        KEYNAME "Software\LazyAdmin"
+        SUPPORTED !!CustomLanguageUrlSupported
+            EXPLAIN !!CustomLanguageUrlExplain
+            PART !!CustomLanguageUrlPathText TEXT
+            END PART
+            PART "Url:" EDITTEXT REQUIRED
+            VALUENAME "CustomLanguageUrl"
+            END PART
+    END POLICY
+END CATEGORY
+ 
+[strings]
+MasterDefinitionUrlPolicy="Scripts Definition URL"
+MasterDefinitionUrlPathText="Specify full URL path to your definitions file."
+MasterDefinitionUrlSupported="Windows Vista and above"
+MasterDefinitionUrlExplain="Full URL Path to scripts definition in JSON format for Lazy Admin.\n\nExample: https://raw.githubusercontent.com/houby-studio/lazy-admin/master/scripts-definitions/definition-lazy-admin-base.json\n\nExample: \\fileserver.local\share\definition-lazy-admin-base.json\n\nNote: You should create your own definitions file and point your administrators to it to use all your company's PowerShell Cmdlets in Lazy Admin.\n\nIf you enable this policy, the URL you specify will be used by Lazy Admin to download latest definitions.\n\nIf you disable this policy, Lazy Admin won't be able to download any definitions.\n\nIf you do not configure this policy, user has to configure definitions URL manually or use default example URL.\n\nYou can read more about Lazy Admin policies by visiting the following URL: https://github.com/houby-studio/lazy-admin/wiki"
+CustomLanguageUrlPolicy="Custom Language URL"
+CustomLanguageUrlPathText="Specify full URL path to your custom translation file."
+CustomLanguageUrlSupported="Windows Vista and above"
+CustomLanguageUrlExplain="Full URL Path to custom translation in JSON format for Lazy Admin.\n\nExample: https://raw.githubusercontent.com/houby-studio/lazy-admin/master/src/i18n/custom-language.json\n\nExample: \\fileserver.local\share\custom-language.json\n\nNote: You should create your translation file if you want to use language, which is not provided with Lazy Admin. Feel free to provide us with your translation and we will include it in next version.\n\nIf you enable this policy, the URL you specify will be used by Lazy Admin to download custom translation.\n\nIf you disable or do not configure this policy, Lazy Admin won't download custom languages.\n\nYou can read more about Lazy Admin custom translation by visiting the following URL: https://github.com/houby-studio/lazy-admin/wiki"

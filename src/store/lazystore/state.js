@@ -1,6 +1,7 @@
 export default function () {
   return {
     language: 'en-us', // Handles application language - Changeable on logon screen
+    custom_language: {}, // Holds application custom language, which may be loaded via registry url
     search_scripts: '', // Holds search string value
     search_history: '', // Holds search string value
     scripts_filter: [], // Holds current filter for scripts table
@@ -15,7 +16,7 @@ export default function () {
     restart_required: false, // Is application restart required? (To install updates)
     update_progress: '', // Update Progress message
     always_confirm: false, // Should confirmation dialog be always displayed regardless script definition
-    history_length: 100, // How many commands should be saved
+    history_length: 25, // How many commands should be saved
     history_visible: false, // Is history dialog window visible?
     history: [], // Array holding previous commands
     dense_input: false, // Should input be dense or not
@@ -23,6 +24,8 @@ export default function () {
     login_skipped: false, // Was login skipped or not
     credentials_saved: false, // Are Login credentials saved or not
     display_progress: false, // Is progress dialog displayed or not
-    loggedin_services: {} // Holds names of logged in services for current PowerShell session
+    loggedin_services: {}, // Holds names of logged in services for current PowerShell session
+    log_command: false, // Should command be logged to console and log file
+    log_result: false // Should result be logged to console and log file
   }
 }

@@ -22,12 +22,33 @@ Pokud nastavení této zásady zakážete, Lazy Admin nebude schopen žádné de
 Pokud nastavení této zásady nenakonfigurujete, uživatel bude muset URL vyplnit manuálně nebo se použije ukázková URL.
 
 O aplikaci Lazy Admin se můžete dočíst více na URL adrese: https://github.com/houby-studio/lazy-admin/wiki</string>
+      <string id="CustomLanguageUrlPolicy">URL vlastního jazyka</string>
+      <string id="CustomLanguageUrlPathText">Zadejte plnou URL cestu k souboru s vlastním překladem.</string>
+      <string id="CustomLanguageUrlSupported">Minimálně Windows Vista</string>
+      <string id="CustomLanguageUrlExplain">Plná URL Cesta k vlastními překladu ve formátu JSON pro Lazy Admina.
+
+Příklad: https://raw.githubusercontent.com/houby-studio/lazy-admin/master/src/i18n/custom-language.json
+Příklad: \\fileserver.local\share\custom-language.json
+
+Poznámka: Vytvořit vlastní soubor překladů můžete v případě, pokud chcete používat jazyk, který není součástí Lazy Admina. Pokud vytvoříte nějaký překlad, zašlete nám jej prosím a my jej zahrneme v další verzi.
+
+Pokud nastavení této zásady povolíte, zadaná URL adresa bude použita aplikací Lazy Admin ke stažení vlastního překladu.
+
+Pokud nastavení této zásady zakážete nebo nenakonfigurujete, Lazy Admin nestáhne žádné vlastní překlady.
+
+O aplikaci Lazy Admin se můžete dočíst více na URL adrese: https://github.com/houby-studio/lazy-admin/wiki</string>
       <string id="ADMXMigrator_UnresolvedString">ADMX Migrator encountered a string that is not present in the source ADM string table.</string>
       <string id="ADMXMigrator_NoSupportedOn">ADMX Migrator encountered a policy that does not have a supportedOn value.</string>
     </stringTable>
     <presentationTable>
       <presentation id="MasterDefinitionUrlPolicy">
         <text>Zadejte plnou URL cestu k vašemu souboru definicí.</text>
+        <textBox refId="Url">
+          <label>Url:</label>
+        </textBox>
+      </presentation>
+      <presentation id="CustomLanguageUrlPolicy">
+        <text>Zadejte plnou URL cestu k vašemu souboru s vlastním překladem.</text>
         <textBox refId="Url">
           <label>Url:</label>
         </textBox>

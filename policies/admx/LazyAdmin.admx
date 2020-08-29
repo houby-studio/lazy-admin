@@ -1,14 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <policyDefinitions revision="1.0" schemaVersion="1.0">
   <policyNamespaces>
-    <target prefix="fullarmor" namespace="FullArmor.97b05ae5-486a-4252-90d2-76fdd32b4233" />
+    <target prefix="fullarmor" namespace="FullArmor.97e185f4-faf3-4141-891f-450c67c9bf59" />
     <using prefix="windows" namespace="Microsoft.Policies.Windows" />
   </policyNamespaces>
-  <supersededAdm fileName="LazyAdmin.adm" />
+  <supersededAdm fileName="C:\git\lazy-admin\admx\adm\LazyAdmin.adm" />
   <resources minRequiredRevision="1.0" />
   <supportedOn>
     <definitions>
       <definition name="MasterDefinitionUrlSupported" displayName="$(string.MasterDefinitionUrlSupported)" />
+      <definition name="CustomLanguageUrlSupported" displayName="$(string.CustomLanguageUrlSupported)" />
       <definition name="SUPPORTED_NotSpecified" displayName="$(string.ADMXMigrator_NoSupportedOn)" />
     </definitions>
   </supportedOn>
@@ -21,6 +22,13 @@
       <supportedOn ref="MasterDefinitionUrlSupported" />
       <elements>
         <text id="Url" valueName="MasterDefinitionUrl" required="true" />
+      </elements>
+    </policy>
+    <policy name="CustomLanguageUrlPolicy" class="Machine" displayName="$(string.CustomLanguageUrlPolicy)" explainText="$(string.CustomLanguageUrlExplain)" presentation="$(presentation.CustomLanguageUrlPolicy)" key="Software\LazyAdmin">
+      <parentCategory ref="LazyAdmin" />
+      <supportedOn ref="CustomLanguageUrlSupported" />
+      <elements>
+        <text id="Url" valueName="CustomLanguageUrl" required="true" />
       </elements>
     </policy>
   </policies>

@@ -5,9 +5,10 @@ import messages from 'src/i18n'
 Vue.use(VueI18n)
 
 const i18n = new VueI18n({
-  language: 'cs-cz',
+  language: 'en-us',
   fallbackLocale: 'en-us',
-  messages
+  messages,
+  silentTranslationWarn: true
 })
 
 export default ({ app, store }) => {

@@ -2,6 +2,10 @@ export function getLanguage (state) {
   return state.language
 }
 
+export function getCustomLanguage (state) {
+  return state.custom_language
+}
+
 export function getSearchScripts (state) {
   return state.search_scripts
 }
@@ -84,6 +88,14 @@ export function getDisplayProgress (state) {
 
 export function getLoggedinServices (state) {
   return state.loggedin_services
+}
+
+export function getLogCommand (state) {
+  return state.log_command
+}
+
+export function getLogResult (state) {
+  return state.log_result
 }
 
 // Dynamically build array of scripts to display in ScriptsPage.vue page

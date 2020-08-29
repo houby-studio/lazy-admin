@@ -4,6 +4,10 @@ export async function setLanguage ({ commit }, language) {
   commit('SET_LANGUAGE', language)
 }
 
+export async function setCustomLanguage ({ commit }, language) {
+  commit('SET_CUSTOMLANGUAGE', language)
+}
+
 // Commit mutation to update search field - Accessed in FullLayout.vue
 export async function setSearchScripts ({ commit }, searchText) {
   commit('SET_SEARCHSCRIPTS', searchText)
@@ -90,11 +94,6 @@ export async function setHistoryVisible ({ commit }, historyVisible) {
 
 // Commit mutation to set history - Accessed in ScriptsPage.vue
 export async function setHistory ({ commit, state }, history) {
-  // const newHistory = state.history
-  // newHistory.unshift(history)
-  // if (newHistory.length > this.historyLength) {
-  //   newHistory.length = this.historyLength
-  // }
   commit('SET_HISTORY', history)
 }
 
@@ -131,4 +130,14 @@ export async function addLoggedinServices ({ commit }, loggedInServices) {
 // Commit mutation to clear logged in services - Accessed in ScriptsPage.vue
 export async function clearLoggedinServices ({ commit }) {
   commit('CLEAR_LOGGEDINSERVICES', {})
+}
+
+// Commit mutation to set whether command is logged or not - Accessed in SettingsPage.vue
+export async function setLogCommand ({ commit }, log) {
+  commit('SET_LOGCOMMAND', log)
+}
+
+// Commit mutation to set whether result is logged or not - Accessed in SettingsPage.vue
+export async function setLogResult ({ commit }, log) {
+  commit('SET_LOGRESULT', log)
 }

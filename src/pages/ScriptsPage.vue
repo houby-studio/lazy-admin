@@ -81,7 +81,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('lazystore', ['getLanguage', 'getAlwaysConfirm', 'getHistoryLength', 'getHistoryVisible', 'getHistory', 'getLoginSkipped', 'getCredentialsSaved', 'getDisplayProgress']),
+    ...mapGetters('lazystore', ['getLanguage', 'getAlwaysConfirm', 'getHistoryLength', 'getHistoryVisible', 'getHistory', 'getLoginSkipped', 'getCredentialsSaved', 'getDisplayProgress', 'getLogCommand', 'getLogResult']),
     language: function () {
       return this.getLanguage
     },
@@ -116,6 +116,12 @@ export default {
     },
     credentialsSaved: function () {
       return this.getCredentialsSaved
+    },
+    logCommand: function () {
+      return this.getLogCommand
+    },
+    logResult: function () {
+      return this.getLogResult
     }
   },
   methods: {
@@ -398,7 +404,10 @@ export default {
             }
           }, 1000)
         }
-        console.log('Executing command')
+        console.log(`Executing command ${this.currentCommandMaster.commandName}`)
+        if (this.logCommand) {
+          console.log('Command: ', this.resultCommand)
+        }
         this.$pwsh.shell.invoke().then(output => {
           //  Code block to handle PowerShell return data
           // Stop listening to output, hide progress dialog and reset dialog
@@ -411,6 +420,9 @@ export default {
           let data
           let params
           let dataArray = []
+          if (this.logResult) {
+            console.log('Results: ', output)
+          }
           try {
             // Cast data to JSON, if this fails, display data as raw output
             data = JSON.parse(output)
