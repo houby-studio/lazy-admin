@@ -165,6 +165,8 @@ module.exports = function (ctx) {
         // https://www.electron.build/configuration/configuration
 
         appId: 'eu.houby-studio.lazy-admin',
+        // eslint-disable-next-line no-template-curly-in-string
+        artifactName: 'Lazy-Admin-Setup-${version}.${ext}',
         win: {
           target: 'nsis',
           icon: 'src-electron/icons/icon.ico',
