@@ -91,13 +91,13 @@ jobs:
       env: 
         CSC_LINK: ${{ secrets.CSC_LINK }}
         CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
-    - run: .\vcn notarize --public .\dist\electron\Packaged\$((Get-Item -Path ".\dist\electron\Packaged\Lazy Admin Setup *.exe").Name)
+    - run: .\vcn notarize --public .\dist\electron\Packaged\$((Get-Item -Path ".\dist\electron\Packaged\Lazy-Admin-Setup-*.exe").Name)
       if: ${{ steps.autotag.outputs.tagname }} # if no tag was created, skip notarizing build
       env:
         VCN_NOTARIZATION_PASSWORD: ${{ secrets.VCN_NOTARIZATION_PASSWORD }}
         VCN_PASSWORD: ${{ secrets.VCN_PASSWORD }}
         VCN_USER: ${{ secrets.VCN_USER }}
-    - run: .\vcn authenticate .\dist\electron\Packaged\$((Get-Item -Path ".\dist\electron\Packaged\Lazy Admin Setup *.exe").Name)
+    - run: .\vcn authenticate .\dist\electron\Packaged\$((Get-Item -Path ".\dist\electron\Packaged\Lazy-Admin-Setup-*.exe").Name)
       if: ${{ steps.autotag.outputs.tagname }} # if no tag was created, skip authenticating build
       env:
         VCN_NOTARIZATION_PASSWORD: ${{ secrets.VCN_NOTARIZATION_PASSWORD }}
