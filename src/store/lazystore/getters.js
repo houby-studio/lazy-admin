@@ -103,9 +103,9 @@ export function getScriptsArray (state) {
   try {
     return Object.entries(state.definitions)
       .filter(([key, value]) => state.scripts_filter.includes(key))
+      .sort(([key, value], [key2, value2]) => (key > key2) ? 1 : -1)
       .map(function ([key, value]) { return value.definition })
       .flat(1)
-      .sort()
   } catch {
     console.error('Cannot build scripts entries.')
   }
@@ -123,7 +123,7 @@ export function getMenuEntries (state) {
           version: value.version,
           icon: value.icon ? value.icon : 'mdi-powershell'
         }
-      })
+      }).sort((a, b) => (a.displayName > b.displayName) ? 1 : -1)
   } catch {
     console.error('Cannot build menu entries.')
   }

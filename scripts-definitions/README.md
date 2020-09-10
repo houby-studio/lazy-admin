@@ -1,4 +1,4 @@
-# Script definitions
+# Scripts definitions
 
 This folder contains sample definitions, serving as example for how you should setup your definitions for application.
 

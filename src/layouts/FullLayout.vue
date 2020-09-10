@@ -375,8 +375,9 @@
               <div class="col-xs-12 col-sm-6 col-md-3">
                 <div class="text-h6">
                   <q-btn
+                    @click="debugGetLanguageJson"
                     color="primary"
-                    label="-"
+                    label="Get language JSON"
                     style="width: 90%"
                     class="q-mb-sm"
                     no-wrap
@@ -429,6 +430,7 @@
 </template>
 
 <script>
+import { exportFile } from 'quasar'
 import { mapGetters } from 'vuex'
 const { app, globalShortcut } = require('electron').remote
 const { shell } = require('electron')
@@ -748,6 +750,15 @@ export default {
           this.$i18n.setLocaleMessage(language, this.customLanguage[language])
         })
       })
+    },
+
+    debugGetLanguageJson () {
+      console.log('DEBUG function: Exporting English i18n strings to JSON.')
+      exportFile(
+        `en-us.json`,
+        JSON.stringify(this.$i18n.messages['en-us']),
+        'application/json'
+      )
     }
   },
   created: function () {
