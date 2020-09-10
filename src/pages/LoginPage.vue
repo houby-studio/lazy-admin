@@ -228,7 +228,7 @@ export default {
           icon: 'warning',
           message: this.$t('pwshMissing'),
           actions: [
-            { label: this.$t('install'), color: 'black', handler: () => { openURL('https://github.com/PowerShell/powershell/releases/latest') } },
+            { label: this.$t('install'), color: 'black', handler: () => { openURL('https://github.com/houby-studio/lazy-admin/wiki/How-to-install-PowerShell-Core') } },
             { label: this.$t('dismiss'), color: 'black' }
           ]
         })
