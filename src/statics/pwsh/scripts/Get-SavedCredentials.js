@@ -22,7 +22,7 @@ function Get-SavedCredentials {
 
   # Attempt to import CredentialManager module
   try {
-    Import-Module -Name "CredentialManager" -ErrorAction Stop
+    Import-Module -Name "CredentialManager" -ErrorAction Stop -WarningAction SilentlyContinue
   }
   catch {
     return [PSCustomObject]@{
@@ -35,7 +35,7 @@ function Get-SavedCredentials {
   # Attempt to retrieve saved credentials
   $CredentialObject = Get-StoredCredential -Target 'Lazy Admin' -Type Generic -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
 
-  # Return either retrieved credentials or information about being unsuccessful 
+  # Return either retrieved credentials or information about being unsuccessful
   if ($CredentialObject) {
     return [PSCustomObject]@{
       error      = $false;
