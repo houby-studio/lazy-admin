@@ -36,7 +36,7 @@ function New-PSSessionWithCredentials {
   )
 
   Import-Module -Name "CredentialManager" -UseWindowsPowerShell -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
-  Import-Module -Name "CredentialManager" -ErrorAction SilentlyContinue
+  Import-Module -Name "CredentialManager" -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
 
   # If credential object should be used, attempt to retrieve it.
   if ($Credential) {
