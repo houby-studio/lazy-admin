@@ -70,7 +70,7 @@ export default {
     ...mapGetters('lazystore', ['getLanguage', 'getMenuEntries', 'getMasterDefinition', 'getUpdateInProgress', 'getUpdateProgress', 'getDefinitionsUpdateInProgress', 'getRestartRequired']),
     lazyVersion: {
       get () {
-        return require('electron').remote.app.getVersion()
+        return require('@electron/remote').app.getVersion()
       }
     },
     masterDefinitionVersion: function () {

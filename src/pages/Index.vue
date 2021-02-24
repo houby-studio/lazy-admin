@@ -31,7 +31,7 @@ export default {
   },
   methods: {
     lazyVersion () {
-      let version = require('electron').remote.app.getVersion()
+      let version = require('@electron/remote').app.getVersion()
       console.log(version)
     }
   }

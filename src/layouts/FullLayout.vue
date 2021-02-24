@@ -432,7 +432,7 @@
 <script>
 import { exportFile } from 'quasar'
 import { mapGetters } from 'vuex'
-const { app, globalShortcut } = require('electron').remote
+const { app, globalShortcut } = require('@electron/remote')
 const { shell } = require('electron')
 const { transports } = require('electron-log')
 
@@ -707,17 +707,17 @@ export default {
 
     debugOpenAppDataPath () {
       console.log('DEBUG function: Openining Lazy Admin\'s AppData folder.')
-      shell.openItem(app.getPath('userData'))
+      shell.openPath(app.getPath('userData'))
     },
 
     debugOpenLog () {
       console.log('DEBUG function: Opening electron log.')
-      shell.openItem(transports.file.getFile().path)
+      shell.openPath(transports.file.getFile().path)
     },
 
     debugOpenInstallPath () {
       console.log('DEBUG function: Opening install location folder.')
-      shell.openItem(app.getAppPath().slice(0, (process.env.PROD ? -18 : 0)))
+      shell.openPath(app.getAppPath().slice(0, (process.env.PROD ? -18 : 0)))
     },
 
     debugUpdateMasterDefinition () {
