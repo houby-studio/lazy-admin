@@ -1,6 +1,6 @@
 {
   "name": "lazy-admin",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "description": "GUI for PowerShell scripts to simplify day to day IT tasks.",
   "productName": "Lazy Admin",
   "cordovaId": "eu.houby-studio.lazy-admin",
@@ -13,14 +13,14 @@
     "release": "quasar build --mode electron --publish onTagOrDraft"
   },
   "dependencies": {
-    "@quasar/extras": "^1.9.5",
+    "@quasar/extras": "^1.9.17",
     "axios": "^0.19.2",
     "csv": "^5.3.2",
     "electron-log": "^4.1.1",
     "electron-updater": "^4.3.1",
     "lodash": "^4.17.19",
     "node-powershell": "^4.0.0",
-    "quasar": "^1.13.2",
+    "quasar": "^1.15.4",
     "regedit": "^3.0.3",
     "vue-clipboard2": "^0.3.1",
     "vue-i18n": "^8.0.0",
@@ -29,7 +29,7 @@
   },
   "devDependencies": {
     "@quasar/app": "^1.9.6",
-    "@quasar/quasar-app-extension-qmarkdown": "^1.0.31",
+    "@quasar/quasar-app-extension-qmarkdown": "^1.4.1",
     "@vue/eslint-config-standard": "^4.0.0",
     "awesome-node-loader": "^1.1.1",
     "babel-eslint": "^10.0.1",
